@@ -18,7 +18,7 @@
   "bugs": {
     "url": "https://github.com/DmitryKr2021/frontend-project-12/issues"
   },
-  "proxy": "http://localhost:3000",
+  "proxy": "http://localhost:5001",
   "homepage": "https://github.com/DmitryKr2021/frontend-project-12#readme",
   "dependencies": {
     "@hexlet/chat-server": "^1.1.8"
