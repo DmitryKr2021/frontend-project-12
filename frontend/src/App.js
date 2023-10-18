@@ -5,17 +5,16 @@ import {
   Route,
   RouterProvider,
 } from "react-router-dom";
-import { PageOne, PageTwo } from "./Components/Pages";
 import { MainPage } from "./Components/MainPage";
 import ErrorPage from "./Components/error-page";
+import SignupForm from "./Components/login-page";
 import "./App.css";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<MainPage />}>
       <Route index element={<div>No page is selected.</div>} />
-      <Route path="one" element={<PageOne />} />
-      <Route path="two" element={<PageTwo />} />
+      <Route path="login" element={<SignupForm />} />
       <Route path="*" element={<ErrorPage />} />
     </Route>
   ),
