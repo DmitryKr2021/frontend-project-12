@@ -9,6 +9,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "postinstall": "cd frontend && npm ci"
   },
+  "engines": {
+    "node": ">=18.18.0 <19.0.0"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/DmitryKr2021/frontend-project-12.git"
