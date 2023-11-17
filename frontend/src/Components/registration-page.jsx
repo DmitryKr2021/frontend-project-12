@@ -14,13 +14,18 @@ const Schema = Yup.object().shape({
     .min(5, "От 5 до 15 символов")
     .max(15, "От 5 до 15 символов")
     .required("Обязательное поле"),
+  repeatPassword: Yup.string()
+  .required("Обязательное поле")
+  .oneOf(
+    [Yup.ref('password'), null],"Пароль должен совпадать"
+  ),
 });
 
 const RegistrationPage = () => {
 
   const handleInput = (e, errors) => {
     const inv = " is-invalid";
-
+console.log('err=', errors);
     if (!e.target.className.includes(inv)) {
       e.target.className += inv;
       //console.log('ТЕПЕРЬ', e.target.className, errors);
@@ -105,8 +110,12 @@ const RegistrationPage = () => {
                             className="form-control"
                             onChange={handleChange}
                             value={values.password}
+                            onInput={(e) => handleInput(e, errors.password)}
                           />
                           <Form.Label htmlFor="password">Пароль</Form.Label>
+                          <Form.Control.Feedback type="invalid" tooltip>
+                            {errors.password}
+                          </Form.Control.Feedback>
                         </div>
                       </Form.Group>
                       <Form.Group className="mb-3">
@@ -121,10 +130,14 @@ const RegistrationPage = () => {
                             className="form-control"
                             onChange={handleChange}
                             value={values.repeatPassword}
+                            onInput={(e) => handleInput(e, errors.repeatPassword)}
                           />
                           <Form.Label htmlFor="repeat-password">
                             Подтвердите пароль
                           </Form.Label>
+                          <Form.Control.Feedback type="invalid" tooltip>
+                            {errors.repeatPassword}
+                          </Form.Control.Feedback>
                         </div>
                       </Form.Group>
                       <Button
