@@ -1,14 +1,11 @@
 import React from "react";
-import { loremIpsum } from "lorem-ipsum";
+import { MainPage } from "./MainPage";
 
-const BuildPage = (index) => (
-  <>
-    <h3>Page {index}</h3>
-    <div>
-      Page {index} content: {loremIpsum({ count: 5 })}
-    </div>
-  </>
-);
+const pageLoader = () => {
+  return (<h3>Loading...</h3>)
+};
 
-export const PageOne = () => BuildPage(1);
-export const PageTwo = () => BuildPage(2);
+export { MainPage, pageLoader };
+export { default as LoginPage } from "./login-page";
+export { default as ErrorPage } from "./error-page";
+export { default as RegistrationPage } from "./registration-page";
