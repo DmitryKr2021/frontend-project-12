@@ -23,30 +23,6 @@ const Schema = Yup.object().shape({
 
 const RegistrationPage = () => {
 
-  const handleInput = (e, errors) => {
-    const inv = " is-invalid";
-console.log('err=', errors);
-    if (!e.target.className.includes(inv)) {
-      e.target.className += inv;
-      //console.log('ТЕПЕРЬ', e.target.className, errors);
-    }
-    if (!errors) {
-      const ind = e.target.className.indexOf(inv);
-      //console.log('ДО', e.target.className, errors, ind);
-      if (ind > 0) {
-        e.target.className = e.target.className.slice(0, ind);
-      }
-      //console.log('ПОСЛЕ', e.target.className, errors, ind);}
-      else {
-        //console.log(e.target.className, errors);
-      }
-
-      /*if (!e.target.className.includes(inv)) {
-        e.target.className += inv;
-        console.log('ТЕПЕРЬ', e.target.className, errors);*/
-    }
-  };
-
   return (
     <Formik
       initialValues={{ username: "", password: "", repeatPassword: "" }}
@@ -55,7 +31,7 @@ console.log('err=', errors);
         console.log(values);
       }}
     >
-      {({ values, handleChange, isSubmitting, handleSubmit, errors }) => (
+      {({ values, handleChange, isSubmitting, handleSubmit, errors, handleBlur }) => (
         <div className="d-flex flex-column">
           <div className="container-fluid h-100">
             <div
@@ -82,19 +58,23 @@ console.log('err=', errors);
                       <Form.Group className="mb-3 position-relative">
                         <div className="form-floating mb-3">
                           <Form.Control
+                            type="text"
                             name="username"
                             placeholder="От 5 до 15 символов"
                             id="username"
                             onChange={handleChange}
                             value={values.username}
-                            onInput={(e) => handleInput(e, errors.username)}
+                            onBlur={handleBlur}
+                            isInvalid={
+                              errors.username
+                            }
                             autoFocus
                           />
                           <Form.Label htmlFor="username">
                             Имя пользователя
                           </Form.Label>
                           <Form.Control.Feedback type="invalid" tooltip>
-                            {errors.username}
+                          {errors.username}
                           </Form.Control.Feedback>
                         </div>
                       </Form.Group>
@@ -107,15 +87,17 @@ console.log('err=', errors);
                             required
                             placeholder="Пароль"
                             id="password"
-                            className="form-control"
                             onChange={handleChange}
+                            onBlur={handleBlur}
                             value={values.password}
-                            onInput={(e) => handleInput(e, errors.password)}
+                            isInvalid={
+                              errors.password
+                            }
                           />
-                          <Form.Label htmlFor="password">Пароль</Form.Label>
+                          <Form.Label htmlFor="password">Пароль</Form.Label>   
                           <Form.Control.Feedback type="invalid" tooltip>
-                            {errors.password}
-                          </Form.Control.Feedback>
+                          {errors.password}
+                          </Form.Control.Feedback>       
                         </div>
                       </Form.Group>
                       <Form.Group className="mb-3">
@@ -127,16 +109,18 @@ console.log('err=', errors);
                             required
                             placeholder="Подтвердите пароль"
                             id="repeat-password"
-                            className="form-control"
                             onChange={handleChange}
-                            value={values.repeatPassword}
-                            onInput={(e) => handleInput(e, errors.repeatPassword)}
+                            onBlur={handleBlur}
+                            value={values.repeatPassword}        
+                            isInvalid={
+                              errors.repeatPassword 
+                            }
                           />
                           <Form.Label htmlFor="repeat-password">
                             Подтвердите пароль
                           </Form.Label>
                           <Form.Control.Feedback type="invalid" tooltip>
-                            {errors.repeatPassword}
+                          {errors.repeatPassword}
                           </Form.Control.Feedback>
                         </div>
                       </Form.Group>
@@ -161,5 +145,3 @@ console.log('err=', errors);
 };
 
 export default RegistrationPage;
-
-/*<Form.Control.Feedback tooltip className="invalid-tooltip">Обязательное поле</Form.Control.Feedback>*/
