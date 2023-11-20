@@ -1,6 +1,6 @@
 //import React, { useState, useEffect } from "react";
 import React from "react";
-import { Formik } from "formik";
+import { Formik, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { Button, Form } from "react-bootstrap";
 import img from "../imgs/registration.png";
@@ -15,14 +15,11 @@ const Schema = Yup.object().shape({
     .max(15, "От 5 до 15 символов")
     .required("Обязательное поле"),
   repeatPassword: Yup.string()
-  .required("Обязательное поле")
-  .oneOf(
-    [Yup.ref('password'), null],"Пароль должен совпадать"
-  ),
+    .required("Обязательное поле")
+    .oneOf([Yup.ref("password"), null], "Пароль должен совпадать"),
 });
 
 const RegistrationPage = () => {
-
   return (
     <Formik
       initialValues={{ username: "", password: "", repeatPassword: "" }}
@@ -31,7 +28,15 @@ const RegistrationPage = () => {
         console.log(values);
       }}
     >
-      {({ values, handleChange, isSubmitting, handleSubmit, errors, handleBlur }) => (
+      {({
+        values,
+        handleChange,
+        isSubmitting,
+        handleSubmit,
+        errors,
+        handleBlur,
+        touched,
+      }) => (
         <div className="d-flex flex-column">
           <div className="container-fluid h-100">
             <div
@@ -65,17 +70,17 @@ const RegistrationPage = () => {
                             onChange={handleChange}
                             value={values.username}
                             onBlur={handleBlur}
-                            isInvalid={
-                              errors.username
-                            }
+                            isInvalid={touched.username && errors.username}
                             autoFocus
                           />
                           <Form.Label htmlFor="username">
                             Имя пользователя
                           </Form.Label>
-                          <Form.Control.Feedback type="invalid" tooltip>
-                          {errors.username}
-                          </Form.Control.Feedback>
+                          <ErrorMessage name="username">
+                            {(msg) => (
+                              <div className=" invalid-tooltip">{msg}</div>
+                            )}
+                          </ErrorMessage>
                         </div>
                       </Form.Group>
                       <Form.Group className="mb-3">
@@ -90,14 +95,14 @@ const RegistrationPage = () => {
                             onChange={handleChange}
                             onBlur={handleBlur}
                             value={values.password}
-                            isInvalid={
-                              errors.password
-                            }
+                            isInvalid={touched.password && errors.password}
                           />
-                          <Form.Label htmlFor="password">Пароль</Form.Label>   
-                          <Form.Control.Feedback type="invalid" tooltip>
-                          {errors.password}
-                          </Form.Control.Feedback>       
+                          <Form.Label htmlFor="password">Пароль</Form.Label>
+                          <ErrorMessage name="password">
+                            {(msg) => (
+                             <div className=" invalid-tooltip">{msg}</div>
+                            )}
+                          </ErrorMessage>
                         </div>
                       </Form.Group>
                       <Form.Group className="mb-3">
@@ -111,16 +116,14 @@ const RegistrationPage = () => {
                             id="repeat-password"
                             onChange={handleChange}
                             onBlur={handleBlur}
-                            value={values.repeatPassword}        
-                            isInvalid={
-                              errors.repeatPassword 
-                            }
+                            value={values.repeatPassword}
+                            isInvalid={touched.repeatPassword && errors.repeatPassword}
                           />
                           <Form.Label htmlFor="repeat-password">
                             Подтвердите пароль
                           </Form.Label>
                           <Form.Control.Feedback type="invalid" tooltip>
-                          {errors.repeatPassword}
+                            {errors.repeatPassword}
                           </Form.Control.Feedback>
                         </div>
                       </Form.Group>
