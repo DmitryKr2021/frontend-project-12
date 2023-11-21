@@ -2,6 +2,15 @@ import React from "react";
 import { Formik } from "formik";
 import { Button, Form } from "react-bootstrap";
 import img from "../imgs/autorization.jpg";
+import axios from 'axios';
+
+
+//const addr = "http://localhost:5001/api/v1/login";
+
+axios.post('/api/v1/login', { username: 'admin', password: 'admin' }).then((response) => {
+//axios.post(addr, { username: 'admin', password: 'admin' }).then((response) => {
+  console.log(response.data); // => { token: ..., username: 'admin' }
+});
 
 const LoginPage = () => {
   return (
