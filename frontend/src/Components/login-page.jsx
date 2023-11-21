@@ -4,24 +4,14 @@ import { Button, Form } from "react-bootstrap";
 import img from "../imgs/autorization.jpg";
 import axios from 'axios';
 
-
-//const addr = "http://localhost:5001/api/v1/login";
-
-axios.post('/api/v1/login', { username: 'admin', password: 'admin' }).then((response) => {
-//axios.post(addr, { username: 'admin', password: 'admin' }).then((response) => {
-  console.log(response.data); // => { token: ..., username: 'admin' }
-});
-
 const LoginPage = () => {
   return (
     <Formik
       initialValues={{ username: "", password: "" }}
-      onSubmit={(values, { setSubmitting }) => {
-        console.log(values);
-        setTimeout(() => {
-          //alert(JSON.stringify(values, null, 2));
-          setSubmitting(false);
-        }, 400);
+      onSubmit={() => {
+        axios.post('/api/v1/login', { username: 'admin', password: 'admin' }).then((response) => {
+            console.log(response.data);
+          });
       }}
     >
       {({ values, handleChange, isSubmitting, handleSubmit }) => (
