@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Button } from 'react-bootstrap';
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -29,24 +30,7 @@ const getAuthHeader = () => {
 getAuthHeader();
 
 /*const AuthProvider = ({ children }) => {
-  const [loggedIn, setLoggedIn] = useState(false);
-  const logIn = () => setLoggedIn(true);
-  const logOut = () => {
-    localStorage.removeItem("userId");
-    setLoggedIn(false);
-  };
-
-  return (
-    <AuthContext.Provider value={{ loggedIn, logIn, logOut }}>
-      {children}
-    </AuthContext.Provider>
-  );
-};*/
-const AuthProvider = ({ children }) => {
-  //const newLog = {loggedIn: true, logIn, logOut};
-  const newLog = {loggedIn: true};
-  //const logIn = () => setLog({loggedIn: true, logIn, logOut});
-  const logIn = () => setLog(newLog);
+  const logIn = () => setLog({loggedIn: true, logIn, logOut});
   const logOut = () => {
     setLog({loggedIn: false, logIn, logOut});
     localStorage.removeItem("user");
@@ -58,6 +42,20 @@ const AuthProvider = ({ children }) => {
       {children}
     </AuthContext.Provider>
   );
+};*/
+const AuthProvider = ({ children }) => {
+  const logIn = () => setLoggedIn(true);
+  const logOut = () => {
+    setLoggedIn(false);
+    localStorage.removeItem("user");
+  };
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  return (
+    <AuthContext.Provider value={{loggedIn, logIn, logOut}}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 AuthProvider.propTypes = {
@@ -66,13 +64,11 @@ AuthProvider.propTypes = {
 
 const ChatPage = ({children}) => {
   const auth = useAuth();
-  console.log('(12) auth.loggedIn=', auth, auth.loggedIn);
-
   const location = useLocation();
     return auth.loggedIn ? (
     children
-  ) : (
-    <Navigate to="/login"  state={{ from: location }} replace={true}/>
+    ) : (
+      <Navigate to="/login"  state={{ from: location }} replace={true}/>
   );
 };
 
@@ -99,7 +95,7 @@ const router = createBrowserRouter(
         element={
           <ChatPage>
             <MainPage />
-          </ChatPage>
+          </ChatPage>  
         }
       />
       <Route path="*" element={<ErrorPage />} />
@@ -107,11 +103,21 @@ const router = createBrowserRouter(
   )
 );
 
+const AuthButton = () => {
+  const auth = useAuth();
+  return (
+    auth.loggedIn
+      ? <Button onClick={auth.logOut}>Выйти</Button>
+      : null
+  );
+};
+
 function App() {
   useEffect(() => {
     const body = document.querySelector("body");
     body.className = "bg-light";
   });
+
   return (
     <AuthProvider>
       <nav className="shadow-sm navbar navbar-expand-lg navbar-light bg-white">
@@ -119,9 +125,7 @@ function App() {
           <a className="navbar-brand" href="/">
             Hexlet Chat
           </a>
-          <button type="button" className="btn btn-primary">
-            Выйти
-          </button>
+          <AuthButton />
         </div>
       </nav>
       <RouterProvider router={router} />

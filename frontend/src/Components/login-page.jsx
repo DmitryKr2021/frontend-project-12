@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Formik, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { Button, Form } from "react-bootstrap";
 import img from "../imgs/autorization.jpg";
 import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
 import useAuth from './hooks/index.jsx';
 
 const Schema = Yup.object().shape({
@@ -15,14 +16,15 @@ const Schema = Yup.object().shape({
 
 const LoginPage = () => {
   const auth = useAuth();
-  console.log('(1) auth=', auth);
+  const navigate = useNavigate();
   if (window.localStorage.length > 0) {
-   // const user = window.localStorage.getItem("user");
-   // console.log("user token===", JSON.parse(user).token);
+   const user = window.localStorage.getItem("user");
+   useEffect(() => {
+     auth.logIn();
+     navigate('/main');
+   }, [auth.loggedIn]);
+   console.log("user token===", JSON.parse(user).token);
   }
-  /*if (JSON.parse(user).token) {
-    //auth.logIn();
-  }*/
   
   //window.localStorage.clear();
 
@@ -34,7 +36,7 @@ const LoginPage = () => {
         axios.post('/api/v1/login', { username: values.username, password: values.password }).then((response) => {
           window.localStorage.setItem('user', JSON.stringify(response.data));
           auth.logIn();
-          console.log('(2) auth.loggedIn=', auth, auth.loggedIn);
+          navigate('/main');
         })
         .catch ((error) => {
           if (error.response) {
@@ -117,8 +119,8 @@ const LoginPage = () => {
                   </div>
                   <div className="card-footer p-4">
                     <div className="text-center">
-                      <span>Нет аккаунта? </span>
-                      <a href="/registration">Регистрация</a>
+                      <span>Нет аккаунта? </span>     
+                      <Link to="/registration">Регистрация</Link>
                     </div>
                   </div>
                 </div>
