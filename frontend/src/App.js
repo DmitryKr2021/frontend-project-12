@@ -22,9 +22,14 @@ import AuthContext from "./Components/contexts/index.jsx";
 import useAuth from "./Components/hooks/index.jsx";
 import PropTypes from "prop-types";
 
-const AuthProvider = ({ children }) => {
-  const [loggedIn, setLoggedIn] = useState(false);
+const getAuthHeader = () => {
+  //return {};
+};
 
+getAuthHeader();
+
+/*const AuthProvider = ({ children }) => {
+  const [loggedIn, setLoggedIn] = useState(false);
   const logIn = () => setLoggedIn(true);
   const logOut = () => {
     localStorage.removeItem("userId");
@@ -36,20 +41,38 @@ const AuthProvider = ({ children }) => {
       {children}
     </AuthContext.Provider>
   );
+};*/
+const AuthProvider = ({ children }) => {
+  //const newLog = {loggedIn: true, logIn, logOut};
+  const newLog = {loggedIn: true};
+  //const logIn = () => setLog({loggedIn: true, logIn, logOut});
+  const logIn = () => setLog(newLog);
+  const logOut = () => {
+    setLog({loggedIn: false, logIn, logOut});
+    localStorage.removeItem("user");
+  };
+  const [log, setLog] = useState({loggedIn: false, logIn, logOut});
+
+  return (
+    <AuthContext.Provider value={log}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 AuthProvider.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
-const ChatPage = ({ children }) => {
+const ChatPage = ({children}) => {
   const auth = useAuth();
+  console.log('(12) auth.loggedIn=', auth, auth.loggedIn);
+
   const location = useLocation();
-  console.log(auth.login);
-  return auth.loggedIn ? (
+    return auth.loggedIn ? (
     children
   ) : (
-    <Navigate to="/login" state={{ from: location }} />
+    <Navigate to="/login"  state={{ from: location }} replace={true}/>
   );
 };
 
@@ -57,23 +80,12 @@ ChatPage.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
-/*const router = createBrowserRouter(
-  createRoutesFromElements(
-    <Route path="/" element={<MainPage />}>
-      <Route index loader={pageLoader} element={<div>It&apos;s a MAIN page </div>} />
-      <Route path="login" element={<LoginPage />} />
-      <Route path="*" element={<ErrorPage />} />
-    </Route>
-  ),
-);*/
-
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={null}>
       <Route
         index
         loader={pageLoader}
-        //element={<MainPage/>}
         element={
           <ChatPage>
             <MainPage />

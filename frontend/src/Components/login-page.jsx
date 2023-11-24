@@ -1,20 +1,56 @@
 import React from "react";
-import { Formik } from "formik";
+import { Formik, ErrorMessage } from "formik";
+import * as Yup from "yup";
 import { Button, Form } from "react-bootstrap";
 import img from "../imgs/autorization.jpg";
-import axios from 'axios';
+import axios from "axios";
+import useAuth from './hooks/index.jsx';
+
+const Schema = Yup.object().shape({
+  username: Yup.string()
+    .oneOf(['admin', null], "Неверные имя пользователя или пароль"),
+  password: Yup.string()
+    .oneOf(['admin', null], "Неверные имя пользователя или пароль"),
+});
 
 const LoginPage = () => {
+  const auth = useAuth();
+  console.log('(1) auth=', auth);
+  if (window.localStorage.length > 0) {
+   // const user = window.localStorage.getItem("user");
+   // console.log("user token===", JSON.parse(user).token);
+  }
+  /*if (JSON.parse(user).token) {
+    //auth.logIn();
+  }*/
+  
+  //window.localStorage.clear();
+
   return (
     <Formik
       initialValues={{ username: "", password: "" }}
-      onSubmit={() => {
-        axios.post('/api/v1/login', { username: 'admin', password: 'admin' }).then((response) => {
-            console.log(response.data);
-          });
+      validationSchema={Schema}
+      onSubmit={(values) => {
+        axios.post('/api/v1/login', { username: values.username, password: values.password }).then((response) => {
+          window.localStorage.setItem('user', JSON.stringify(response.data));
+          auth.logIn();
+          console.log('(2) auth.loggedIn=', auth, auth.loggedIn);
+        })
+        .catch ((error) => {
+          if (error.response) {
+            console.log(error.response.data);
+            console.log(error.response.status);
+            console.log(error.response.headers);
+          } else if (error.request) {
+            console.log(error.request);
+          } else {
+            console.log('Error', error.message);
+          }
+          throw(error);
+        })
       }}
     >
-      {({ values, handleChange, isSubmitting, handleSubmit }) => (
+      {({ values, handleChange, isSubmitting, handleSubmit, touched, errors }) => (
         <div className="d-flex flex-column">
           <div className="container-fluid h-100">
             <div
@@ -40,9 +76,9 @@ const LoginPage = () => {
                             required
                             placeholder="Ваш ник"
                             id="username"
-                            className="form-control"
                             onChange={handleChange}
                             value={values.username}
+                            isInvalid={touched.username && errors.username}
                             autoFocus
                           />
                           <Form.Label htmlFor="username">Ваш ник</Form.Label>
@@ -57,11 +93,16 @@ const LoginPage = () => {
                             placeholder="Пароль"
                             required
                             id="password"
-                            className="form-control"
                             onChange={handleChange}
                             value={values.password}
+                            isInvalid={touched.password && errors.password}
                           />
                           <Form.Label htmlFor="password">Пароль</Form.Label>
+                          <ErrorMessage name="username">
+                            {(msg) => (
+                              <div className=" invalid-tooltip">{msg}</div>
+                            )}
+                          </ErrorMessage>
                         </div>
                       </Form.Group>
                       <Button
