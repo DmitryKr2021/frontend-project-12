@@ -18,16 +18,12 @@ const LoginPage = () => {
   const auth = useAuth();
   const navigate = useNavigate();
   if (window.localStorage.length > 0) {
-   const user = window.localStorage.getItem("user");
    useEffect(() => {
      auth.logIn();
      navigate('/main');
    }, [auth.loggedIn]);
-   console.log("user token===", JSON.parse(user).token);
   }
   
-  //window.localStorage.clear();
-
   return (
     <Formik
       initialValues={{ username: "", password: "" }}

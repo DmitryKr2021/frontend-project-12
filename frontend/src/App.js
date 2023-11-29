@@ -29,20 +29,6 @@ const getAuthHeader = () => {
 
 getAuthHeader();
 
-/*const AuthProvider = ({ children }) => {
-  const logIn = () => setLog({loggedIn: true, logIn, logOut});
-  const logOut = () => {
-    setLog({loggedIn: false, logIn, logOut});
-    localStorage.removeItem("user");
-  };
-  const [log, setLog] = useState({loggedIn: false, logIn, logOut});
-
-  return (
-    <AuthContext.Provider value={log}>
-      {children}
-    </AuthContext.Provider>
-  );
-};*/
 const AuthProvider = ({ children }) => {
   const logIn = () => setLoggedIn(true);
   const logOut = () => {
@@ -50,7 +36,6 @@ const AuthProvider = ({ children }) => {
     localStorage.removeItem("user");
   };
   const [loggedIn, setLoggedIn] = useState(false);
-
   return (
     <AuthContext.Provider value={{loggedIn, logIn, logOut}}>
       {children}
@@ -75,6 +60,7 @@ const ChatPage = ({children}) => {
 ChatPage.propTypes = {
   children: PropTypes.node.isRequired,
 };
+
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -103,7 +89,7 @@ const router = createBrowserRouter(
   )
 );
 
-const AuthButton = () => {
+const OutButton = () => {
   const auth = useAuth();
   return (
     auth.loggedIn
@@ -117,7 +103,7 @@ function App() {
     const body = document.querySelector("body");
     body.className = "bg-light";
   });
-
+  
   return (
     <AuthProvider>
       <nav className="shadow-sm navbar navbar-expand-lg navbar-light bg-white">
@@ -125,7 +111,7 @@ function App() {
           <a className="navbar-brand" href="/">
             Hexlet Chat
           </a>
-          <AuthButton />
+          <OutButton />
         </div>
       </nav>
       <RouterProvider router={router} />
