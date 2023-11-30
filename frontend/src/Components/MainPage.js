@@ -11,7 +11,7 @@ export const MainPage = () => {
   const dispatch = useDispatch();
   const btnClass = cn("w-100", "rounded-0", "text-start", "btn");
   const selector = useSelector((state) => state.channels.value);
- 
+
   const handleClick = (e) => {
     const btnList = document.querySelectorAll("[data-type]");
     btnList.forEach(
@@ -21,6 +21,7 @@ export const MainPage = () => {
             ? btnClass + " btn-secondary"
             : btnClass + " btn-light")
     );
+    console.log(e.target)
     setChatTitle("# " + e.target.innerText.slice(1));
   };
 
@@ -35,13 +36,15 @@ export const MainPage = () => {
       })
       .then((response) => {
         const { channels } = response.data;
-        // console.log("response.data=", response.data);
-        //console.log("selector=", selector);
-        channels.forEach((item) => {
-          dispatch(addChannels(item.name));
+        console.log("response.data=", response.data);
+        console.log("selector=", selector);
+        channels.forEach((channel) => {
+          console.log('channel=', channel)
+          //dispatch(addChannels(channel.name));
+          dispatch(addChannels(channel));
         });
       });
-  }
+    }
 
   useEffect(() => {
     const btnList = document.querySelectorAll("[data-type]");
@@ -78,17 +81,16 @@ export const MainPage = () => {
         <ul
           id="channels-box"
           className="nav flex-column nav-pills nav-fill px-2 mb-3 overflow-auto h-100 d-block"
-        >
+        >          
           {selector.map((item) => (
-            <li className="nav-item w-100" key={item}>
+            <li className="nav-item w-100" key={item.id}>
               <Button
                 type="button"
                 data-type="button"
                 onClick={(e) => handleClick(e)}
-                
               >
                 <span className="me-1">#</span>
-                {item}
+                {item.name}
               </Button>
             </li>
           ))}
@@ -171,3 +173,17 @@ export const MainPage = () => {
     </>
   );
 };
+
+
+/*{selector.map((item) => (
+  <li className="nav-item w-100" key={item}>
+    <Button
+      type="button"
+      data-type="button"
+      onClick={(e) => handleClick(e)}
+    >
+      <span className="me-1">#</span>
+      {item}
+    </Button>
+  </li>
+))}*/
