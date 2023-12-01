@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
-import { addChannels } from "./slices/channels";
+// import channels, { addChannels } from "./slices/channels";
+import { addChannels, addMessages } from "./slices/channels";
 import { Button, Form } from "react-bootstrap";
 import { Formik } from "formik";
 import cn from "classnames";
@@ -10,9 +11,12 @@ export const MainPage = () => {
   const [chatTitle, setChatTitle] = useState("# general");
   const dispatch = useDispatch();
   const btnClass = cn("w-100", "rounded-0", "text-start", "btn");
-  const selector = useSelector((state) => state.channels.value);
-
-  const handleClick = (e) => {
+  const selectorChannels = useSelector((state) => state.channels);
+  const selectorMessages = useSelector((state) => state.messages);
+  console.log("(1) selectorChannels=", selectorChannels);
+  console.log("(1) selectorMessages=", selectorMessages);
+  
+  /* const handleClick = (e) => {
     const btnList = document.querySelectorAll("[data-type]");
     btnList.forEach(
       (item) =>
@@ -53,8 +57,44 @@ export const MainPage = () => {
         (item.classList =
           index === 0 ? btnClass + " btn-secondary" : btnClass + " btn-light")
     );
-  });
+  });*/
 
+  const handleClick = (e) => {
+    setChatTitle("# " + e.target.innerText.slice(1));
+  };
+
+  useEffect(() => {
+    const requestData = async () => {
+      if (window.localStorage.length > 0) {
+        const user = window.localStorage.getItem("user");
+        const userToken = JSON.parse(user).token;
+        axios
+          .get("/api/v1/data", {
+            headers: {
+              Authorization: `Bearer ${userToken}`,
+            },
+          })
+          .then((response) => {
+            const { channels, messages } = response.data;
+
+            console.log("response.data=", response.data);
+            console.log('channels=', channels);
+            console.log('messages=', messages);
+
+            channels.forEach((channel) => {
+              dispatch(addChannels(channel));
+            });
+            messages.forEach((message) => {
+              dispatch(addMessages(message));
+            });
+          });
+        }
+      };
+      requestData();
+    }, []);
+    
+    console.log("(2) selectorChannels=", selectorChannels);
+    
   const Channels = () => {
     return (
       <div className="col-4 col-md-2 border-end px-0 bg-light flex-column h-100 d-flex">
@@ -81,13 +121,14 @@ export const MainPage = () => {
         <ul
           id="channels-box"
           className="nav flex-column nav-pills nav-fill px-2 mb-3 overflow-auto h-100 d-block"
-        >          
-          {selector.map((item) => (
+        >
+          {selectorChannels.channels.map((item) => (
             <li className="nav-item w-100" key={item.id}>
               <Button
                 type="button"
                 data-type="button"
                 onClick={(e) => handleClick(e)}
+                className={btnClass}
               >
                 <span className="me-1">#</span>
                 {item.name}
@@ -174,16 +215,3 @@ export const MainPage = () => {
   );
 };
 
-
-/*{selector.map((item) => (
-  <li className="nav-item w-100" key={item}>
-    <Button
-      type="button"
-      data-type="button"
-      onClick={(e) => handleClick(e)}
-    >
-      <span className="me-1">#</span>
-      {item}
-    </Button>
-  </li>
-))}*/
