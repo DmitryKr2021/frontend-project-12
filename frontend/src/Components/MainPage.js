@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
-// import channels, { addChannels } from "./slices/channels";
-import { addChannels, addMessages } from "./slices/channels";
+import { addChannels } from "./slices/channels";
+import { addMessages } from "./slices/messages";
 import { Button, Form } from "react-bootstrap";
 import { Formik } from "formik";
 import cn from "classnames";
@@ -10,57 +10,16 @@ import cn from "classnames";
 export const MainPage = () => {
   const [chatTitle, setChatTitle] = useState("# general");
   const dispatch = useDispatch();
-  const btnClass = cn("w-100", "rounded-0", "text-start", "btn");
-  const selectorChannels = useSelector((state) => state.channels);
-  const selectorMessages = useSelector((state) => state.messages);
-  console.log("(1) selectorChannels=", selectorChannels);
-  console.log("(1) selectorMessages=", selectorMessages);
-  
-  /* const handleClick = (e) => {
-    const btnList = document.querySelectorAll("[data-type]");
-    btnList.forEach(
-      (item) =>
-        (item.classList =
-          item === e.target
-            ? btnClass + " btn-secondary"
-            : btnClass + " btn-light")
-    );
-    console.log(e.target)
-    setChatTitle("# " + e.target.innerText.slice(1));
-  };
+  const btnClass = cn("w-100", "rounded-0", "text-start");
+  const selectorChannels = useSelector((state) => state.channelsSlice.channels);
+  const selectorMessages = useSelector((state) => state.messagesSlice.messages);
 
-  if (window.localStorage.length > 0) {
-    const user = window.localStorage.getItem("user");
-    const userToken = JSON.parse(user).token;
-    axios
-      .get("/api/v1/data", {
-        headers: {
-          Authorization: `Bearer ${userToken}`,
-        },
-      })
-      .then((response) => {
-        const { channels } = response.data;
-        console.log("response.data=", response.data);
-        console.log("selector=", selector);
-        channels.forEach((channel) => {
-          console.log('channel=', channel)
-          //dispatch(addChannels(channel.name));
-          dispatch(addChannels(channel));
-        });
-      });
-    }
-
-  useEffect(() => {
-    const btnList = document.querySelectorAll("[data-type]");
-    btnList.forEach(
-      (item, index) =>
-        (item.classList =
-          index === 0 ? btnClass + " btn-secondary" : btnClass + " btn-light")
-    );
-  });*/
+  const [btnIndex, setBtnIndex] = useState(1);
 
   const handleClick = (e) => {
     setChatTitle("# " + e.target.innerText.slice(1));
+    setBtnIndex(e.target.id);
+    console.log("id===", e.target.id, "btnIndex==", btnIndex);
   };
 
   useEffect(() => {
@@ -76,25 +35,15 @@ export const MainPage = () => {
           })
           .then((response) => {
             const { channels, messages } = response.data;
-
             console.log("response.data=", response.data);
-            console.log('channels=', channels);
-            console.log('messages=', messages);
-
-            channels.forEach((channel) => {
-              dispatch(addChannels(channel));
-            });
-            messages.forEach((message) => {
-              dispatch(addMessages(message));
-            });
+            dispatch(addChannels(channels));
+            dispatch(addMessages(messages));
           });
-        }
-      };
-      requestData();
-    }, []);
-    
-    console.log("(2) selectorChannels=", selectorChannels);
-    
+      }
+    };
+    requestData();
+  }, []);
+
   const Channels = () => {
     return (
       <div className="col-4 col-md-2 border-end px-0 bg-light flex-column h-100 d-flex">
@@ -122,16 +71,21 @@ export const MainPage = () => {
           id="channels-box"
           className="nav flex-column nav-pills nav-fill px-2 mb-3 overflow-auto h-100 d-block"
         >
-          {selectorChannels.channels.map((item) => (
-            <li className="nav-item w-100" key={item.id}>
+          {selectorChannels.name.map((item, index) => (
+            <li className="nav-item w-100" key={item} id={item}>
               <Button
                 type="button"
+                id={selectorChannels.id[index]}
                 data-type="button"
                 onClick={(e) => handleClick(e)}
-                className={btnClass}
+                className={
+                  index + 1 === btnIndex
+                    ? btnClass + " btn-secondary"
+                    : btnClass + " btn-light"
+                }
               >
                 <span className="me-1">#</span>
-                {item.name}
+                {item}
               </Button>
             </li>
           ))}
@@ -150,10 +104,22 @@ export const MainPage = () => {
             </p>
             <span className="text-muted">0 сообщений</span>
           </div>
-          <div
-            id="messages-box"
-            className="chat-messages overflow-auto px-5 "
-          ></div>
+          <div id="messages-box" className="chat-messages overflow-auto px-5 ">
+           
+      
+            {selectorMessages.map((item, index) => (
+              <ul key={index}
+              className="nav flex-column nav-pills nav-fill px-2 mb-3 overflow-auto h-100 d-block"
+              >
+                <li className="nav-item w-100" key={item} id={item}>
+                  <span className="me-1">#</span>
+                  {item}
+                </li>
+              </ul>
+            ))}
+
+
+          </div>
           <div className="mt-auto px-5 py-3">
             <Formik
               initialValues={{ message: "" }}
@@ -214,4 +180,3 @@ export const MainPage = () => {
     </>
   );
 };
-
