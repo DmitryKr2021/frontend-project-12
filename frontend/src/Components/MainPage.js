@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { addChannels } from "./slices/channels";
-import { addMessages } from "./slices/messages";
+//import { addMessages } from "./slices/messages";
 import { Button, Form } from "react-bootstrap";
 import { Formik } from "formik";
 import cn from "classnames";
@@ -12,14 +12,18 @@ export const MainPage = () => {
   const dispatch = useDispatch();
   const btnClass = cn("w-100", "rounded-0", "text-start");
   const selectorChannels = useSelector((state) => state.channelsSlice.channels);
+ 
+  let selectorActiveChannel = useSelector((state) => state.channelsSlice.channels.activeChannel);
+
   const selectorMessages = useSelector((state) => state.messagesSlice.messages);
 
-  const [btnIndex, setBtnIndex] = useState(1);
+  //const [btnIndex, setBtnIndex] = useState(1);
 
   const handleClick = (e) => {
     setChatTitle("# " + e.target.innerText.slice(1));
-    setBtnIndex(e.target.id);
-    console.log("id===", e.target.id, "btnIndex==", btnIndex);
+    selectorActiveChannel = e.target.id;
+    //setBtnIndex(e.target.id);
+    console.log("selectorActiveChannel===", selectorActiveChannel);
   };
 
   useEffect(() => {
@@ -34,10 +38,9 @@ export const MainPage = () => {
             },
           })
           .then((response) => {
-            const { channels, messages } = response.data;
             console.log("response.data=", response.data);
-            dispatch(addChannels(channels));
-            dispatch(addMessages(messages));
+            //dispatch(addMessages(messages));
+            dispatch(addChannels(response.data));
           });
       }
     };
@@ -79,7 +82,7 @@ export const MainPage = () => {
                 data-type="button"
                 onClick={(e) => handleClick(e)}
                 className={
-                  index + 1 === btnIndex
+                  index + 1 === selectorActiveChannel
                     ? btnClass + " btn-secondary"
                     : btnClass + " btn-light"
                 }
@@ -133,7 +136,7 @@ export const MainPage = () => {
                 >
                   <div className="input-group has-validation">
                     <Form.Control
-                      name="body"
+                      name="message"
                       aria-label="Новое сообщение"
                       placeholder="Введите сообщение..."
                       className="border-0 p-0 ps-2 form-control"
