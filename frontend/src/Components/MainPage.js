@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { addChannels } from "./slices/channels";
-//import { addMessages } from "./slices/messages";
+import { addMessages } from "./slices/messages";
+import { setActiveChannel } from "./slices/active";
 import { Button, Form } from "react-bootstrap";
 import { Formik } from "formik";
 import cn from "classnames";
@@ -12,18 +13,13 @@ export const MainPage = () => {
   const dispatch = useDispatch();
   const btnClass = cn("w-100", "rounded-0", "text-start");
   const selectorChannels = useSelector((state) => state.channelsSlice.channels);
- 
-  let selectorActiveChannel = useSelector((state) => state.channelsSlice.channels.activeChannel);
-
   const selectorMessages = useSelector((state) => state.messagesSlice.messages);
+  const [activeBtn, setActiveBtn] = useState(1);
 
-  //const [btnIndex, setBtnIndex] = useState(1);
-
-  const handleClick = (e) => {
-    setChatTitle("# " + e.target.innerText.slice(1));
-    selectorActiveChannel = e.target.id;
-    //setBtnIndex(e.target.id);
-    console.log("selectorActiveChannel===", selectorActiveChannel);
+  const handleClick = (index) => {
+    setChatTitle("# " + selectorChannels.name[index]);
+    const activeNum = dispatch(setActiveChannel(index + 1));
+    setActiveBtn(activeNum.payload);
   };
 
   useEffect(() => {
@@ -39,8 +35,9 @@ export const MainPage = () => {
           })
           .then((response) => {
             console.log("response.data=", response.data);
-            //dispatch(addMessages(messages));
+            dispatch(addMessages(response.data));
             dispatch(addChannels(response.data));
+            setActiveBtn(response.data.currentChannelId);
           });
       }
     };
@@ -80,9 +77,9 @@ export const MainPage = () => {
                 type="button"
                 id={selectorChannels.id[index]}
                 data-type="button"
-                onClick={(e) => handleClick(e)}
+                onClick={() => handleClick(index)}
                 className={
-                  index + 1 === selectorActiveChannel
+                  index + 1 === activeBtn
                     ? btnClass + " btn-secondary"
                     : btnClass + " btn-light"
                 }

@@ -4,7 +4,6 @@ const initialState = {
   channels: {
     name: [],
     id: [],
-    activeChannel: null,
   },
 };
 
@@ -14,12 +13,11 @@ const channelsSlice = createSlice({
   reducers: {
     addChannels: (state, action) => {
       const { payload } = action;
-      const { channels, currentChannelId } = payload;
+      const { channels } = payload;
       channels.map((item, ind) => {
         state.channels.name[ind] = item.name;
         state.channels.id[ind] = item.id;
       })
-      state.channels.activeChannel = currentChannelId;
     },
   },
 });

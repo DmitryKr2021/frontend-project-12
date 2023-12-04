@@ -10,7 +10,8 @@ const messagesSlice = createSlice({
   reducers: {
     addMessages: (state, action) => {
       const { payload } = action;
-      payload.map((item, ind) => {
+      const { messages } = payload;
+      messages.map((item, ind) => {
         state.messages[ind] = item;
       })
     },
