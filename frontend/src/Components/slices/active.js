@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  activeChannel: 0,
+  activeChannel: 1,
 };
 
 const activeChannelSlice = createSlice({

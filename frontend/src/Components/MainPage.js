@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { addChannels } from "./slices/channels";
 import { addMessages } from "./slices/messages";
-import { setActiveChannel } from "./slices/active";
+import { setActiveChannel } from "./slices/channels";
 import { Button, Form } from "react-bootstrap";
 import { Formik } from "formik";
 import cn from "classnames";
@@ -13,12 +13,10 @@ export const MainPage = () => {
   const btnClass = cn("w-100", "rounded-0", "text-start");
   const selectorChannels = useSelector((state) => state.channelsSlice.channels);
   const selectorMessages = useSelector((state) => state.messagesSlice.messages);
-  const defaultActiveChannel = 1;
-  const [activeChannelBtn, setActiveChannelBtn] = useState(defaultActiveChannel);
+  const selectorActiveChannel = useSelector((state) => state.channelsSlice.activeChannel);
 
   const handleClick = (index) => {
     dispatch(setActiveChannel(index + 1));
-    setActiveChannelBtn(index + 1);
   };
   
   useEffect(() => {
@@ -36,7 +34,16 @@ export const MainPage = () => {
             console.log("response.data=", response.data);
             dispatch(addMessages(response.data));
             dispatch(addChannels(response.data));
-            setActiveChannelBtn(response.data.currentChannelId);
+      
+            const socket = new WebSocket('ws://localhost:3000'); 
+            socket.addEventListener('open', () => { 
+              socket.send('Hello Server!'); 
+            }); 
+            socket.addEventListener('message', (event) => { 
+              console.log('Message from server ', event.data); 
+            });
+            console.log('socket==', socket)
+
           });
       }
     };
@@ -78,7 +85,7 @@ export const MainPage = () => {
                 data-type="button"
                 onClick={() => handleClick(index)}
                 className={
-                  index + 1 === activeChannelBtn
+                  index + 1 === selectorActiveChannel
                     ? btnClass + " btn-secondary"
                     : btnClass + " btn-light"
                 }
@@ -99,7 +106,7 @@ export const MainPage = () => {
         <div className="d-flex flex-column h-100">
           <div className="bg-light mb-4 p-3 shadow-sm small">
             <p className="m-0">
-              <b>{`# ${ selectorChannels.name[activeChannelBtn - 1]}`}</b>
+              <b>{`# ${ selectorChannels.name[selectorActiveChannel - 1]}`}</b>
             </p>
             <span className="text-muted">0 сообщений</span>
           </div>
