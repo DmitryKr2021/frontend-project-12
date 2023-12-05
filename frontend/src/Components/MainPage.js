@@ -9,19 +9,18 @@ import { Formik } from "formik";
 import cn from "classnames";
 
 export const MainPage = () => {
-  const [chatTitle, setChatTitle] = useState("# general");
   const dispatch = useDispatch();
   const btnClass = cn("w-100", "rounded-0", "text-start");
   const selectorChannels = useSelector((state) => state.channelsSlice.channels);
   const selectorMessages = useSelector((state) => state.messagesSlice.messages);
-  const [activeBtn, setActiveBtn] = useState(1);
+  const defaultActiveChannel = 1;
+  const [activeChannelBtn, setActiveChannelBtn] = useState(defaultActiveChannel);
 
   const handleClick = (index) => {
-    setChatTitle("# " + selectorChannels.name[index]);
-    const activeNum = dispatch(setActiveChannel(index + 1));
-    setActiveBtn(activeNum.payload);
+    dispatch(setActiveChannel(index + 1));
+    setActiveChannelBtn(index + 1);
   };
-
+  
   useEffect(() => {
     const requestData = async () => {
       if (window.localStorage.length > 0) {
@@ -37,7 +36,7 @@ export const MainPage = () => {
             console.log("response.data=", response.data);
             dispatch(addMessages(response.data));
             dispatch(addChannels(response.data));
-            setActiveBtn(response.data.currentChannelId);
+            setActiveChannelBtn(response.data.currentChannelId);
           });
       }
     };
@@ -79,7 +78,7 @@ export const MainPage = () => {
                 data-type="button"
                 onClick={() => handleClick(index)}
                 className={
-                  index + 1 === activeBtn
+                  index + 1 === activeChannelBtn
                     ? btnClass + " btn-secondary"
                     : btnClass + " btn-light"
                 }
@@ -100,7 +99,7 @@ export const MainPage = () => {
         <div className="d-flex flex-column h-100">
           <div className="bg-light mb-4 p-3 shadow-sm small">
             <p className="m-0">
-              <b>{chatTitle}</b>
+              <b>{`# ${ selectorChannels.name[activeChannelBtn - 1]}`}</b>
             </p>
             <span className="text-muted">0 сообщений</span>
           </div>
