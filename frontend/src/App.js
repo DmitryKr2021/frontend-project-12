@@ -14,13 +14,13 @@ import {
   ErrorPage,
   LoginPage,
   RegistrationPage
-} from "./Components/Pages";
+} from "./components/Pages";
 
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap";
-import AuthContext from "./Components/contexts/index.jsx";
-import useAuth from "./Components/hooks/index.jsx";
+import AuthContext from "./components/contexts/index.jsx";
+import useAuth from "./hooks/index.jsx";
 import PropTypes from "prop-types";
 
 const getAuthHeader = () => {

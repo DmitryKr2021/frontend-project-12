@@ -5,7 +5,7 @@ import { Button, Form } from "react-bootstrap";
 import img from "../imgs/autorization.jpg";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
-import useAuth from './hooks/index.jsx';
+import useAuth from '../hooks/index.jsx';
 
 const Schema = Yup.object().shape({
   username: Yup.string()

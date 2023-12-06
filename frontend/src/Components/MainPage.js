@@ -1,24 +1,25 @@
 import React, { useEffect } from "react";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
-import { addChannels } from "./slices/channels";
-import { addMessages } from "./slices/messages";
-import { setActiveChannel } from "./slices/channels";
+import { addChannels } from "../slices/channels";
+import { addMessages } from "../slices/messages";
+import { setActiveChannel } from "../slices/channels";
 import { Button, Form } from "react-bootstrap";
 import { Formik } from "formik";
 import cn from "classnames";
+import { io } from "socket.io-client";
 
 export const MainPage = () => {
-  const dispatch = useDispatch();
   const btnClass = cn("w-100", "rounded-0", "text-start");
   const selectorChannels = useSelector((state) => state.channelsSlice.channels);
   const selectorMessages = useSelector((state) => state.messagesSlice.messages);
   const selectorActiveChannel = useSelector((state) => state.channelsSlice.activeChannel);
+  const dispatch = useDispatch();
 
   const handleClick = (index) => {
     dispatch(setActiveChannel(index + 1));
   };
-  
+ 
   useEffect(() => {
     const requestData = async () => {
       if (window.localStorage.length > 0) {
@@ -35,15 +36,22 @@ export const MainPage = () => {
             dispatch(addMessages(response.data));
             dispatch(addChannels(response.data));
       
-            const socket = new WebSocket('ws://localhost:3000'); 
-            socket.addEventListener('open', () => { 
-              socket.send('Hello Server!'); 
-            }); 
-            socket.addEventListener('message', (event) => { 
-              console.log('Message from server ', event.data); 
+            /* Socket */ 
+          // const socket = io('<http://localhost>');  
+           /* const socket = io('');         
+            socket.addEventListener("error", (event) => {
+              console.log("WebSocket error: ", event);
             });
-            console.log('socket==', socket)
-
+                
+            //socket.emit('newMessage', { body: 'values.message', channelId: 1, username: 'admin' });
+            
+            socket.on('newMessage', (payload) => {
+              console.log(payload);
+            });
+            
+            socket.on('newChannel', (payload) => {
+              console.log(payload) // { id: 6, name: "new channel", removable: true }
+            });*/
           });
       }
     };
@@ -100,38 +108,47 @@ export const MainPage = () => {
     );
   };
 
+  const socket = io(''); 
+
   const Chats = () => {
+    const activeChannelName = selectorChannels.name[selectorActiveChannel - 1];
     return (
       <div className="col p-0 h-100">
         <div className="d-flex flex-column h-100">
           <div className="bg-light mb-4 p-3 shadow-sm small">
             <p className="m-0">
-              <b>{`# ${ selectorChannels.name[selectorActiveChannel - 1]}`}</b>
+              <b>{`# ${ activeChannelName }`}</b>
             </p>
-            <span className="text-muted">0 сообщений</span>
+            <span className="text-muted">{selectorMessages.length} сообщений</span>
           </div>
           <div id="messages-box" className="chat-messages overflow-auto px-5 ">
-           
-      
+                 
             {selectorMessages.map((item, index) => (
               <ul key={index}
               className="nav flex-column nav-pills nav-fill px-2 mb-3 overflow-auto h-100 d-block"
               >
-                <li className="nav-item w-100" key={item} id={item}>
-                  <span className="me-1">#</span>
-                  {item}
+                <li className="nav-item w-100" key={item.id} id={item.id}>
+                  <span className="me-1">{item.username}:</span>
+                  {item.body}
                 </li>
               </ul>
             ))}
-
 
           </div>
           <div className="mt-auto px-5 py-3">
             <Formik
               initialValues={{ message: "" }}
-              onSubmit={(values) => console.log(values)}
+              onSubmit={(values, { setSubmitting }) => {
+                setTimeout(() => {
+                  socket.emit('newMessage', { body: values.message, channelId: selectorActiveChannel, username: 'admin' });
+                  socket.on('newMessage', (payload) => {
+                    console.log('payload=', payload);
+                  });
+                  setSubmitting(false);
+                }, 200);
+              }}
             >
-              {({ values, handleChange, handleSubmit }) => (
+              {({ values, handleChange, handleSubmit, isSubmitting, resetForm }) => (
                 <Form
                   noValidate=""
                   onSubmit={handleSubmit}
@@ -148,7 +165,8 @@ export const MainPage = () => {
                     />
                     <Button
                       type="submit"
-                      disabled=""
+                      disabled={isSubmitting}
+                      onClick={() => setTimeout (() => resetForm(''), 300)}
                       className="btn btn-group-vertical"
                     >
                       <svg
