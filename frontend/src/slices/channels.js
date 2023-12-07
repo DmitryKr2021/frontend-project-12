@@ -12,7 +12,7 @@ const channelsSlice = createSlice({
   name: "channels",
   initialState,
   reducers: {
-    addChannels: (state, action) => {
+    renderChannels: (state, action) => {
       const { payload } = action;
       const { channels } = payload;
       channels.map((item, ind) => {
@@ -27,5 +27,5 @@ const channelsSlice = createSlice({
   },
 });
 
-export const { addChannels, setActiveChannel } = channelsSlice.actions;
+export const { renderChannels, setActiveChannel } = channelsSlice.actions;
 export default channelsSlice.reducer;

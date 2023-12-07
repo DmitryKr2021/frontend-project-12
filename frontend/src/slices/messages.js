@@ -8,15 +8,19 @@ const messagesSlice = createSlice({
   name: "messages",
   initialState,
   reducers: {
-    addMessages: (state, action) => {
+    renderMessages: (state, action) => {
       const { payload } = action;
       const { messages } = payload;
       messages.map((item, ind) => {
         state.messages[ind] = item;
       })
     },
+    addNewMessage: (state, action) => {
+      const { payload } = action;
+      state.messages.push(payload);
+    }
   },
 });
 
-export const { addMessages } = messagesSlice.actions;
+export const { renderMessages, addNewMessage } = messagesSlice.actions;
 export default messagesSlice.reducer;

@@ -1,25 +1,53 @@
 import React, { useEffect } from "react";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
-import { addChannels } from "../slices/channels";
-import { addMessages } from "../slices/messages";
-import { setActiveChannel } from "../slices/channels";
+import { renderChannels, setActiveChannel } from "../slices/channels";
+import { renderMessages, addNewMessage } from "../slices/messages";
 import { Button, Form } from "react-bootstrap";
 import { Formik } from "formik";
 import cn from "classnames";
-import { io } from "socket.io-client";
+import { useTranslation, I18nextProvider } from "react-i18next";
+import i18next, { socket } from "../init.js";
 
 export const MainPage = () => {
   const btnClass = cn("w-100", "rounded-0", "text-start");
   const selectorChannels = useSelector((state) => state.channelsSlice.channels);
   const selectorMessages = useSelector((state) => state.messagesSlice.messages);
-  const selectorActiveChannel = useSelector((state) => state.channelsSlice.activeChannel);
+  const selectorActiveChannel = useSelector(
+    (state) => state.channelsSlice.activeChannel
+  );
   const dispatch = useDispatch();
+  const { t } = useTranslation();
+
+  const getMes = (value) => {
+    let mes;
+    switch (value) {
+      case 0:
+        mes = "mes_zero";
+        break;
+      case 1:
+        mes = "mes_one";
+        break;
+      case 2:
+        mes = "mes_two";
+        break;
+      case 3:
+        mes = "mes_three";
+        break;
+      case 4:
+        mes = "mes_four";
+        break;
+      default:
+        mes = "mes_few";
+        break;
+    }
+    return mes;
+  };
 
   const handleClick = (index) => {
     dispatch(setActiveChannel(index + 1));
   };
- 
+
   useEffect(() => {
     const requestData = async () => {
       if (window.localStorage.length > 0) {
@@ -33,25 +61,8 @@ export const MainPage = () => {
           })
           .then((response) => {
             console.log("response.data=", response.data);
-            dispatch(addMessages(response.data));
-            dispatch(addChannels(response.data));
-      
-            /* Socket */ 
-          // const socket = io('<http://localhost>');  
-           /* const socket = io('');         
-            socket.addEventListener("error", (event) => {
-              console.log("WebSocket error: ", event);
-            });
-                
-            //socket.emit('newMessage', { body: 'values.message', channelId: 1, username: 'admin' });
-            
-            socket.on('newMessage', (payload) => {
-              console.log(payload);
-            });
-            
-            socket.on('newChannel', (payload) => {
-              console.log(payload) // { id: 6, name: "new channel", removable: true }
-            });*/
+            dispatch(renderMessages(response.data));
+            dispatch(renderChannels(response.data));
           });
       }
     };
@@ -108,47 +119,61 @@ export const MainPage = () => {
     );
   };
 
-  const socket = io(''); 
+  console.log('selectorMessages', selectorMessages)
 
   const Chats = () => {
     const activeChannelName = selectorChannels.name[selectorActiveChannel - 1];
+    const messagesLength = selectorMessages.length;
+    const countMessages = t(getMes(messagesLength), { count: messagesLength });
     return (
       <div className="col p-0 h-100">
         <div className="d-flex flex-column h-100">
           <div className="bg-light mb-4 p-3 shadow-sm small">
             <p className="m-0">
-              <b>{`# ${ activeChannelName }`}</b>
+              <b>{`# ${activeChannelName}`}</b>
             </p>
-            <span className="text-muted">{selectorMessages.length} сообщений</span>
+            <span className="text-muted">{countMessages}</span>
           </div>
           <div id="messages-box" className="chat-messages overflow-auto px-5 ">
-                 
             {selectorMessages.map((item, index) => (
-              <ul key={index}
-              className="nav flex-column nav-pills nav-fill px-2 mb-3 overflow-auto h-100 d-block"
+              item.channelId === selectorActiveChannel ?
+              <ul
+                key={index}
+                className="nav flex-column nav-pills nav-fill px-2 mb-3 overflow-auto h-100 d-block"
               >
                 <li className="nav-item w-100" key={item.id} id={item.id}>
-                  <span className="me-1">{item.username}:</span>
+                  <span className="me-1"><b>{item.username}</b>:</span>
                   {item.body}
                 </li>
               </ul>
+              : null
             ))}
-
           </div>
           <div className="mt-auto px-5 py-3">
             <Formik
               initialValues={{ message: "" }}
               onSubmit={(values, { setSubmitting }) => {
                 setTimeout(() => {
-                  socket.emit('newMessage', { body: values.message, channelId: selectorActiveChannel, username: 'admin' });
+                  socket.emit("newMessage", {
+                    body: values.message,
+                    channelId: selectorActiveChannel,
+                    username: "admin",
+                  });
                   socket.on('newMessage', (payload) => {
                     console.log('payload=', payload);
+                    dispatch(addNewMessage(payload));
                   });
                   setSubmitting(false);
                 }, 200);
               }}
             >
-              {({ values, handleChange, handleSubmit, isSubmitting, resetForm }) => (
+              {({
+                values,
+                handleChange,
+                handleSubmit,
+                isSubmitting,
+                resetForm,
+              }) => (
                 <Form
                   noValidate=""
                   onSubmit={handleSubmit}
@@ -166,7 +191,7 @@ export const MainPage = () => {
                     <Button
                       type="submit"
                       disabled={isSubmitting}
-                      onClick={() => setTimeout (() => resetForm(''), 300)}
+                      onClick={() => setTimeout(() => resetForm(""), 300)}
                       className="btn btn-group-vertical"
                     >
                       <svg
@@ -197,8 +222,10 @@ export const MainPage = () => {
     <>
       <div className="container h-100 my-4 overflow-hidden rounded shadow">
         <div className="row h-100 bg-white flex-md-row">
-          <Channels />
-          <Chats />
+          <I18nextProvider i18n={i18next} defaultNS={"translation"}>
+            <Channels />
+            <Chats />
+          </I18nextProvider>
         </div>
       </div>
     </>
