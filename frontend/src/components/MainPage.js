@@ -3,6 +3,7 @@ import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { renderChannels, setActiveChannel } from "../slices/channels";
 import { renderMessages, addNewMessage } from "../slices/messages";
+//import { renderMessages } from "../slices/messages";
 import { Button, Form } from "react-bootstrap";
 import { Formik } from "formik";
 import cn from "classnames";
@@ -119,8 +120,6 @@ export const MainPage = () => {
     );
   };
 
-  console.log('selectorMessages', selectorMessages)
-
   const Chats = () => {
     const activeChannelName = selectorChannels.name[selectorActiveChannel - 1];
     const messagesLength = selectorMessages.length;
@@ -135,36 +134,34 @@ export const MainPage = () => {
             <span className="text-muted">{countMessages}</span>
           </div>
           <div id="messages-box" className="chat-messages overflow-auto px-5 ">
-            {selectorMessages.map((item, index) => (
-              item.channelId === selectorActiveChannel ?
-              <ul
-                key={index}
-                className="nav flex-column nav-pills nav-fill px-2 mb-3 overflow-auto h-100 d-block"
-              >
-                <li className="nav-item w-100" key={item.id} id={item.id}>
-                  <span className="me-1"><b>{item.username}</b>:</span>
-                  {item.body}
-                </li>
-              </ul>
-              : null
-            ))}
+            {selectorMessages.map((item, index) =>
+              item.channelId === selectorActiveChannel ? (
+                <ul
+                  key={index}
+                  className="nav flex-column nav-pills nav-fill px-2 mb-3 overflow-auto h-100 d-block"
+                >
+                  <li className="nav-item w-100" key={item.id} id={item.id}>
+                    <span className="me-1">
+                      <b>{item.username}</b>:
+                    </span>
+                    {item.body}
+                  </li>
+                </ul>
+              ) : null
+            )}
           </div>
           <div className="mt-auto px-5 py-3">
             <Formik
               initialValues={{ message: "" }}
               onSubmit={(values, { setSubmitting }) => {
-                setTimeout(() => {
-                  socket.emit("newMessage", {
-                    body: values.message,
-                    channelId: selectorActiveChannel,
-                    username: "admin",
-                  });
-                  socket.on('newMessage', (payload) => {
-                    console.log('payload=', payload);
-                    dispatch(addNewMessage(payload));
-                  });
-                  setSubmitting(false);
-                }, 200);
+                const newMessage = {
+                  body: values.message,
+                  channelId: selectorActiveChannel,
+                  username: "admin",
+                }
+                socket.emit("newMessage", newMessage);
+                dispatch(addNewMessage(newMessage));
+                setSubmitting(false);
               }}
             >
               {({

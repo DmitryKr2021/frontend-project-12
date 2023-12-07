@@ -17,8 +17,7 @@ const messagesSlice = createSlice({
     },
     addNewMessage: (state, action) => {
       const { payload } = action;
-      //state.messages.push(payload);
-      state.messages[state.messages.length] = payload;
+      state.messages.push(payload);
     }
   },
 });
