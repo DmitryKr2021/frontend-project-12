@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+//import { socket } from "../init.js";
 
 const initialState = {
   messages: [],
@@ -19,6 +20,12 @@ const messagesSlice = createSlice({
       const { payload } = action;
       state.messages.push(payload);
     }
+   /* addNewMessage: () => {
+      socket.on('newMessage', (payload) => {
+        console.log('payload===', payload);
+        state.messages.push(payload);
+      })
+    }*/
   },
 });
 

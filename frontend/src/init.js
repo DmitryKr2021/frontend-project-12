@@ -12,9 +12,6 @@ import { initReactI18next } from "react-i18next";
     });*/
 
 export const socket = new io();
-/*socket.on("newMessage", (payload) => {
-  console.log("newMessage=", payload);
-});*/
 
 i18next
   .use(initReactI18next) // передаем экземпляр i18n в react-i18next, который сделает его доступным для всех компонентов через context API.

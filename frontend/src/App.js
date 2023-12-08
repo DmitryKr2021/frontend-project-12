@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button } from 'react-bootstrap';
+import { Button } from "react-bootstrap";
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -13,7 +13,7 @@ import {
   pageLoader,
   ErrorPage,
   LoginPage,
-  RegistrationPage
+  RegistrationPage,
 } from "./components/Pages";
 
 import "./App.css";
@@ -37,7 +37,7 @@ const AuthProvider = ({ children }) => {
   };
   const [loggedIn, setLoggedIn] = useState(false);
   return (
-    <AuthContext.Provider value={{loggedIn, logIn, logOut}}>
+    <AuthContext.Provider value={{ loggedIn, logIn, logOut }}>
       {children}
     </AuthContext.Provider>
   );
@@ -47,20 +47,19 @@ AuthProvider.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
-const ChatPage = ({children}) => {
+const ChatPage = ({ children }) => {
   const auth = useAuth();
   const location = useLocation();
-    return auth.loggedIn ? (
+  return auth.loggedIn ? (
     children
-    ) : (
-      <Navigate to="/login"  state={{ from: location }} replace={true}/>
+  ) : (
+    <Navigate to="/login" state={{ from: location }} replace={true} />
   );
 };
 
 ChatPage.propTypes = {
   children: PropTypes.node.isRequired,
 };
-
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -81,7 +80,7 @@ const router = createBrowserRouter(
         element={
           <ChatPage>
             <MainPage />
-          </ChatPage>  
+          </ChatPage>
         }
       />
       <Route path="*" element={<ErrorPage />} />
@@ -91,30 +90,32 @@ const router = createBrowserRouter(
 
 const OutButton = () => {
   const auth = useAuth();
-  return (
-    auth.loggedIn
-      ? <Button onClick={auth.logOut}>Выйти</Button>
-      : null
-  );
+  return auth.loggedIn ? <Button onClick={auth.logOut}>Выйти</Button> : null;
 };
 
 function App() {
   useEffect(() => {
     const body = document.querySelector("body");
-    body.className = "bg-light";
+    body.className = "bg-light h-100";
   });
-  
+
   return (
     <AuthProvider>
-      <nav className="shadow-sm navbar navbar-expand-lg navbar-light bg-white">
-        <div className="container">
-          <a className="navbar-brand" href="/">
-            Hexlet Chat
-          </a>
-          <OutButton />
+      <div className="h-100">
+        <div className="h-100" id="chat">
+          <div className="h-100 d-flex flex-column">
+            <nav className="shadow-sm navbar navbar-expand-lg navbar-light bg-white">
+              <div className="container">
+                <a className="navbar-brand" href="/">
+                  Hexlet Chat
+                </a>
+                <OutButton />
+              </div>
+            </nav>
+            <RouterProvider router={router} />
+          </div>
         </div>
-      </nav>
-      <RouterProvider router={router} />
+      </div>
     </AuthProvider>
   );
 }
