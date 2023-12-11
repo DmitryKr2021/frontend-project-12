@@ -2,12 +2,13 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { renderChannels, setActiveChannel } from "../slices/channels";
-import { renderMessages, addNewMessage } from "../slices/messages";
+import { renderMessages } from "../slices/messages";
 import { Button, Form, Alert } from "react-bootstrap";
 import { Formik } from "formik";
 import cn from "classnames";
 import { useTranslation, I18nextProvider } from "react-i18next";
-import i18next, { socket } from "../init.js";
+import { i18n, socketEmitMessage, socketOnMessage } from "../index.js";
+
 
 export const MainPage = () => {
   const btnClass = cn("w-100", "rounded-0", "text-start");
@@ -119,11 +120,13 @@ export const MainPage = () => {
       </div>
     );
   };
-
+  
   const Chats = () => {
     const activeChannelName = selectorChannels.name[selectorActiveChannel - 1];
-    const messagesLength = selectorMessages.length;
+    const channelMessages = selectorMessages.filter((item) => item.channelId === selectorActiveChannel);
+    const messagesLength = channelMessages.length;
     const countMessages = t(getMes(messagesLength), { count: messagesLength });
+    
     return (
       <div className="col p-0 h-100">
         <div className="d-flex flex-column h-100">
@@ -156,28 +159,12 @@ export const MainPage = () => {
                   channelId: selectorActiveChannel,
                   username: "admin",
                 };
-                socket.emit("newMessage", newMessage, (response) => {
-                  const { status } = response;
-                  setShowAlert(status === "ok" ? false : true);
-                  console.log(
-                    status === "ok"
-                      ? `Сообщение ${values.message} доставлено`
-                      : `Сообщение ${values.message} не доставлено`
-                  );
-                });
-                dispatch(addNewMessage(newMessage));
-
-               /*
-                socket.on('newMessage', (payload) => {
-                  dispatch(addNewMessage(payload);
-                })
-                */
-
-                // dispatch(addNewMessage());
+                socketEmitMessage(newMessage, setShowAlert);
+                socketOnMessage(dispatch);
                 setSubmitting(false);
               }}
-              
             >
+              
               {({
                 values,
                 handleChange,
@@ -199,6 +186,7 @@ export const MainPage = () => {
                         className="border-0 p-0 ps-2 form-control"
                         onChange={handleChange}
                         value={values.message}
+                        autoFocus
                       />
                       <Button
                         type="submit"
@@ -249,7 +237,7 @@ export const MainPage = () => {
     <>
       <div className="container h-100 my-4 overflow-hidden rounded shadow">
         <div className="row h-100 bg-white flex-md-row">
-          <I18nextProvider i18n={i18next} defaultNS={"translation"}>
+          <I18nextProvider i18n={i18n} defaultNS={"translation"}>
             <Channels />
             <Chats />
           </I18nextProvider>
