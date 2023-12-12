@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { renderChannels, setActiveChannel } from "../slices/channels";
@@ -7,12 +7,12 @@ import { Button, Form, Alert } from "react-bootstrap";
 import { Formik } from "formik";
 import cn from "classnames";
 import { useTranslation, I18nextProvider } from "react-i18next";
-// import { i18n, socketEmitMessage, socketOnMessage } from "../index.js";
-import { i18n } from "../index.js";
+import { i18n, userContext } from "../index.js";
 
-//runApp();
 
 export const MainPage = () => {
+  const { socket } = useContext(userContext);
+  const newSocket = socket.socket;
   const btnClass = cn("w-100", "rounded-0", "text-start");
   const selectorChannels = useSelector((state) => state.channelsSlice.channels);
   const selectorMessages = useSelector((state) => state.messagesSlice.messages);
@@ -161,9 +161,16 @@ export const MainPage = () => {
                   channelId: selectorActiveChannel,
                   username: "admin",
                 };
-                console.log(newMessage);
-                //socketEmitMessage(newMessage, setShowAlert);
-                //socketOnMessage(dispatch);
+                newSocket.emit("newMessage", newMessage, (response) => {
+                  const { status } = response;
+                  const { body } = newMessage;
+                  setShowAlert(status === "ok" ? false : true);
+                  console.log(
+                    status === "ok"
+                      ? `Сообщение ${body} доставлено`
+                      : `Сообщение ${body} не доставлено`
+                  );
+                });
                 setSubmitting(false);
               }}
             >

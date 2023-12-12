@@ -30,6 +30,7 @@ const getAuthHeader = () => {
 getAuthHeader();
 
 const AuthProvider = ({ children }) => {
+  //console.log('Auht prov children=', children)
   const logIn = () => setLoggedIn(true);
   const logOut = () => {
     setLoggedIn(false);
@@ -68,7 +69,7 @@ const router = createBrowserRouter(
         index
         loader={pageLoader}
         element={
-          <ChatPage>
+          <ChatPage props={'999999'}>
             <MainPage />
           </ChatPage>
         }
@@ -78,7 +79,7 @@ const router = createBrowserRouter(
       <Route
         path="main"
         element={
-          <ChatPage>
+          <ChatPage >
             <MainPage />
           </ChatPage>
         }
@@ -93,14 +94,14 @@ const OutButton = () => {
   return auth.loggedIn ? <Button onClick={auth.logOut}>Выйти</Button> : null;
 };
 
-function App() {
+const App = () => {
   useEffect(() => {
     const body = document.querySelector("body");
     body.className = "bg-light h-100";
   });
 
   return (
-    <AuthProvider>
+    <AuthProvider >
       <div className="h-100">
         <div className="h-100" id="chat">
           <div className="h-100 d-flex flex-column">
