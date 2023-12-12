@@ -11,7 +11,7 @@ import { initReactI18next } from "react-i18next";
 import ru from "./locales/ru.js";
 import { addNewMessage } from "./slices/messages";
 
-export const socket = new io();
+/*export const socket = new io();
 
 export const socketEmitMessage = (newMessage, setShowAlert) => socket.emit("newMessage", newMessage, (response) => {
   const { status } = response;
@@ -22,17 +22,17 @@ export const socketEmitMessage = (newMessage, setShowAlert) => socket.emit("newM
       ? `Сообщение ${body} доставлено`
       : `Сообщение ${body} не доставлено`
   );  
-  /*if (status === 'ok') {
+  ****if (status === 'ok') {
     socket.on('newMessage', (payload) => {
       console.log('payload=', payload);
       //dispatch(addNewMessage(payload));
     });
-  }*/
+  }****
 });
 
 export const socketOnMessage = (dispatch) => socket.on('newMessage', (payload) => {
   dispatch(addNewMessage(payload));
-});
+});*/
 
 export const i18n = i18next
   .use(initReactI18next) // передаем экземпляр i18n в react-i18next, который сделает его доступным для всех компонентов через context API.
@@ -44,14 +44,38 @@ export const i18n = i18next
     },
   });
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(
-  <Provider store={store}>
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>
-  </Provider>
-);
+const runApp = async () => {
+  console.log("new");
+  const root = ReactDOM.createRoot(document.getElementById("root"));
+  const socket = new io();
+  const socketEmitMessage = (newMessage, setShowAlert) =>
+    socket.emit("newMessage", newMessage, (response) => {
+      const { status } = response;
+      const { body } = newMessage;
+      setShowAlert(status === "ok" ? false : true);
+      console.log(
+        status === "ok"
+          ? `Сообщение ${body} доставлено`
+          : `Сообщение ${body} не доставлено`
+      );
+    });
+  await socketEmitMessage;
+
+  const socketOnMessage = (dispatch) =>
+    socket.on("newMessage", (payload) => {
+      dispatch(addNewMessage(payload));
+    });
+  await socketOnMessage;
+
+  root.render(
+    <Provider store={store}>
+      <React.StrictMode>
+        <App />
+      </React.StrictMode>
+    </Provider>
+  );
+};
+runApp();
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

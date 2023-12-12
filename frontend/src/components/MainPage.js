@@ -7,8 +7,10 @@ import { Button, Form, Alert } from "react-bootstrap";
 import { Formik } from "formik";
 import cn from "classnames";
 import { useTranslation, I18nextProvider } from "react-i18next";
-import { i18n, socketEmitMessage, socketOnMessage } from "../index.js";
+// import { i18n, socketEmitMessage, socketOnMessage } from "../index.js";
+import { i18n } from "../index.js";
 
+//runApp();
 
 export const MainPage = () => {
   const btnClass = cn("w-100", "rounded-0", "text-start");
@@ -159,8 +161,9 @@ export const MainPage = () => {
                   channelId: selectorActiveChannel,
                   username: "admin",
                 };
-                socketEmitMessage(newMessage, setShowAlert);
-                socketOnMessage(dispatch);
+                console.log(newMessage);
+                //socketEmitMessage(newMessage, setShowAlert);
+                //socketOnMessage(dispatch);
                 setSubmitting(false);
               }}
             >
