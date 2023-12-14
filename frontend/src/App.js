@@ -30,7 +30,6 @@ const getAuthHeader = () => {
 getAuthHeader();
 
 const AuthProvider = ({ children }) => {
-  //console.log('Auht prov children=', children)
   const logIn = () => setLoggedIn(true);
   const logOut = () => {
     setLoggedIn(false);
@@ -69,7 +68,7 @@ const router = createBrowserRouter(
         index
         loader={pageLoader}
         element={
-          <ChatPage props={'999999'}>
+          <ChatPage>
             <MainPage />
           </ChatPage>
         }

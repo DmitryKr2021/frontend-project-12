@@ -18,7 +18,6 @@ const messagesSlice = createSlice({
     addNewMessage: (state, action) => {
       const { payload } = action;
       state.messages.push(payload);
-      //console.log('payload=', payload)
     },
   },
 });

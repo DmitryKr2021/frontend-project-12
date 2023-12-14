@@ -1,19 +1,26 @@
 import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
-import { renderChannels, setActiveChannel } from "../slices/channels";
-import { renderMessages } from "../slices/messages";
-import { Button, Form, Alert } from "react-bootstrap";
+import { renderChannels, setActiveChannel } from "../slices/channels.js";
+import { renderMessages } from "../slices/messages.js";
+import { Button, Form, ButtonGroup, Alert } from "react-bootstrap";
 import { Formik } from "formik";
 import cn from "classnames";
 import { useTranslation, I18nextProvider } from "react-i18next";
 import { i18n, userContext } from "../index.js";
-
+import getModal from "./modals/index.js";
+import PropTypes from "prop-types";
 
 export const MainPage = () => {
   const { socket } = useContext(userContext);
   const newSocket = socket.socket;
   const btnClass = cn("w-100", "rounded-0", "text-start");
+  const btnClass2 = cn(
+    "flex-grow-0",
+    "dropdown-toggle",
+    "dropdown-toggle-split",
+    "btn"
+  );
   const selectorChannels = useSelector((state) => state.channelsSlice.channels);
   const selectorMessages = useSelector((state) => state.messagesSlice.messages);
   const selectorActiveChannel = useSelector(
@@ -22,6 +29,48 @@ export const MainPage = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const [showAlert, setShowAlert] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+
+  const [typeModal, setTypeModal] = useState("null");
+  const addOneChannel = () => {
+    setShowModal(true);
+    setTypeModal("adding");
+    const body = document.querySelector("body");
+   // body.setAttribute("style", `background-color: red`);
+   body.classList.add('modal-open')
+    console.log("body=", body);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
+
+  /* 
+  //const removeModal = (task) => {
+  const removeModal = () => {
+    setTypeModal('removing');
+    //setShowRemove(true);
+    //setShowModal(false);
+    //setTaskToRemove(task);
+  };
+console.log(removeModal)*/
+
+  const RenderModal = (props) => {
+    const { value } = props;
+    const getModalValue = getModal(value);
+    switch (value) {
+      case "adding":
+        return getModalValue(showModal, closeModal);
+      /*case 'renaming': return (getModalValue(showRename, closeRenameModal, taskToRename, renameTask));*/
+      //case 'removing': return (getModalValue(showRemove, closeRemoveModal, removeTask));
+      default:
+        return null;
+    }
+  };
+
+  RenderModal.propTypes = {
+    value: PropTypes.node.isRequired,
+  };
 
   const getMes = (value) => {
     let mes;
@@ -74,6 +123,7 @@ export const MainPage = () => {
   }, []);
 
   const Channels = () => {
+    const { name, id, removable } = selectorChannels;
     return (
       <div className="col-4 col-md-2 border-end px-0 bg-light flex-column h-100 d-flex">
         <div className="d-flex mt-1 justify-content-between mb-2 ps-4 pe-2 p-4">
@@ -82,6 +132,7 @@ export const MainPage = () => {
             type="button"
             variant="light"
             className="p-0 text-primary btn btn-group-vertical"
+            onClick={addOneChannel}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -100,35 +151,52 @@ export const MainPage = () => {
           id="channels-box"
           className="nav flex-column nav-pills nav-fill px-2 mb-3 overflow-auto h-100 d-block"
         >
-          {selectorChannels.name.map((item, index) => (
-            <li className="nav-item w-100" key={item} id={item}>
-              <Button
-                type="button"
-                id={selectorChannels.id[index]}
-                data-type="button"
-                onClick={() => handleClick(index)}
-                className={
-                  index + 1 === selectorActiveChannel
-                    ? btnClass + " btn-secondary"
-                    : btnClass + " btn-light"
-                }
-              >
-                <span className="me-1">#</span>
-                {item}
-              </Button>
+          {name.map((item, index) => (
+            <li className="nav-item w-100" key={id[index]} id={item}>
+              <ButtonGroup className="d-flex">
+                <Button
+                  type="button"
+                  id={id[index]}
+                  data-type="button"
+                  onClick={() => handleClick(index)}
+                  className={
+                    index + 1 === selectorActiveChannel
+                      ? btnClass + " btn-secondary"
+                      : btnClass + " btn-light"
+                  }
+                >
+                  <span className="me-1">#</span>
+                  {item}
+                </Button>
+                {removable[index] ? (
+                  <Button
+                    type="button"
+                    aria-expanded="false"
+                    className={
+                      index + 1 === selectorActiveChannel
+                        ? btnClass2 + " btn-secondary"
+                        : btnClass2 + " visually-hidden"
+                    }
+                  >
+                    <span className="visually-hidden">Управление каналом</span>
+                  </Button>
+                ) : null}
+              </ButtonGroup>
             </li>
           ))}
         </ul>
       </div>
     );
   };
-  
+
   const Chats = () => {
     const activeChannelName = selectorChannels.name[selectorActiveChannel - 1];
-    const channelMessages = selectorMessages.filter((item) => item.channelId === selectorActiveChannel);
+    const channelMessages = selectorMessages.filter(
+      (item) => item.channelId === selectorActiveChannel
+    );
     const messagesLength = channelMessages.length;
     const countMessages = t(getMes(messagesLength), { count: messagesLength });
-    
+
     return (
       <div className="col p-0 h-100">
         <div className="d-flex flex-column h-100">
@@ -174,7 +242,6 @@ export const MainPage = () => {
                 setSubmitting(false);
               }}
             >
-              
               {({
                 values,
                 handleChange,
@@ -250,9 +317,12 @@ export const MainPage = () => {
           <I18nextProvider i18n={i18n} defaultNS={"translation"}>
             <Channels />
             <Chats />
+            <RenderModal value={typeModal} />
           </I18nextProvider>
         </div>
       </div>
     </>
   );
 };
+
+/*<AddChannelModal />*/
