@@ -29,20 +29,16 @@ export const MainPage = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const [showAlert, setShowAlert] = useState(false);
-  const [showModal, setShowModal] = useState(false);
+  const [showAdd, setShowAdd] = useState(false);
 
   const [typeModal, setTypeModal] = useState("null");
   const addOneChannel = () => {
-    setShowModal(true);
+    setShowAdd(true);
     setTypeModal("adding");
-    const body = document.querySelector("body");
-   // body.setAttribute("style", `background-color: red`);
-   body.classList.add('modal-open')
-    console.log("body=", body);
   };
 
-  const closeModal = () => {
-    setShowModal(false);
+  const closeAdd = () => {
+    setShowAdd(false);
   };
 
   /* 
@@ -60,7 +56,7 @@ console.log(removeModal)*/
     const getModalValue = getModal(value);
     switch (value) {
       case "adding":
-        return getModalValue(showModal, closeModal);
+        return getModalValue(showAdd, closeAdd);
       /*case 'renaming': return (getModalValue(showRename, closeRenameModal, taskToRename, renameTask));*/
       //case 'removing': return (getModalValue(showRemove, closeRemoveModal, removeTask));
       default:
