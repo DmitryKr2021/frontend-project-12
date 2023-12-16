@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import * as Yup from "yup";
 import { useSelector } from "react-redux";
 import {
@@ -15,24 +15,27 @@ import { userContext } from "../../index.js";
 const AddChannel = (showAdd, closeAdd) => {
   const selectorChannels = useSelector((state) => state.channelsSlice.channels);
   const [showAlert, setShowAlert] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
-  //const [countOfProgess, setCountOfProgess] = useState(100);
+  const [showConfirm, setShowConfirm] = useState(true);
+  const [countOfProgress, setCountOfProgress] = useState(100);
   const { socket } = useContext(userContext);
   const newSocket = socket.socket;
+  const [n, setN] = useState(0);
 
-  //const timer =
-  setTimeout(() => setShowConfirm(false), 3000);
-
-  /*const now = setInterval(() => {
-    // if (0 == countOfProgess) return 100;
-    console.log('countOfProgess', countOfProgess)
-    let n = 0;
-    while (n < 10) {
-      setCountOfProgess(100 - n*10);
-      n += 1;
+  const Bar = () => {
+    useEffect(() => {
+      const inter = setInterval(() => {
+        setN(n + 1);
+        setCountOfProgress(100 - n);
+        console.log("countOfProgress==", countOfProgress, "n=", n);
+      }, 30);
+      return () => clearInterval(inter);
+    }, [n, showConfirm]);
+    if (n > 99) {
+      setShowConfirm(false);
+      return;
     }
-    return countOfProgess;
-  }, 100);*/
+    return <ProgressBar now={countOfProgress} variant="success" />;
+  };
 
   const Schema = Yup.object().shape({
     channel: Yup.string()
@@ -61,7 +64,7 @@ const AddChannel = (showAdd, closeAdd) => {
                 const { status } = response;
                 const { name } = newChannel;
                 if (status === "ok") {
-                  setShowConfirm(true);
+                  setShowConfirm("krakozyabra");
                   console.log("confirm", showConfirm);
                 }
                 setShowAlert(status === "ok" ? false : true);
@@ -142,26 +145,10 @@ const AddChannel = (showAdd, closeAdd) => {
         <Modal.Title className="ps-5">Канал создан</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <ProgressBar now = {30} variant="success" />
+        <Bar />
       </Modal.Body>
     </Modal>
   );
 };
 
 export default AddChannel;
-
-// <ProgressBar now={60} variant="success" />
-
-/*
-
-https://www.geeksforgeeks.org/react-bootstrap-progressbar-component/
-
-
-<Modal.Body>
-        <ProgressBar now={setInterval(() => {
-           if (0 == countOfProgess) return 100;
-           return setCountOfProgess(Math.min(Math.random() * 10, 100));
-        }, 30)} variant="success" />
-      </Modal.Body>
-      {setTimeout(() => setConfirm(false), 3000)}
-*/
