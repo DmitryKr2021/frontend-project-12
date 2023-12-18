@@ -3,7 +3,7 @@ import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { renderChannels, setActiveChannel } from "../slices/channels.js";
 import { renderMessages } from "../slices/messages.js";
-import { Button, Form, ButtonGroup, Alert } from "react-bootstrap";
+import { Button, Form, ButtonGroup, Alert, Modal } from "react-bootstrap";
 import { Formik } from "formik";
 import cn from "classnames";
 import { useTranslation, I18nextProvider } from "react-i18next";
@@ -15,12 +15,14 @@ export const MainPage = () => {
   const { socket } = useContext(userContext);
   const newSocket = socket.socket;
   const btnClass = cn("w-100", "rounded-0", "text-start");
+
   const btnClass2 = cn(
     "flex-grow-0",
     "dropdown-toggle",
     "dropdown-toggle-split",
     "btn"
   );
+
   const selectorChannels = useSelector((state) => state.channelsSlice.channels);
   const selectorMessages = useSelector((state) => state.messagesSlice.messages);
   const selectorActiveChannel = useSelector(
@@ -30,16 +32,22 @@ export const MainPage = () => {
   const { t } = useTranslation();
   const [showAlert, setShowAlert] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
+  //const [showConfirm, setShowConfirm] = useState(false);
 
   const [typeModal, setTypeModal] = useState("null");
   const addOneChannel = () => {
     setShowAdd(true);
+   // setShowConfirm(true);
     setTypeModal("adding");
   };
 
   const closeAdd = () => {
     setShowAdd(false);
   };
+
+  /*const closeConfirm = () => {
+    setShowConfirm(false);
+  };*/
 
   /* 
   //const removeModal = (task) => {
@@ -56,6 +64,7 @@ console.log(removeModal)*/
     const getModalValue = getModal(value);
     switch (value) {
       case "adding":
+        //return getModalValue(showAdd, closeAdd, showConfirm, closeConfirm);
         return getModalValue(showAdd, closeAdd);
       /*case 'renaming': return (getModalValue(showRename, closeRenameModal, taskToRename, renameTask));*/
       //case 'removing': return (getModalValue(showRemove, closeRemoveModal, removeTask));
@@ -66,31 +75,6 @@ console.log(removeModal)*/
 
   RenderModal.propTypes = {
     value: PropTypes.node.isRequired,
-  };
-
-  const getMes = (value) => {
-    let mes;
-    switch (value) {
-      case 0:
-        mes = "mes_zero";
-        break;
-      case 1:
-        mes = "mes_one";
-        break;
-      case 2:
-        mes = "mes_two";
-        break;
-      case 3:
-        mes = "mes_three";
-        break;
-      case 4:
-        mes = "mes_four";
-        break;
-      default:
-        mes = "mes_few";
-        break;
-    }
-    return mes;
   };
 
   const handleClick = (index) => {
@@ -116,7 +100,29 @@ console.log(removeModal)*/
       }
     };
     requestData();
-  }, []);
+  }, [dispatch]);
+
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  //const handleShow = () => setShow(true);
+
+  const manageChannel = (e) => {
+    const dropDowns = document.querySelectorAll(".dropdown-menu");
+    for (let item of dropDowns) {
+      const { classList } = item;
+      if (item.getAttribute("aria-labelledby") === e.target.id) {
+        classList.remove("visually-hidden");
+      } else {
+        classList.contains("visually-hidden")
+          ? null
+          : classList.add("visually-hidden");
+      }
+    }
+
+    setShow(true);
+  };
+
+  const dropDownClass = cn("square", "rounded-1", "pt-2", "pb-2", "end-0");
 
   const Channels = () => {
     const { name, id, removable } = selectorChannels;
@@ -148,11 +154,14 @@ console.log(removeModal)*/
           className="nav flex-column nav-pills nav-fill px-2 mb-3 overflow-auto h-100 d-block"
         >
           {name.map((item, index) => (
-            <li className="nav-item w-100" key={id[index]} id={item}>
+            <li
+              className="nav-item w-100 position-relative"
+              key={id[index]}
+              id={item}
+            >
               <ButtonGroup className="d-flex">
                 <Button
                   type="button"
-                  id={id[index]}
                   data-type="button"
                   onClick={() => handleClick(index)}
                   className={
@@ -167,17 +176,39 @@ console.log(removeModal)*/
                 {removable[index] ? (
                   <Button
                     type="button"
+                    id={id[index]}
                     aria-expanded="false"
                     className={
                       index + 1 === selectorActiveChannel
                         ? btnClass2 + " btn-secondary"
-                        : btnClass2 + " visually-hidden"
+                        : btnClass2 + " btn-light"
                     }
+                    onClick={manageChannel}
                   >
                     <span className="visually-hidden">Управление каналом</span>
                   </Button>
                 ) : null}
               </ButtonGroup>
+              {removable[index] ? (
+                <Modal show={show} onHide={handleClose}>
+
+
+                  <ButtonGroup
+                    vertical
+                    className={dropDownClass}
+                    aria-labelledby={id[index]}
+                  >
+                    <Button className="text-start btn-light square border border-0 rounded-0">
+                      Удалить
+                    </Button>
+                    <Button className="text-start btn-light square border border-0 rounded-0">
+                      Переименовать
+                    </Button>
+                  </ButtonGroup>
+
+
+                </Modal>
+              ) : null}
             </li>
           ))}
         </ul>
@@ -191,7 +222,8 @@ console.log(removeModal)*/
       (item) => item.channelId === selectorActiveChannel
     );
     const messagesLength = channelMessages.length;
-    const countMessages = t(getMes(messagesLength), { count: messagesLength });
+   // const countMessages = t(getMes(messagesLength), { count: messagesLength });
+    const countMessages = t('mes', { count: messagesLength });
 
     return (
       <div className="col p-0 h-100">
