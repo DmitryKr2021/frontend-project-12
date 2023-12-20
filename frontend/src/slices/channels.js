@@ -1,11 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  channels: {
-    name: [],
-    id: [],
-    removable: [],
-  },
+  channels: [{id: '', name: '', removable: ''}],
   activeChannel: 1,
 };
 
@@ -14,13 +10,8 @@ const channelsSlice = createSlice({
   initialState,
   reducers: {
     renderChannels: (state, action) => {
-      const { payload } = action;
-      const { channels } = payload;
-      channels.map((item, ind) => {
-        state.channels.name[ind] = item.name;
-        state.channels.id[ind] = item.id;
-        state.channels.removable[ind] = item.removable;
-      })
+      const { channels } = action.payload;
+      state.channels = channels;
     },
     setActiveChannel: (state, action) => {
       const { payload } = action;
@@ -28,13 +19,15 @@ const channelsSlice = createSlice({
     },
     addNewChannel: (state, action) => {
       const { payload } = action;
-      const { name, id, removable } = payload;
-      state.channels.name.push(name);
-      state.channels.id.push(id);
-      state.channels.removable.push(removable);
+      state.channels = [...state.channels, payload];
+    },
+    removeChannel: (state, action) => {
+      const { payload } = action;
+      const newChannels = state.channels.filter((item) => item.id !== payload)
+      state.channels = [...newChannels];
     },
   },
 });
 
-export const { renderChannels, setActiveChannel, addNewChannel } = channelsSlice.actions;
+export const { renderChannels, setActiveChannel, addNewChannel, removeChannel } = channelsSlice.actions;
 export default channelsSlice.reducer;

@@ -17,12 +17,12 @@ const Schema = Yup.object().shape({
 const LoginPage = () => {
   const auth = useAuth();
   const navigate = useNavigate();
+  useEffect(() => {
   if (window.localStorage.length > 0) {
-   useEffect(() => {
      auth.logIn();
      navigate('/main');
-   }, [auth.loggedIn]);
-  }
+    }
+  }, [auth, navigate, auth.loggedIn]);
   
   return (
     <Formik

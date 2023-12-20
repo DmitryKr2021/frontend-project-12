@@ -68,12 +68,12 @@ const AddChannel = (showAdd, closeAdd) => {
     }
     return <ProgressBar now={count} variant="success" />;
   };*/
-
+  
   const Schema = Yup.object().shape({
     channel: Yup.string()
       .min(3, "От 3 до 15 символов")
       .max(15, "От 3 до 15 символов")
-      .notOneOf(selectorChannels.name, "Такой канал уже существует"),
+      .notOneOf(selectorChannels.map(channel => channel.name), "Такой канал уже существует"),
   });
 
   return showAdd ? (
@@ -87,10 +87,8 @@ const AddChannel = (showAdd, closeAdd) => {
             validationSchema={Schema}
             initialValues={{ channel: "" }}
             onSubmit={(values, { setSubmitting }) => {
-              const channelNumber = selectorChannels.name.length + 1;
               const newChannel = {
                 name: values.channel,
-                channelNumber,
               };
               newSocket.emit("newChannel", newChannel, (response) => {
                 const { status } = response;
@@ -137,7 +135,6 @@ const AddChannel = (showAdd, closeAdd) => {
                         variant="primary"
                         type="submit"
                         className="rounded"
-                        //onClick={setShowConfirm(true)} не работает
                       >
                         Отправить
                       </Button>
@@ -169,32 +166,3 @@ const AddChannel = (showAdd, closeAdd) => {
 };
 
 export default AddChannel;
-
-
-/*
-const dropDownClass = cn(
-    "dropdown-menu",
-    "square",
-    "border",
-    "rounded-1",
-    "pt-2",
-    "pb-2",
-    "position-absolute",
-    "end-0"
-  );
-*/
-/*
- (
-    <Modal show={showConfirm} centered>
-    <Modal.Header closeButton onClick={() => closeConfirm()}>
-      <svg viewBox="0 0 24 24" width="8%" height="8%" fill="green">
-        <path d="M12 0a12 12 0 1012 12A12.014 12.014 0 0012 0zm6.927 8.2l-6.845 9.289a1.011 1.011 0 01-1.43.188l-4.888-3.908a1 1 0 111.25-1.562l4.076 3.261 6.227-8.451a1 1 0 111.61 1.183z"></path>
-      </svg>
-      <Modal.Title className="ps-5">Канал создан</Modal.Title>
-    </Modal.Header>
-    <Modal.Body>
-      <Bar />
-    </Modal.Body>
-  </Modal>
-  );
-*/

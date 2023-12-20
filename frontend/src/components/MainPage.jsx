@@ -3,7 +3,7 @@ import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { renderChannels, setActiveChannel } from "../slices/channels.js";
 import { renderMessages } from "../slices/messages.js";
-import { Button, Form, ButtonGroup, Alert, Modal } from "react-bootstrap";
+import { Button, Form, ButtonGroup, Alert, Dropdown } from "react-bootstrap";
 import { Formik } from "formik";
 import cn from "classnames";
 import { useTranslation, I18nextProvider } from "react-i18next";
@@ -16,13 +16,6 @@ export const MainPage = () => {
   const newSocket = socket.socket;
   const btnClass = cn("w-100", "rounded-0", "text-start");
 
-  const btnClass2 = cn(
-    "flex-grow-0",
-    "dropdown-toggle",
-    "dropdown-toggle-split",
-    "btn"
-  );
-
   const selectorChannels = useSelector((state) => state.channelsSlice.channels);
   const selectorMessages = useSelector((state) => state.messagesSlice.messages);
   const selectorActiveChannel = useSelector(
@@ -32,12 +25,12 @@ export const MainPage = () => {
   const { t } = useTranslation();
   const [showAlert, setShowAlert] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
-  //const [showConfirm, setShowConfirm] = useState(false);
-
+  const [showRemove, setShowRemove] = useState(false);
+  const [removingChannelNumber, setRemovingChannelNumber] = useState(null);
   const [typeModal, setTypeModal] = useState("null");
+
   const addOneChannel = () => {
     setShowAdd(true);
-   // setShowConfirm(true);
     setTypeModal("adding");
   };
 
@@ -45,19 +38,16 @@ export const MainPage = () => {
     setShowAdd(false);
   };
 
-  /*const closeConfirm = () => {
-    setShowConfirm(false);
-  };*/
-
-  /* 
-  //const removeModal = (task) => {
-  const removeModal = () => {
-    setTypeModal('removing');
-    //setShowRemove(true);
-    //setShowModal(false);
-    //setTaskToRemove(task);
+  const removeOneChannel = (e) => {
+    e.preventDefault();
+    setShowRemove(true);
+    setTypeModal("removing");
+    setRemovingChannelNumber(e.target.getAttribute('data-index'))
   };
-console.log(removeModal)*/
+
+  const closeRemove = () => {
+    setShowRemove(false);
+  };
 
   const RenderModal = (props) => {
     const { value } = props;
@@ -67,7 +57,7 @@ console.log(removeModal)*/
         //return getModalValue(showAdd, closeAdd, showConfirm, closeConfirm);
         return getModalValue(showAdd, closeAdd);
       /*case 'renaming': return (getModalValue(showRename, closeRenameModal, taskToRename, renameTask));*/
-      //case 'removing': return (getModalValue(showRemove, closeRemoveModal, removeTask));
+      case 'removing': return (getModalValue(showRemove, closeRemove, removingChannelNumber));
       default:
         return null;
     }
@@ -77,8 +67,8 @@ console.log(removeModal)*/
     value: PropTypes.node.isRequired,
   };
 
-  const handleClick = (index) => {
-    dispatch(setActiveChannel(index + 1));
+  const handleClick = (id) => {
+    dispatch(setActiveChannel(id));
   };
 
   useEffect(() => {
@@ -102,30 +92,9 @@ console.log(removeModal)*/
     requestData();
   }, [dispatch]);
 
-  const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  //const handleShow = () => setShow(true);
-
-  const manageChannel = (e) => {
-    const dropDowns = document.querySelectorAll(".dropdown-menu");
-    for (let item of dropDowns) {
-      const { classList } = item;
-      if (item.getAttribute("aria-labelledby") === e.target.id) {
-        classList.remove("visually-hidden");
-      } else {
-        classList.contains("visually-hidden")
-          ? null
-          : classList.add("visually-hidden");
-      }
-    }
-
-    setShow(true);
-  };
-
-  const dropDownClass = cn("square", "rounded-1", "pt-2", "pb-2", "end-0");
+  const dropDownClass = cn("square", "border", "border-0");
 
   const Channels = () => {
-    const { name, id, removable } = selectorChannels;
     return (
       <div className="col-4 col-md-2 border-end px-0 bg-light flex-column h-100 d-flex">
         <div className="d-flex mt-1 justify-content-between mb-2 ps-4 pe-2 p-4">
@@ -153,62 +122,50 @@ console.log(removeModal)*/
           id="channels-box"
           className="nav flex-column nav-pills nav-fill px-2 mb-3 overflow-auto h-100 d-block"
         >
-          {name.map((item, index) => (
+          {selectorChannels.map((item) => (
             <li
               className="nav-item w-100 position-relative"
-              key={id[index]}
-              id={item}
+              key={item.id}
+              id={item.id}
             >
               <ButtonGroup className="d-flex">
                 <Button
                   type="button"
                   data-type="button"
-                  onClick={() => handleClick(index)}
+                  onClick={() => handleClick(item.id)}
                   className={
-                    index + 1 === selectorActiveChannel
+                    item.id === selectorActiveChannel
                       ? btnClass + " btn-secondary"
                       : btnClass + " btn-light"
                   }
                 >
                   <span className="me-1">#</span>
-                  {item}
+                  {item.name}
                 </Button>
-                {removable[index] ? (
-                  <Button
-                    type="button"
-                    id={id[index]}
-                    aria-expanded="false"
-                    className={
-                      index + 1 === selectorActiveChannel
-                        ? btnClass2 + " btn-secondary"
-                        : btnClass2 + " btn-light"
-                    }
-                    onClick={manageChannel}
-                  >
-                    <span className="visually-hidden">Управление каналом</span>
-                  </Button>
+                {item.removable ? (
+                  <Dropdown as={ButtonGroup}>
+                    <Dropdown.Toggle
+                      aria-labelledby={item.id}
+                      className={
+                        item.id === selectorActiveChannel
+                          ? dropDownClass + " btn-secondary"
+                          : dropDownClass + " btn-light"
+                      }
+                      id="dropdown-basic"
+                    >
+                      <span className="visually-hidden">
+                        Управление каналом
+                      </span>
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu>
+                      <Dropdown.Item type="button" href="#/action-1" data-index={item.id} onClick={removeOneChannel}>Удалить</Dropdown.Item>
+                      <Dropdown.Item type="button" href="#/action-2">
+                        Переименовать
+                      </Dropdown.Item>
+                    </Dropdown.Menu>
+                  </Dropdown>
                 ) : null}
               </ButtonGroup>
-              {removable[index] ? (
-                <Modal show={show} onHide={handleClose}>
-
-
-                  <ButtonGroup
-                    vertical
-                    className={dropDownClass}
-                    aria-labelledby={id[index]}
-                  >
-                    <Button className="text-start btn-light square border border-0 rounded-0">
-                      Удалить
-                    </Button>
-                    <Button className="text-start btn-light square border border-0 rounded-0">
-                      Переименовать
-                    </Button>
-                  </ButtonGroup>
-
-
-                </Modal>
-              ) : null}
             </li>
           ))}
         </ul>
@@ -217,13 +174,20 @@ console.log(removeModal)*/
   };
 
   const Chats = () => {
-    const activeChannelName = selectorChannels.name[selectorActiveChannel - 1];
+   //const [activeChannel] = selectorChannels.filter(channel => channel.id === selectorActiveChannel);
+   
+   console.log('selectorChannels=', selectorChannels);
+   //console.log('selectorActiveChannel=', selectorActiveChannel);
+   console.log('filter=', selectorChannels.filter(channel => channel.id === selectorActiveChannel)[0])
+   //const activeChannelName = selectorChannels.filter(channel => channel.id === selectorActiveChannel)[0].name;
+
+    const activeChannelName = 'qwerty';
+
     const channelMessages = selectorMessages.filter(
       (item) => item.channelId === selectorActiveChannel
     );
     const messagesLength = channelMessages.length;
-   // const countMessages = t(getMes(messagesLength), { count: messagesLength });
-    const countMessages = t('mes', { count: messagesLength });
+    const countMessages = t("mes", { count: messagesLength });
 
     return (
       <div className="col p-0 h-100">
@@ -353,4 +317,3 @@ console.log(removeModal)*/
   );
 };
 
-/*<AddChannelModal />*/
