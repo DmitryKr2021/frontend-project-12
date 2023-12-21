@@ -8,4 +8,5 @@ const pageLoader = () => {
 export { MainPage, pageLoader };
 export { default as LoginPage } from "./login-page";
 export { default as ErrorPage } from "./error-page";
+export { default as ConflictPage } from "./conflict-page";
 export { default as RegistrationPage } from "./registration-page";

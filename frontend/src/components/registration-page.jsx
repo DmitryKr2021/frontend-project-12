@@ -3,15 +3,18 @@ import { Formik, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { Button, Form } from "react-bootstrap";
 import img from "../imgs/registration.png";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import useAuth from "../hooks/index.jsx";
 
 const Schema = Yup.object().shape({
   username: Yup.string()
-    .min(5, "От 5 до 15 символов")
-    .max(15, "От 5 до 15 символов")
+    .min(3, "От 3 до 20 символов")
+    .max(20, "От 3 до 20 символов")
     .required("Обязательное поле"),
   password: Yup.string()
-    .min(5, "От 5 до 15 символов")
-    .max(15, "От 5 до 15 символов")
+    .min(6, "От 6 до 15 символов")
+    .max(15, "От 6 до 15 символов")
     .required("Обязательное поле"),
   repeatPassword: Yup.string()
     .required("Обязательное поле")
@@ -19,12 +22,40 @@ const Schema = Yup.object().shape({
 });
 
 const RegistrationPage = () => {
+  const navigate = useNavigate();
+  const auth = useAuth();
+  console.log("localStor=", window.localStorage);
+  console.log("auth=", auth);
   return (
     <Formik
       initialValues={{ username: "", password: "", repeatPassword: "" }}
       validationSchema={Schema}
       onSubmit={(values) => {
         console.log(values);
+        axios
+          .post("/api/v1/signup", {
+            username: values.username,
+            password: values.password,
+          })
+          .then((response) => {
+            console.log(response.data);
+            auth.logIn();
+            navigate("/main");
+          })
+          .catch((error) => {
+            if (error.response) {
+              navigate("/conflict");
+              console.log(error.response.data);
+              console.log(error.response.status);
+              console.log(error.response.headers);
+              return;
+            } else if (error.request) {
+              console.log(error.request);
+            } else {
+              console.log("Error", error.message);
+            }
+            throw error;
+          });
       }}
     >
       {({
@@ -99,7 +130,7 @@ const RegistrationPage = () => {
                           <Form.Label htmlFor="password">Пароль</Form.Label>
                           <ErrorMessage name="password">
                             {(msg) => (
-                             <div className=" invalid-tooltip">{msg}</div>
+                              <div className=" invalid-tooltip">{msg}</div>
                             )}
                           </ErrorMessage>
                         </div>
@@ -116,7 +147,9 @@ const RegistrationPage = () => {
                             onChange={handleChange}
                             onBlur={handleBlur}
                             value={values.repeatPassword}
-                            isInvalid={touched.repeatPassword && errors.repeatPassword}
+                            isInvalid={
+                              touched.repeatPassword && errors.repeatPassword
+                            }
                           />
                           <Form.Label htmlFor="repeat-password">
                             Подтвердите пароль

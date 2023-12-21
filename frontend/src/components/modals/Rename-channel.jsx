@@ -1,106 +1,63 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect, useRef } from "react";
 import * as Yup from "yup";
 import { useSelector } from "react-redux";
-import {
-  Button,
-  ButtonGroup,
-  Form,
-  Alert,
-  Modal,
-} from "react-bootstrap";
+import { Button, ButtonGroup, Form, Alert, Modal } from "react-bootstrap";
 import { Formik, ErrorMessage } from "formik";
 import { userContext } from "../../index.js";
 
-// const AddChannel = (showAdd, closeAdd, showConfirm, closeConfirm) => {
-const AddChannel = (showAdd, closeAdd) => {
+const RenameChannel = (showRename, closeRename, renamingChannelNumber) => {
   const selectorChannels = useSelector((state) => state.channelsSlice.channels);
   const [showAlert, setShowAlert] = useState(false);
   const { socket } = useContext(userContext).socket;
   const newSocket = socket;
-  
-  
-  /*const [countOfProgress, setCountOfProgress] = useState(100);
-  const [n, setN] = useState(0);
 
-  const Bar = () => {
-    useEffect(() => {
-      const inter = setInterval(() => {
-        setN(x => x + 1);
-        setCountOfProgress(100 - n);
-      }, 30);
-      if (countOfProgress <= 0) {
-        clearInterval(inter);
-        closeConfirm();
-        return;
-      }
-      return () => clearInterval(inter);
-  }, []);
-    return <ProgressBar now={countOfProgress} variant="success" />;
-  };*/
-  
-  /*const reducer = (state, action) => {
-    const { count, step } = state;
-    if (action.type === "tick") {
-      return { count: count - step, step };
-    } else {
-      throw new Error();
-    }
-  };
+  const [renamingChannel] = selectorChannels.filter(
+    (channel) => channel.id === +renamingChannelNumber
+  );
 
-  const initialState = {
-    count: 101,
-    step: 1,
-  };
-
-  const Bar = () => {
-    const [state, dispatch] = useReducer(reducer, initialState);
-    const { count, step } = state;
-    useEffect(() => {
-      const inter = setInterval(() => {
-        dispatch({ type: "tick" });
-      }, 30);
-      return () => clearInterval(inter);
-    }, [dispatch]);
-    console.log("count=", count, "step=", step);
-    if (count < 0) {
-      setShowConfirm(false);
-      return;
-    }
-    return <ProgressBar now={count} variant="success" />;
-  };*/
-  
   const Schema = Yup.object().shape({
     channel: Yup.string()
       .min(3, "От 3 до 15 символов")
       .max(15, "От 3 до 15 символов")
-      .notOneOf(selectorChannels.map(channel => channel.name), "Имя должно быть уникальным"),
+      .notOneOf(
+        selectorChannels.map((channel) => channel.name),
+        "Имя должно быть уникальным"
+      ),
   });
 
-  return showAdd ? (
+  const inpChannel = useRef();
+  useEffect(() => {
+    inpChannel.current?.select();
+  }, []);
+
+  return showRename ? (
     <div className="fade modal show" tabIndex="-1">
-      <Modal show={showAdd} onHide={closeAdd} centered>
-        <Modal.Header closeButton onClick={closeAdd}>
-          <Modal.Title>Добавить канал</Modal.Title>
+      <Modal show={showRename} onHide={closeRename} centered>
+        <Modal.Header closeButton onClick={closeRename}>
+          <Modal.Title>Переименовать канал</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Formik
             validationSchema={Schema}
-            initialValues={{ channel: "" }}
+            initialValues={{
+              channel: renamingChannel.name,
+              id: renamingChannelNumber,
+            }}
             onSubmit={(values, { setSubmitting }) => {
-              const newChannel = {
+              const renamingChannel = {
                 name: values.channel,
+                id: values.id,
               };
-              newSocket.emit("newChannel", newChannel, (response) => {
+              newSocket.emit("renameChannel", renamingChannel, (response) => {
                 const { status } = response;
-                const { name } = newChannel;
                 setShowAlert(status === "ok" ? false : true);
                 console.log(
                   status === "ok"
-                    ? `Канал ${name} добавлен`
-                    : `Канал ${name} не добавлен`
+                    ? `Канал переименован`
+                    : `Канал не переименован`
                 );
               });
-              closeAdd();
+              closeRename();
               setSubmitting(false);
             }}
           >
@@ -110,13 +67,14 @@ const AddChannel = (showAdd, closeAdd) => {
                   <div className="input-group has-validation">
                     <Form.Control
                       name="channel"
-                      aria-label="Новый канал"
+                      aria-label="Переименовать канал"
+                      title="Переименовать канал"
                       onChange={handleChange}
                       value={values.channel}
+                      ref={inpChannel}
                       isInvalid={touched.channel && errors.channel}
                       autoFocus
                       required
-                      title="Добавить новый канал"
                     />
                     <ErrorMessage name="channel">
                       {(msg) => <div className=" invalid-tooltip">{msg}</div>}
@@ -128,7 +86,7 @@ const AddChannel = (showAdd, closeAdd) => {
                         variant="secondary"
                         type="button"
                         className="me-2 rounded"
-                        onClick={closeAdd}
+                        onClick={closeRename}
                       >
                         Отменить
                       </Button>
@@ -154,7 +112,7 @@ const AddChannel = (showAdd, closeAdd) => {
                     <Alert.Heading className="h5">
                       Канал {values.channel}
                     </Alert.Heading>
-                    не добавлен
+                    не переименован
                   </Alert>
                 ) : null}
               </>
@@ -163,7 +121,7 @@ const AddChannel = (showAdd, closeAdd) => {
         </Modal.Body>
       </Modal>
     </div>
-  ) : null
+  ) : null;
 };
 
-export default AddChannel;
+export default RenameChannel;

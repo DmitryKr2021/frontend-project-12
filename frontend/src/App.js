@@ -14,6 +14,7 @@ import {
   ErrorPage,
   LoginPage,
   RegistrationPage,
+  ConflictPage,
 } from "./components/Pages";
 
 import "./App.css";
@@ -23,11 +24,10 @@ import AuthContext from "./components/contexts/index.jsx";
 import useAuth from "./hooks/index.jsx";
 import PropTypes from "prop-types";
 
-const getAuthHeader = () => {
+/*const getAuthHeader = () => {
   //return {};
 };
-
-getAuthHeader();
+getAuthHeader();*/
 
 const AuthProvider = ({ children }) => {
   const logIn = () => setLoggedIn(true);
@@ -74,6 +74,7 @@ const router = createBrowserRouter(
         }
       />
       <Route path="login" element={<LoginPage />} />
+      <Route path="conflict" element={<ConflictPage />} />
       <Route path="registration" element={<RegistrationPage />} />
       <Route
         path="main"

@@ -28,10 +28,13 @@ export const MainPage = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
   const [showRemove, setShowRemove] = useState(false);
+  const [showRename, setShowRename] = useState(false);
   const [removingChannelNumber, setRemovingChannelNumber] = useState(null);
+  const [renamingChannelNumber, setRenamingChannelNumber] = useState(null);
   const [typeModal, setTypeModal] = useState("null");
 
-  const addOneChannel = () => {
+  const addOneChannel = (e) => {
+    e.preventDefault();
     setShowAdd(true);
     setTypeModal("adding");
   };
@@ -44,11 +47,22 @@ export const MainPage = () => {
     e.preventDefault();
     setShowRemove(true);
     setTypeModal("removing");
-    setRemovingChannelNumber(e.target.getAttribute('data-index'))
+    setRemovingChannelNumber(e.target.getAttribute("data-index"));
   };
 
   const closeRemove = () => {
     setShowRemove(false);
+  };
+
+  const renameChannel = (e) => {
+    e.preventDefault();
+    setShowRename(true);
+    setTypeModal("renaming");
+    setRenamingChannelNumber(e.target.getAttribute("data-index"));
+  };
+
+  const closeRename = () => {
+    setShowRename(false);
   };
 
   const RenderModal = (props) => {
@@ -56,10 +70,10 @@ export const MainPage = () => {
     const getModalValue = getModal(value);
     switch (value) {
       case "adding":
-        //return getModalValue(showAdd, closeAdd, showConfirm, closeConfirm);
         return getModalValue(showAdd, closeAdd);
-      /*case 'renaming': return (getModalValue(showRename, closeRenameModal, taskToRename, renameTask));*/
-      case 'removing': return (getModalValue(showRemove, closeRemove, removingChannelNumber));
+      case 'renaming': return (getModalValue(showRename, closeRename, renamingChannelNumber));
+      case "removing":
+        return getModalValue(showRemove, closeRemove, removingChannelNumber);
       default:
         return null;
     }
@@ -107,7 +121,7 @@ export const MainPage = () => {
             className="p-0 text-primary btn btn-group-vertical"
             onClick={addOneChannel}
           >
-           <SvgPlus/>
+            <SvgPlus />
             <span className="visually-hidden">+</span>
           </Button>
         </div>
@@ -151,8 +165,18 @@ export const MainPage = () => {
                       </span>
                     </Dropdown.Toggle>
                     <Dropdown.Menu>
-                      <Dropdown.Item type="button" href="#/action-1" data-index={item.id} onClick={removeOneChannel}>Удалить</Dropdown.Item>
-                      <Dropdown.Item type="button" href="#/action-2">
+                      <Dropdown.Item
+                        type="button"
+                        href="#/action-1"
+                        data-index={item.id}
+                        onClick={removeOneChannel}
+                      >
+                        Удалить
+                      </Dropdown.Item>
+                      <Dropdown.Item type="button" href="#/action-2"
+                       data-index={item.id}
+                       onClick={renameChannel}
+                      >
                         Переименовать
                       </Dropdown.Item>
                     </Dropdown.Menu>
@@ -167,15 +191,14 @@ export const MainPage = () => {
   };
 
   const Chats = () => {
-   //const [activeChannel] = selectorChannels.filter(channel => channel.id === selectorActiveChannel);
-   
-   console.log('selectorChannels=', selectorChannels);
-   //console.log('selectorActiveChannel=', selectorActiveChannel);
-   console.log('filter=', selectorChannels.filter(channel => channel.id === selectorActiveChannel)[0])
-   //const activeChannelName = selectorChannels.filter(channel => channel.id === selectorActiveChannel)[0].name;
-
-    const activeChannelName = 'qwerty';
-
+    let activeChannel;
+    if (selectorChannels.length > 0) {
+      [activeChannel] = selectorChannels.filter(
+        channel => channel.id === selectorActiveChannel
+      );
+    } else {
+      return;
+    }
     const channelMessages = selectorMessages.filter(
       (item) => item.channelId === selectorActiveChannel
     );
@@ -187,7 +210,7 @@ export const MainPage = () => {
         <div className="d-flex flex-column h-100">
           <div className="bg-light mb-4 p-3 shadow-sm small">
             <p className="m-0">
-              <b>{`# ${activeChannelName}`}</b>
+              <b>{`# ${activeChannel.name}`}</b>
             </p>
             <span className="text-muted">{countMessages}</span>
           </div>
@@ -298,4 +321,3 @@ export const MainPage = () => {
     </>
   );
 };
-

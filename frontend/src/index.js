@@ -9,9 +9,8 @@ import i18next from "i18next";
 import { io } from "socket.io-client";
 import { initReactI18next } from "react-i18next";
 import ru from "./locales/ru.js";
-import { addNewMessage } from "./slices/messages";
-import { addNewChannel, setActiveChannel, removeChannel} from "./slices/channels";
-//import { addNewChannel, setActiveChannel } from "./slices/channels";
+import { addNewMessage, removeMessages } from "./slices/messages";
+import { addNewChannel, setActiveChannel, removeChannel, renameChannel} from "./slices/channels";
 
 export const userContext = createContext();
 const { dispatch } = store;
@@ -41,6 +40,10 @@ const runApp = async () => {
     const { id } = payload;
     dispatch(removeChannel(id));
     dispatch(setActiveChannel(1));
+    dispatch(removeMessages(id))
+  });
+ await socket.on("renameChannel", (payload) => {
+    dispatch(renameChannel(payload));
   });
 
   root.render(
