@@ -5,50 +5,70 @@ import { Button, Form } from "react-bootstrap";
 import img from "../imgs/autorization.jpg";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
-import useAuth from '../hooks/index.jsx';
+import useAuth from "../hooks/index.jsx";
 
 const Schema = Yup.object().shape({
   username: Yup.string()
-    .oneOf(['admin', null], "Неверные имя пользователя или пароль"),
+    .min(3, "От 3 до 20 символов")
+    .max(20, "От 3 до 20 символов")
+    .required("Обязательное поле"),
   password: Yup.string()
-    .oneOf(['admin', null], "Неверные имя пользователя или пароль"),
+    .min(6, "От 6 до 20 символов")
+    .max(20, "От 6 до 20 символов")
+    .required("Обязательное поле"),
+  serverError: Yup.bool()
+    .oneOf([false, null], "Неверные имя пользователя или пароль"),  
 });
 
 const LoginPage = () => {
   const auth = useAuth();
   const navigate = useNavigate();
   useEffect(() => {
-  if (window.localStorage.length > 0) {
-     auth.logIn();
-     navigate('/main');
+    if (window.localStorage.length > 0) {
+      auth.logIn();
+      navigate("/main");
     }
   }, [auth, navigate, auth.loggedIn]);
-  
+
   return (
     <Formik
-      initialValues={{ username: "", password: "" }}
+      initialValues={{ username: "", password: "", serverError: false }}
       validationSchema={Schema}
       onSubmit={(values) => {
-        axios.post('/api/v1/login', { username: values.username, password: values.password }).then((response) => {
-          window.localStorage.setItem('user', JSON.stringify(response.data));
-          auth.logIn();
-          navigate('/main');
-        })
-        .catch ((error) => {
-          if (error.response) {
-            console.log(error.response.data);
-            console.log(error.response.status);
-            console.log(error.response.headers);
-          } else if (error.request) {
-            console.log(error.request);
-          } else {
-            console.log('Error', error.message);
-          }
-          throw(error);
-        })
+        axios
+          .post("/api/v1/login", {
+            username: values.username,
+            password: values.password,
+          })
+          .then((response) => {
+            window.localStorage.setItem("user", JSON.stringify(response.data));
+            auth.logIn();
+            navigate("/main");
+          })
+          .catch((error) => {
+            if (error.response) {
+              values.serverError = true;
+              console.log(error.response.data);
+              console.log(error.response.status);
+              console.log(error.response.headers);
+              //return;
+            } else if (error.request) {
+              console.log(error.request);
+            } else {
+              console.log("Error", error.message);
+            }
+            // throw error;
+          });
       }}
     >
-      {({ values, handleChange, isSubmitting, handleSubmit, touched, errors }) => (
+      {({
+        values,
+        handleChange,
+        isSubmitting,
+        handleSubmit,
+        touched,
+        errors,
+      }) => (
         <div className="d-flex flex-column">
           <div className="container-fluid h-100">
             <div
@@ -76,10 +96,15 @@ const LoginPage = () => {
                             id="username"
                             onChange={handleChange}
                             value={values.username}
-                            isInvalid={touched.username && errors.username}
+                            isInvalid={touched.username && errors.username && errors.serverError}
                             autoFocus
                           />
                           <Form.Label htmlFor="username">Ваш ник</Form.Label>
+                          <ErrorMessage name="username">
+                            {(msg) => (
+                              <div className="invalid-tooltip">{msg}</div>
+                            )}
+                          </ErrorMessage>
                         </div>
                       </Form.Group>
                       <Form.Group className="mb-3">
@@ -93,16 +118,24 @@ const LoginPage = () => {
                             id="password"
                             onChange={handleChange}
                             value={values.password}
-                            isInvalid={touched.password && errors.password}
+                            isInvalid={touched.password && errors.password && errors.serverError}
                           />
                           <Form.Label htmlFor="password">Пароль</Form.Label>
-                          <ErrorMessage name="username">
+                          <ErrorMessage name="password">
                             {(msg) => (
-                              <div className=" invalid-tooltip">{msg}</div>
+                              <div className="invalid-tooltip">{msg}</div>
                             )}
                           </ErrorMessage>
+
+                          <ErrorMessage name="serverError">
+                            {(msg) => (
+                              <div className="invalid-tooltip">{msg}</div>
+                            )}
+                          </ErrorMessage>
+
                         </div>
                       </Form.Group>
+
                       <Button
                         type="submit"
                         className="w-100 mb-3 btn btn-outline-primary"
@@ -115,7 +148,7 @@ const LoginPage = () => {
                   </div>
                   <div className="card-footer p-4">
                     <div className="text-center">
-                      <span>Нет аккаунта? </span>     
+                      <span>Нет аккаунта? </span>
                       <Link to="/registration">Регистрация</Link>
                     </div>
                   </div>

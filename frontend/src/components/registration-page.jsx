@@ -13,8 +13,8 @@ const Schema = Yup.object().shape({
     .max(20, "От 3 до 20 символов")
     .required("Обязательное поле"),
   password: Yup.string()
-    .min(6, "От 6 до 15 символов")
-    .max(15, "От 6 до 15 символов")
+    .min(6, "От 6 до 20 символов")
+    .max(20, "От 6 до 20 символов")
     .required("Обязательное поле"),
   repeatPassword: Yup.string()
     .required("Обязательное поле")
