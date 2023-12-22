@@ -13,11 +13,9 @@ const Schema = Yup.object().shape({
     .max(20, "От 3 до 20 символов")
     .required("Обязательное поле"),
   password: Yup.string()
-    .min(6, "От 6 до 20 символов")
-    .max(20, "От 6 до 20 символов")
-    .required("Обязательное поле"),
-  serverError: Yup.bool()
-    .oneOf([false, null], "Неверные имя пользователя или пароль"),  
+    .min(5, "От 5 до 20 символов")
+    .max(20, "От 5 до 20 символов")
+    .required("Обязательное поле"), 
 });
 
 const LoginPage = () => {
@@ -32,9 +30,9 @@ const LoginPage = () => {
 
   return (
     <Formik
-      initialValues={{ username: "", password: "", serverError: false }}
+      initialValues={{ username: "", password: "" }}
       validationSchema={Schema}
-      onSubmit={(values) => {
+      onSubmit={(values, { setErrors }) => {
         axios
           .post("/api/v1/login", {
             username: values.username,
@@ -47,7 +45,12 @@ const LoginPage = () => {
           })
           .catch((error) => {
             if (error.response) {
-              values.serverError = true;
+          
+             setErrors({'username': "Неверные имя пользователя или пароль", 
+             'password': "Неверные имя пользователя или пароль"});
+             //setFieldError('username', "Неверные имя пользователя или пароль");
+             //setFieldError('password', "Неверные имя пользователя или пароль");
+
               console.log(error.response.data);
               console.log(error.response.status);
               console.log(error.response.headers);
@@ -62,10 +65,9 @@ const LoginPage = () => {
       }}
     >
       {({
-        values,
-        handleChange,
         isSubmitting,
         handleSubmit,
+        getFieldProps,
         touched,
         errors,
       }) => (
@@ -94,12 +96,11 @@ const LoginPage = () => {
                             required
                             placeholder="Ваш ник"
                             id="username"
-                            onChange={handleChange}
-                            value={values.username}
-                            isInvalid={touched.username && errors.username && errors.serverError}
+                            {...getFieldProps('username')}           
+                            isInvalid={touched.username && errors.username}
                             autoFocus
                           />
-                          <Form.Label htmlFor="username">Ваш ник</Form.Label>
+                          <Form.Label htmlFor="username">Ваш ник</Form.Label>                
                           <ErrorMessage name="username">
                             {(msg) => (
                               <div className="invalid-tooltip">{msg}</div>
@@ -115,10 +116,9 @@ const LoginPage = () => {
                             autoComplete="password"
                             placeholder="Пароль"
                             required
-                            id="password"
-                            onChange={handleChange}
-                            value={values.password}
-                            isInvalid={touched.password && errors.password && errors.serverError}
+                            id="password" 
+                            {...getFieldProps('password')}
+                            isInvalid={touched.password && errors.password}
                           />
                           <Form.Label htmlFor="password">Пароль</Form.Label>
                           <ErrorMessage name="password">
@@ -126,13 +126,6 @@ const LoginPage = () => {
                               <div className="invalid-tooltip">{msg}</div>
                             )}
                           </ErrorMessage>
-
-                          <ErrorMessage name="serverError">
-                            {(msg) => (
-                              <div className="invalid-tooltip">{msg}</div>
-                            )}
-                          </ErrorMessage>
-
                         </div>
                       </Form.Group>
 
