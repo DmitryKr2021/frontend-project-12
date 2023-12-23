@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { Formik, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { Button, Form } from "react-bootstrap";
@@ -6,6 +6,7 @@ import img from "../imgs/autorization.jpg";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../hooks/index.jsx";
+import cn from "classnames";
 
 const Schema = Yup.object().shape({
   username: Yup.string()
@@ -15,10 +16,11 @@ const Schema = Yup.object().shape({
   password: Yup.string()
     .min(5, "От 5 до 20 символов")
     .max(20, "От 5 до 20 символов")
-    .required("Обязательное поле"), 
+    .required("Обязательное поле"),
 });
 
 const LoginPage = () => {
+  const msgClass = cn("invalid-tooltip");
   const auth = useAuth();
   const navigate = useNavigate();
   useEffect(() => {
@@ -27,6 +29,8 @@ const LoginPage = () => {
       navigate("/main");
     }
   }, [auth, navigate, auth.loggedIn]);
+
+  const inpName = useRef();
 
   return (
     <Formik
@@ -45,16 +49,14 @@ const LoginPage = () => {
           })
           .catch((error) => {
             if (error.response) {
-          
-             setErrors({'username': "Неверные имя пользователя или пароль", 
-             'password': "Неверные имя пользователя или пароль"});
-             //setFieldError('username', "Неверные имя пользователя или пароль");
-             //setFieldError('password', "Неверные имя пользователя или пароль");
-
+             inpName.current.select();
+              setErrors({
+                username: "Неверные имя пользователя или пароль",
+                password: "Неверные имя пользователя или пароль",
+              });
               console.log(error.response.data);
               console.log(error.response.status);
               console.log(error.response.headers);
-              //return;
             } else if (error.request) {
               console.log(error.request);
             } else {
@@ -65,7 +67,7 @@ const LoginPage = () => {
       }}
     >
       {({
-        isSubmitting,
+        //isSubmitting,
         handleSubmit,
         getFieldProps,
         touched,
@@ -96,14 +98,23 @@ const LoginPage = () => {
                             required
                             placeholder="Ваш ник"
                             id="username"
-                            {...getFieldProps('username')}           
+                            {...getFieldProps("username")}
                             isInvalid={touched.username && errors.username}
                             autoFocus
+                            ref={inpName}
                           />
-                          <Form.Label htmlFor="username">Ваш ник</Form.Label>                
+                          <Form.Label htmlFor="username">Ваш ник</Form.Label>
                           <ErrorMessage name="username">
                             {(msg) => (
-                              <div className="invalid-tooltip">{msg}</div>
+                              <div
+                                className={            
+                                  errors.username === "Неверные имя пользователя или пароль"
+                                    ? msgClass + " visually-hidden"
+                                    : msgClass
+                                }
+                              >
+                                {msg}
+                              </div>
                             )}
                           </ErrorMessage>
                         </div>
@@ -116,8 +127,8 @@ const LoginPage = () => {
                             autoComplete="password"
                             placeholder="Пароль"
                             required
-                            id="password" 
-                            {...getFieldProps('password')}
+                            id="password"
+                            {...getFieldProps("password")}
                             isInvalid={touched.password && errors.password}
                           />
                           <Form.Label htmlFor="password">Пароль</Form.Label>
@@ -133,7 +144,7 @@ const LoginPage = () => {
                         type="submit"
                         className="w-100 mb-3 btn btn-outline-primary"
                         variant="outline-primary"
-                        disabled={isSubmitting}
+                        //disabled={isSubmitting}
                       >
                         Войти
                       </Button>

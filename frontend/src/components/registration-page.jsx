@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Formik, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { Button, Form } from "react-bootstrap";
@@ -18,27 +18,30 @@ const Schema = Yup.object().shape({
     .required("Обязательное поле"),
   repeatPassword: Yup.string()
     .required("Обязательное поле")
-    .oneOf([Yup.ref("password"), null], "Пароль должен совпадать"),
+    .oneOf([Yup.ref("password"), null], "Пароли должен совпадать"),
 });
 
 const RegistrationPage = () => {
   const navigate = useNavigate();
   const auth = useAuth();
-  console.log("localStor=", window.localStorage);
-  console.log("auth=", auth);
+  const inpRepeat = useRef();
+
+  /*const handleRepeat = () => {
+    inpRepeat.current.select();
+  };*/
+
   return (
     <Formik
       initialValues={{ username: "", password: "", repeatPassword: "" }}
       validationSchema={Schema}
       onSubmit={(values) => {
-        console.log(values);
         axios
           .post("/api/v1/signup", {
             username: values.username,
             password: values.password,
           })
           .then((response) => {
-            console.log(response.data);
+            window.localStorage.setItem('user', JSON.stringify(response.data))
             auth.logIn();
             navigate("/main");
           })
@@ -63,8 +66,8 @@ const RegistrationPage = () => {
         handleChange,
         isSubmitting,
         handleSubmit,
-        errors,
         handleBlur,
+        errors,
         touched,
       }) => (
         <div className="d-flex flex-column">
@@ -98,8 +101,8 @@ const RegistrationPage = () => {
                             placeholder="От 5 до 15 символов"
                             id="username"
                             onChange={handleChange}
-                            value={values.username}
                             onBlur={handleBlur}
+                            value={values.username}
                             isInvalid={touched.username && errors.username}
                             autoFocus
                           />
@@ -120,10 +123,10 @@ const RegistrationPage = () => {
                             type="password"
                             autoComplete="password"
                             required
+                            onBlur={handleBlur}
                             placeholder="Пароль"
                             id="password"
                             onChange={handleChange}
-                            onBlur={handleBlur}
                             value={values.password}
                             isInvalid={touched.password && errors.password}
                           />
@@ -145,11 +148,13 @@ const RegistrationPage = () => {
                             placeholder="Подтвердите пароль"
                             id="repeat-password"
                             onChange={handleChange}
+                            //onBlur={handleRepeat}
                             onBlur={handleBlur}
                             value={values.repeatPassword}
                             isInvalid={
                               touched.repeatPassword && errors.repeatPassword
                             }
+                            ref={inpRepeat}
                           />
                           <Form.Label htmlFor="repeat-password">
                             Подтвердите пароль
