@@ -23,11 +23,7 @@ import "bootstrap";
 import AuthContext from "./components/contexts/index.jsx";
 import useAuth from "./hooks/index.jsx";
 import PropTypes from "prop-types";
-
-/*const getAuthHeader = () => {
-  //return {};
-};
-getAuthHeader();*/
+import { useTranslation } from "react-i18next";
 
 const AuthProvider = ({ children }) => {
   const logIn = () => setLoggedIn(true);
@@ -91,7 +87,9 @@ const router = createBrowserRouter(
 
 const OutButton = () => {
   const auth = useAuth();
-  return auth.loggedIn ? <Button onClick={auth.logOut}>Выйти</Button> : null;
+  const { t } = useTranslation();
+  const goOut = t("app.goOut");
+  return auth.loggedIn ? <Button onClick={auth.logOut}>{goOut}</Button> : null;
 };
 
 const App = () => {
@@ -99,7 +97,7 @@ const App = () => {
     const body = document.querySelector("body");
     body.className = "bg-light h-100";
   });
-
+  
   return (
     <AuthProvider >
       <div className="h-100">

@@ -10,6 +10,7 @@ import {
 } from "react-bootstrap";
 import { Formik, ErrorMessage } from "formik";
 import { userContext } from "../../index.js";
+import { useTranslation } from "react-i18next";
 
 // const AddChannel = (showAdd, closeAdd, showConfirm, closeConfirm) => {
 const AddChannel = (showAdd, closeAdd) => {
@@ -17,7 +18,14 @@ const AddChannel = (showAdd, closeAdd) => {
   const [showAlert, setShowAlert] = useState(false);
   const { socket } = useContext(userContext).socket;
   const newSocket = socket;
-  
+  const { t } = useTranslation();
+  const channelLength = t("errors.channelLength");
+  const uniqName = t("errors.uniqName");
+  const addChannel = t("add.addChannel");
+  const cancel = t("add.cancel");
+  const send = t("add.send");
+  const channel = t("add.channel");
+  const notAdded = t("add.notAdded");
   
   /*const [countOfProgress, setCountOfProgress] = useState(100);
   const [n, setN] = useState(0);
@@ -71,16 +79,16 @@ const AddChannel = (showAdd, closeAdd) => {
   
   const Schema = Yup.object().shape({
     channel: Yup.string()
-      .min(3, "От 3 до 15 символов")
-      .max(15, "От 3 до 15 символов")
-      .notOneOf(selectorChannels.map(channel => channel.name), "Имя должно быть уникальным"),
+      .min(3, channelLength)
+      .max(20, channelLength)
+      .notOneOf(selectorChannels.map(channel => channel.name), uniqName),
   });
 
   return showAdd ? (
     <div className="fade modal show" tabIndex="-1">
       <Modal show={showAdd} onHide={closeAdd} centered>
         <Modal.Header closeButton onClick={closeAdd}>
-          <Modal.Title>Добавить канал</Modal.Title>
+          <Modal.Title>{addChannel}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Formik
@@ -116,7 +124,7 @@ const AddChannel = (showAdd, closeAdd) => {
                       isInvalid={touched.channel && errors.channel}
                       autoFocus
                       required
-                      title="Добавить новый канал"
+                      title={addChannel}
                     />
                     <ErrorMessage name="channel">
                       {(msg) => <div className=" invalid-tooltip">{msg}</div>}
@@ -130,14 +138,14 @@ const AddChannel = (showAdd, closeAdd) => {
                         className="me-2 rounded"
                         onClick={closeAdd}
                       >
-                        Отменить
+                        {cancel}
                       </Button>
                       <Button
                         variant="primary"
                         type="submit"
                         className="rounded"
                       >
-                        Отправить
+                        {send}
                       </Button>
                     </ButtonGroup>
                   </div>
@@ -152,9 +160,9 @@ const AddChannel = (showAdd, closeAdd) => {
                     dismissible
                   >
                     <Alert.Heading className="h5">
-                      Канал {values.channel}
+                      {channel} {values.channel}
                     </Alert.Heading>
-                    не добавлен
+                    {notAdded}
                   </Alert>
                 ) : null}
               </>

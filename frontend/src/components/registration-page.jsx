@@ -6,29 +6,30 @@ import img from "../imgs/registration.png";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/index.jsx";
-
-const Schema = Yup.object().shape({
-  username: Yup.string()
-    .min(3, "От 3 до 20 символов")
-    .max(20, "От 3 до 20 символов")
-    .required("Обязательное поле"),
-  password: Yup.string()
-    .min(5, "От 5 до 20 символов")
-    .max(20, "От 5 до 20 символов")
-    .required("Обязательное поле"),
-  repeatPassword: Yup.string()
-    .required("Обязательное поле")
-    .oneOf([Yup.ref("password"), null], "Пароли должен совпадать"),
-});
+import { useTranslation } from "react-i18next";
 
 const RegistrationPage = () => {
+  const { t } = useTranslation();
+  const loginLength = t("errors.loginLength");
+  const passwordLength = t("errors.passwordLength");
+  const required = t("errors.required");
+  const coincidePass = t("errors.coincidePass");
+  const toRegister = t("registration.toRegister");
+  const username = t("registration.username");
+  const password = t("registration.password");
+  const repeatPassword = t("registration.repeatPassword");
+  const registration = t("registration.registration");
   const navigate = useNavigate();
   const auth = useAuth();
   const inpRepeat = useRef();
 
-  /*const handleRepeat = () => {
-    inpRepeat.current.select();
-  };*/
+  const Schema = Yup.object().shape({
+    username: Yup.string().min(3, loginLength).max(20, loginLength).required(required),
+    password: Yup.string().min(5, passwordLength).max(20, passwordLength).required(required),
+    repeatPassword: Yup.string()
+      .required(required)
+      .oneOf([Yup.ref("password"), null], coincidePass),
+  });
 
   return (
     <Formik
@@ -41,7 +42,7 @@ const RegistrationPage = () => {
             password: values.password,
           })
           .then((response) => {
-            window.localStorage.setItem('user', JSON.stringify(response.data))
+            window.localStorage.setItem("user", JSON.stringify(response.data));
             auth.logIn();
             navigate("/main");
           })
@@ -84,7 +85,7 @@ const RegistrationPage = () => {
                         src={img}
                         width={200}
                         className="rounded-circle"
-                        alt="Регистрация"
+                        alt={registration}
                       />
                     </div>
                     <Form
@@ -92,13 +93,13 @@ const RegistrationPage = () => {
                       onSubmit={handleSubmit}
                       className="col-12 col-md-6 mt-3 mt-mb-0"
                     >
-                      <h1 className="text-center mb-4">Регистрация</h1>
+                      <h1 className="text-center mb-4">{registration}</h1>
                       <Form.Group className="mb-3 position-relative">
                         <div className="form-floating mb-3">
                           <Form.Control
                             type="text"
                             name="username"
-                            placeholder="От 5 до 15 символов"
+                            placeholder={username}
                             id="username"
                             onChange={handleChange}
                             onBlur={handleBlur}
@@ -106,9 +107,7 @@ const RegistrationPage = () => {
                             isInvalid={touched.username && errors.username}
                             autoFocus
                           />
-                          <Form.Label htmlFor="username">
-                            Имя пользователя
-                          </Form.Label>
+                          <Form.Label htmlFor="username">{username}</Form.Label>
                           <ErrorMessage name="username">
                             {(msg) => (
                               <div className=" invalid-tooltip">{msg}</div>
@@ -124,13 +123,13 @@ const RegistrationPage = () => {
                             autoComplete="password"
                             required
                             onBlur={handleBlur}
-                            placeholder="Пароль"
+                            placeholder={password}
                             id="password"
                             onChange={handleChange}
                             value={values.password}
                             isInvalid={touched.password && errors.password}
                           />
-                          <Form.Label htmlFor="password">Пароль</Form.Label>
+                          <Form.Label htmlFor="password">{password}</Form.Label>
                           <ErrorMessage name="password">
                             {(msg) => (
                               <div className=" invalid-tooltip">{msg}</div>
@@ -145,10 +144,9 @@ const RegistrationPage = () => {
                             type="password"
                             autoComplete="repeatPassword"
                             required
-                            placeholder="Подтвердите пароль"
+                            placeholder={repeatPassword}
                             id="repeat-password"
                             onChange={handleChange}
-                            //onBlur={handleRepeat}
                             onBlur={handleBlur}
                             value={values.repeatPassword}
                             isInvalid={
@@ -157,7 +155,7 @@ const RegistrationPage = () => {
                             ref={inpRepeat}
                           />
                           <Form.Label htmlFor="repeat-password">
-                            Подтвердите пароль
+                            {repeatPassword}
                           </Form.Label>
                           <Form.Control.Feedback type="invalid" tooltip>
                             {errors.repeatPassword}
@@ -170,7 +168,7 @@ const RegistrationPage = () => {
                         variant="outline-primary"
                         disabled={isSubmitting}
                       >
-                        Зарегистрироваться
+                        {toRegister}
                       </Button>
                     </Form>
                   </div>

@@ -32,6 +32,14 @@ export const MainPage = () => {
   const [removingChannelNumber, setRemovingChannelNumber] = useState(null);
   const [renamingChannelNumber, setRenamingChannelNumber] = useState(null);
   const [typeModal, setTypeModal] = useState("null");
+  const channels = t("main.channels");
+  const channelManage = t("main.channelManage");
+  const remove = t("main.remove");
+  const rename = t("main.rename");
+  const enterMessage = t("main.enterMessage");
+  const send = t("main.send");
+  const message = t("main.message");
+  const notDelivered = t("main.notDelivered");
 
   const addOneChannel = (e) => {
     e.preventDefault();
@@ -114,7 +122,7 @@ export const MainPage = () => {
     return (
       <div className="col-4 col-md-2 border-end px-0 bg-light flex-column h-100 d-flex">
         <div className="d-flex mt-1 justify-content-between mb-2 ps-4 pe-2 p-4">
-          <b>Каналы</b>
+          <b>{channels}</b>
           <Button
             type="button"
             variant="light"
@@ -161,7 +169,7 @@ export const MainPage = () => {
                       id="dropdown-basic"
                     >
                       <span className="visually-hidden">
-                        Управление каналом
+                        {channelManage}
                       </span>
                     </Dropdown.Toggle>
                     <Dropdown.Menu>
@@ -171,13 +179,13 @@ export const MainPage = () => {
                         data-index={item.id}
                         onClick={removeOneChannel}
                       >
-                        Удалить
+                        {remove}
                       </Dropdown.Item>
                       <Dropdown.Item type="button" href="#/action-2"
                        data-index={item.id}
                        onClick={renameChannel}
                       >
-                        Переименовать
+                        {rename}
                       </Dropdown.Item>
                     </Dropdown.Menu>
                   </Dropdown>
@@ -203,7 +211,7 @@ export const MainPage = () => {
       (item) => item.channelId === selectorActiveChannel
     );
     const messagesLength = channelMessages.length;
-    const countMessages = t("mes", { count: messagesLength });
+    const countMessages = t("messages.msg", { count: messagesLength });
 
     return (
       <div className="col p-0 h-100">
@@ -267,7 +275,7 @@ export const MainPage = () => {
                       <Form.Control
                         name="message"
                         aria-label="Новое сообщение"
-                        placeholder="Введите сообщение..."
+                        placeholder={enterMessage}
                         className="border-0 p-0 ps-2 form-control"
                         onChange={handleChange}
                         value={values.message}
@@ -280,7 +288,7 @@ export const MainPage = () => {
                         className="btn btn-group-vertical"
                       >
                         <SvgSend />
-                        <span className="visually-hidden">Отправить</span>
+                        <span className="visually-hidden">{send}</span>
                       </Button>
                     </div>
                   </Form>
@@ -293,9 +301,9 @@ export const MainPage = () => {
                       dismissible
                     >
                       <Alert.Heading className="h5">
-                        Сообщение {values.message}
+                        {message} {values.message}
                       </Alert.Heading>
-                      не доставлено
+                      {notDelivered}
                     </Alert>
                   ) : null}
                 </>

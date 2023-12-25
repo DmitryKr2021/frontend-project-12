@@ -7,19 +7,25 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../hooks/index.jsx";
 import cn from "classnames";
-
-const Schema = Yup.object().shape({
-  username: Yup.string()
-    .min(3, "От 3 до 20 символов")
-    .max(20, "От 3 до 20 символов")
-    .required("Обязательное поле"),
-  password: Yup.string()
-    .min(5, "От 5 до 20 символов")
-    .max(20, "От 5 до 20 символов")
-    .required("Обязательное поле"),
-});
+import { useTranslation } from "react-i18next";
 
 const LoginPage = () => {
+  const { t } = useTranslation();
+  const serverError = t("errors.serverError");
+  const loginLength = t("errors.loginLength");
+  const passwordLength = t("errors.passwordLength");
+  const required = t("errors.required");
+  const enter = t("login.enter");
+  const nik = t("login.nik");
+  const password = t("login.password");
+  const noAccount = t("login.noAccount");
+  const registration = t("login.registration");
+
+  const Schema = Yup.object().shape({
+    username: Yup.string().min(3, loginLength).max(20, loginLength).required(required),
+    password: Yup.string().min(5, passwordLength).max(20, passwordLength).required(required),
+  });
+
   const msgClass = cn("invalid-tooltip");
   const auth = useAuth();
   const navigate = useNavigate();
@@ -49,10 +55,10 @@ const LoginPage = () => {
           })
           .catch((error) => {
             if (error.response) {
-             inpName.current.select();
+              inpName.current.select();
               setErrors({
-                username: "Неверные имя пользователя или пароль",
-                password: "Неверные имя пользователя или пароль",
+                username: serverError,
+                password: serverError,
               });
               console.log(error.response.data);
               console.log(error.response.status);
@@ -83,32 +89,36 @@ const LoginPage = () => {
                 <div className="card shadow-sm">
                   <div className="card-body row p-5">
                     <div className="col-12 col-md-6 d-flex align-items-center justify-content-center">
-                      <img src={img} className="rounded-circle" alt="Войти" />
+                      <img
+                        src={img}
+                        className="rounded-circle"
+                        alt="Войти/Enter"
+                      />
                     </div>
                     <Form
                       onSubmit={handleSubmit}
                       className="col-12 col-md-6 mt-3 mt-mb-0"
                     >
-                      <h1 className="text-center mb-4">Войти</h1>
+                      <h1 className="text-center mb-4">{enter}</h1>
                       <Form.Group className="mb-3">
                         <div className="form-floating mb-3">
                           <Form.Control
                             name="username"
                             autoComplete="username"
                             required
-                            placeholder="Ваш ник"
+                            placeholder={nik}
                             id="username"
                             {...getFieldProps("username")}
                             isInvalid={touched.username && errors.username}
                             autoFocus
                             ref={inpName}
                           />
-                          <Form.Label htmlFor="username">Ваш ник</Form.Label>
+                          <Form.Label htmlFor="username">{nik}</Form.Label>
                           <ErrorMessage name="username">
                             {(msg) => (
                               <div
-                                className={            
-                                  errors.username === "Неверные имя пользователя или пароль"
+                                className={
+                                  errors.username === serverError
                                     ? msgClass + " visually-hidden"
                                     : msgClass
                                 }
@@ -125,13 +135,13 @@ const LoginPage = () => {
                             name="password"
                             type="password"
                             autoComplete="password"
-                            placeholder="Пароль"
+                            placeholder={password}
                             required
                             id="password"
                             {...getFieldProps("password")}
                             isInvalid={touched.password && errors.password}
                           />
-                          <Form.Label htmlFor="password">Пароль</Form.Label>
+                          <Form.Label htmlFor="password">{password}</Form.Label>
                           <ErrorMessage name="password">
                             {(msg) => (
                               <div className="invalid-tooltip">{msg}</div>
@@ -146,14 +156,14 @@ const LoginPage = () => {
                         variant="outline-primary"
                         //disabled={isSubmitting}
                       >
-                        Войти
+                        {enter}
                       </Button>
                     </Form>
                   </div>
                   <div className="card-footer p-4">
                     <div className="text-center">
-                      <span>Нет аккаунта? </span>
-                      <Link to="/registration">Регистрация</Link>
+                      <span>{noAccount}</span>
+                      <Link to="/registration">{registration}</Link>
                     </div>
                   </div>
                 </div>

@@ -4,12 +4,21 @@ import { useSelector } from "react-redux";
 import { Button, ButtonGroup, Form, Alert, Modal } from "react-bootstrap";
 import { Formik, ErrorMessage } from "formik";
 import { userContext } from "../../index.js";
+import { useTranslation } from "react-i18next";
 
 const RenameChannel = (showRename, closeRename, renamingChannelNumber) => {
   const selectorChannels = useSelector((state) => state.channelsSlice.channels);
   const [showAlert, setShowAlert] = useState(false);
   const { socket } = useContext(userContext).socket;
   const newSocket = socket;
+  const { t } = useTranslation();
+  const channelLength = t("errors.channelLength");
+  const uniqName = t("errors.uniqName");
+  const rename = t("rename.rename");
+  const cancel = t("rename.cancel");
+  const send = t("rename.send");
+  const channel = t("rename.channel");
+  const notRenamed = t("rename.notRenamed");
 
   const [renamingChannel] = selectorChannels.filter(
     (channel) => channel.id === +renamingChannelNumber
@@ -17,11 +26,11 @@ const RenameChannel = (showRename, closeRename, renamingChannelNumber) => {
 
   const Schema = Yup.object().shape({
     channel: Yup.string()
-      .min(3, "От 3 до 15 символов")
-      .max(15, "От 3 до 15 символов")
+      .min(3, channelLength)
+      .max(20, channelLength)
       .notOneOf(
         selectorChannels.map((channel) => channel.name),
-        "Имя должно быть уникальным"
+        uniqName
       ),
   });
 
@@ -34,7 +43,7 @@ const RenameChannel = (showRename, closeRename, renamingChannelNumber) => {
     <div className="fade modal show" tabIndex="-1">
       <Modal show={showRename} onHide={closeRename} centered>
         <Modal.Header closeButton onClick={closeRename}>
-          <Modal.Title>Переименовать канал</Modal.Title>
+          <Modal.Title>{rename}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Formik
@@ -67,8 +76,8 @@ const RenameChannel = (showRename, closeRename, renamingChannelNumber) => {
                   <div className="input-group has-validation">
                     <Form.Control
                       name="channel"
-                      aria-label="Переименовать канал"
-                      title="Переименовать канал"
+                      aria-label={rename}
+                      title={rename}
                       onChange={handleChange}
                       value={values.channel}
                       ref={inpChannel}
@@ -88,14 +97,14 @@ const RenameChannel = (showRename, closeRename, renamingChannelNumber) => {
                         className="me-2 rounded"
                         onClick={closeRename}
                       >
-                        Отменить
+                        {cancel}
                       </Button>
                       <Button
                         variant="primary"
                         type="submit"
                         className="rounded"
                       >
-                        Отправить
+                        {send}
                       </Button>
                     </ButtonGroup>
                   </div>
@@ -110,9 +119,9 @@ const RenameChannel = (showRename, closeRename, renamingChannelNumber) => {
                     dismissible
                   >
                     <Alert.Heading className="h5">
-                      Канал {values.channel}
+                      {channel} {values.channel}
                     </Alert.Heading>
-                    не переименован
+                    {notRenamed}
                   </Alert>
                 ) : null}
               </>
