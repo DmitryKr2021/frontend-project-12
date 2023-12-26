@@ -1,11 +1,10 @@
 import React, { useState, useContext } from "react";
-import { Button, ButtonGroup, Form, Alert, Modal } from "react-bootstrap";
+import { Button, ButtonGroup, Form, Modal } from "react-bootstrap";
 import { userContext } from "../../index.js";
 import { useTranslation } from "react-i18next";
 
 const RemoveChannel = (params) => {
-  const { channelNumber, setModalNull } = params;
-  const [showAlert, setShowAlert] = useState(false);
+  const { channelNumber, setModalNull, setNotify } = params;
   const { socket } = useContext(userContext).socket;
   const newSocket = socket;
   const { t } = useTranslation();
@@ -13,8 +12,6 @@ const RemoveChannel = (params) => {
   const remove = t("remove.remove");
   const sure = t("remove.sure");
   const cancel = t("remove.cancel");
-  const channel = t("remove.channel");
-  const notRemoved = t("remove.notRemoved");
 
   const [show, setShow] = useState(true);
   const close = () => {
@@ -22,15 +19,17 @@ const RemoveChannel = (params) => {
     setModalNull();
   };
 
+  const channelRemoved = t("toasts.channelRemoved");
+  const channelNotRemoved = t("rename.channelNotRemoved");
+
   const handleRemove = () => {
     newSocket.emit("removeChannel", {id: channelNumber}, (response) => {
         const { status } = response;
-        setShowAlert(status === "ok" ? false : true);
-        console.log(
-          status === "ok"
-            ? `Канал удален`
-            : `Канал не удален`
-        );
+        if (status === "ok") {
+          setNotify(channelRemoved, 'success');
+        } else {
+          setNotify(channelNotRemoved, 'error');
+        }
       });
     close();
   };
@@ -59,18 +58,6 @@ const RemoveChannel = (params) => {
               </ButtonGroup>
             </div>
           </Form>
-          {showAlert ? (
-            <Alert
-              key="danger"
-              variant="danger"
-              className="border-2 p-2 ps-2 mt-1"
-              onClose={() => setShowAlert(false)}
-              dismissible
-            >
-              <Alert.Heading className="h5">{channel}</Alert.Heading>
-              {notRemoved}
-            </Alert>
-          ) : null}
         </Modal.Body>
       </Modal>
     </div>

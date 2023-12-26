@@ -11,6 +11,11 @@ export default {
     toasts: {
       channelRenamed: "Канал переименован",
       channelNotRenamed: "Канал не переименован",
+      channelAdded: "Канал добавлен",
+      channelNotAdded: "Канал не добавлен",
+      channelRemoved: "Канал удален",
+      channelNotRemoved: "Канал не удален",
+      dataNotLoaded: "Данные не загружены",
     },
     errors: {
       serverError: "Неверные имя пользователя или пароль",
@@ -49,23 +54,17 @@ export default {
       rename: "Переименовать канал",
       cancel: "Отменить",
       send: "Отправить",
-      channel: "Канал",
-      notRenamed: "не переименован",
     },
     remove: {
       removeChannel: "Удалить канал",
       remove: "Удалить",
       sure: "Уверены?",
       cancel: "Отменить",
-      channel: "Канал",
-      notRemoved: "не удален",
     },
     add: {
       addChannel: "Добавить канал",
       cancel: "Отменить",
       send: "Отправить",
-      channel: "Канал",
-      notAdded: "не добавлен",
     },
   },
 };

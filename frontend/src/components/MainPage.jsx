@@ -12,6 +12,8 @@ import getModal from "./modals/index.js";
 import PropTypes from "prop-types";
 import SvgPlus from "./svg/Svg-plus.jsx";
 import SvgSend from "./svg/Svg-send.jsx";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export const MainPage = () => {
   const { socket } = useContext(userContext);
@@ -36,21 +38,11 @@ export const MainPage = () => {
   const send = t("main.send");
   const message = t("main.message");
   const notDelivered = t("main.notDelivered");
+  const dataNotLoaded = t("toasts.dataNotLoaded");
 
-  const addOneChannel = (e) => {
+  const manageChannel = (manageType) => (e) => {
     e.preventDefault();
-    setTypeModal("adding");
-  };
-
-  const removeOneChannel = (e) => {
-    e.preventDefault();
-    setTypeModal("removing");
-    setChannelNumber(e.target.getAttribute("data-index"));
-  };
-
-  const renameChannel = (e) => {
-    e.preventDefault();
-    setTypeModal("renaming");
+    setTypeModal(manageType);
     setChannelNumber(e.target.getAttribute("data-index"));
   };
 
@@ -58,12 +50,18 @@ export const MainPage = () => {
     setTypeModal(null);
   };
 
+  const setNotify = (text, result) => {
+    const notify = () => toast[result](text);
+    notify();
+  };
+
   const RenderModal = (props) => {
     const getModalValue = getModal(props.value);
     const params = {
       channelNumber,
       setModalNull,
-    }
+      setNotify,
+    };
     return getModalValue(params) || null;
   };
 
@@ -80,7 +78,7 @@ export const MainPage = () => {
       if (window.localStorage.length > 0) {
         const user = window.localStorage.getItem("user");
         const userToken = JSON.parse(user).token;
-        axios
+        await axios
           .get("/api/v1/data", {
             headers: {
               Authorization: `Bearer ${userToken}`,
@@ -88,13 +86,18 @@ export const MainPage = () => {
           })
           .then((response) => {
             console.log("response.data=", response.data);
+            console.log("response.status=", response.status);
             dispatch(renderMessages(response.data));
             dispatch(renderChannels(response.data));
+          })
+          .catch(() => {
+            const notify = () => toast.error(dataNotLoaded);
+            notify();
           });
       }
     };
     requestData();
-  }, [dispatch]);
+  }, [dispatch, dataNotLoaded]);
 
   const dropDownClass = cn("square", "border", "border-0");
   const Channels = () => {
@@ -106,7 +109,7 @@ export const MainPage = () => {
             type="button"
             variant="light"
             className="p-0 text-primary btn btn-group-vertical"
-            onClick={addOneChannel}
+            onClick={manageChannel('adding')}
           >
             <SvgPlus />
             <span className="visually-hidden">+</span>
@@ -154,7 +157,7 @@ export const MainPage = () => {
                         type="button"
                         href="#/action-1"
                         data-index={item.id}
-                        onClick={removeOneChannel}
+                        onClick={manageChannel('removing')}
                       >
                         {remove}
                       </Dropdown.Item>
@@ -162,7 +165,7 @@ export const MainPage = () => {
                         type="button"
                         href="#/action-2"
                         data-index={item.id}
-                        onClick={renameChannel}
+                        onClick={manageChannel('renaming')}
                       >
                         {rename}
                       </Dropdown.Item>
@@ -296,6 +299,7 @@ export const MainPage = () => {
 
   return (
     <>
+      <ToastContainer />
       <div className="container h-100 my-4 overflow-hidden rounded shadow">
         <div className="row h-100 bg-white flex-md-row">
           <Channels />

@@ -5,7 +5,6 @@ import {
   Button,
   ButtonGroup,
   Form,
-  Alert,
   Modal,
 } from "react-bootstrap";
 import { Formik, ErrorMessage } from "formik";
@@ -13,9 +12,8 @@ import { userContext } from "../../index.js";
 import { useTranslation } from "react-i18next";
 
 const AddChannel = (params) => {
-  const { setModalNull } = params;
+  const { setModalNull, setNotify } = params;
   const selectorChannels = useSelector((state) => state.channelsSlice.channels);
-  const [showAlert, setShowAlert] = useState(false);
   const { socket } = useContext(userContext).socket;
   const newSocket = socket;
   const { t } = useTranslation();
@@ -24,15 +22,15 @@ const AddChannel = (params) => {
   const addChannel = t("add.addChannel");
   const cancel = t("add.cancel");
   const send = t("add.send");
-  const channel = t("add.channel");
-  const notAdded = t("add.notAdded");
-
+  
   const [show, setShow] = useState(true);
   const close = () => {
     setShow(false);
     setModalNull();
   };
-  
+  const channelAdded = t("toasts.channelAdded");
+  const channelNotAdded = t("rename.channelNotAdded");
+
   const Schema = Yup.object().shape({
     channel: Yup.string()
       .min(3, channelLength)
@@ -56,13 +54,11 @@ const AddChannel = (params) => {
               };
               newSocket.emit("newChannel", newChannel, (response) => {
                 const { status } = response;
-                const { name } = newChannel;
-                setShowAlert(status === "ok" ? false : true);
-                console.log(
-                  status === "ok"
-                    ? `Канал ${name} добавлен`
-                    : `Канал ${name} не добавлен`
-                );
+                if (status === "ok") {
+                  setNotify(channelAdded, 'success');
+                } else {
+                  setNotify(channelNotAdded, 'error');
+                }
               });
               close();
               setSubmitting(false);
@@ -106,21 +102,6 @@ const AddChannel = (params) => {
                     </ButtonGroup>
                   </div>
                 </Form>
-
-                {showAlert ? (
-                  <Alert
-                    key="danger"
-                    variant="danger"
-                    className="border-2 p-2 ps-2 mt-1"
-                    onClose={() => setShowAlert(false)}
-                    dismissible
-                  >
-                    <Alert.Heading className="h5">
-                      {channel} {values.channel}
-                    </Alert.Heading>
-                    {notAdded}
-                  </Alert>
-                ) : null}
               </>
             )}
           </Formik>

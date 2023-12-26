@@ -1,20 +1,14 @@
 import React, { useState, useContext, useEffect, useRef } from "react";
 import * as Yup from "yup";
 import { useSelector } from "react-redux";
-//import { Button, ButtonGroup, Form, Alert, Modal } from "react-bootstrap";
 import { Button, ButtonGroup, Form, Modal } from "react-bootstrap";
 import { Formik, ErrorMessage } from "formik";
 import { userContext } from "../../index.js";
 import { useTranslation } from "react-i18next";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-
-//const notify = () => toast('channelRenamed');
 
 const RenameChannel = (params) => {
-  const { channelNumber, setModalNull } = params;
+  const { channelNumber, setModalNull, setNotify } = params;
   const selectorChannels = useSelector((state) => state.channelsSlice.channels);
-//  const [showAlert, setShowAlert] = useState(false);
   const { socket } = useContext(userContext).socket;
   const newSocket = socket;
   const { t } = useTranslation();
@@ -23,9 +17,7 @@ const RenameChannel = (params) => {
   const rename = t("rename.rename");
   const cancel = t("rename.cancel");
   const send = t("rename.send");
-  //const channel = t("rename.channel");
-  //const notRenamed = t("rename.notRenamed");
-
+  
   const [show, setShow] = useState(true);
   const close = () => {
     setShow(false);
@@ -33,8 +25,7 @@ const RenameChannel = (params) => {
   };
 
   const channelRenamed = t("toasts.channelRenamed");
-  //const channelNotRenamed = t("rename.channelNotRenamed");
-   const notify = () => toast(channelRenamed);
+  const channelNotRenamed = t("rename.channelNotRenamed");
 
   const [renamingChannel] = selectorChannels.filter(
     (channel) => channel.id === +channelNumber
@@ -50,24 +41,13 @@ const RenameChannel = (params) => {
       ),
   });
 
-  //notify();
   const inpChannel = useRef();
   useEffect(() => {
     inpChannel.current?.select();
   }, []);
 
-  /*const [st, setSt] = useState(false);
-  useEffect(() => {
-    console.log('st==', st)
-    const notify = () => toast(channelRenamed, {
-      autoClose: 1000,
-    });
-    notify();
-  }, [st, channelRenamed]);*/
-
   return (
     <>
-      <ToastContainer />
       <div className="fade modal show" tabIndex="-1">
         <Modal show={show} onHide={close} centered>
           <Modal.Header closeButton onClick={close}>
@@ -87,17 +67,11 @@ const RenameChannel = (params) => {
                 };
                 newSocket.emit("renameChannel", renamingChannel, (response) => {
                   const { status } = response;
-                 // setShowAlert(status === "ok" ? false : true);
                   if (status === "ok") {
-                    notify();
-                    //setSt(true);
-                    //console.log('status === ok', st)
+                    setNotify(channelRenamed, 'success');
+                  } else {
+                    setNotify(channelNotRenamed, 'error');
                   }
-                  console.log(
-                    status === "ok"
-                      ? `Канал переименован`
-                      : `Канал не переименован`
-                  );
                 });
                 close();
                 setSubmitting(false);
@@ -142,8 +116,6 @@ const RenameChannel = (params) => {
                       </ButtonGroup>
                     </div>
                   </Form>
-
-                
                 </>
               )}
             </Formik>
@@ -155,22 +127,3 @@ const RenameChannel = (params) => {
 };
 
 export default RenameChannel;
-
-
-
-/*
-  {showAlert ? (
-                    <Alert
-                      key="danger"
-                      variant="danger"
-                      className="border-2 p-2 ps-2 mt-1"
-                      onClose={() => setShowAlert(false)}
-                      dismissible
-                    >
-                      <Alert.Heading className="h5">
-                        {channel} {values.channel}
-                      </Alert.Heading>
-                      {notRenamed}
-                    </Alert>
-                  ) : null}
-*/
