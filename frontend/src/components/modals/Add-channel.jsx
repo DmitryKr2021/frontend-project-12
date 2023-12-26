@@ -12,8 +12,7 @@ import { Formik, ErrorMessage } from "formik";
 import { userContext } from "../../index.js";
 import { useTranslation } from "react-i18next";
 
-// const AddChannel = (showAdd, closeAdd, showConfirm, closeConfirm) => {
-const AddChannel = (showAdd, closeAdd) => {
+const AddChannel = (channelNull, setModal) => {
   const selectorChannels = useSelector((state) => state.channelsSlice.channels);
   const [showAlert, setShowAlert] = useState(false);
   const { socket } = useContext(userContext).socket;
@@ -26,56 +25,12 @@ const AddChannel = (showAdd, closeAdd) => {
   const send = t("add.send");
   const channel = t("add.channel");
   const notAdded = t("add.notAdded");
-  
-  /*const [countOfProgress, setCountOfProgress] = useState(100);
-  const [n, setN] = useState(0);
 
-  const Bar = () => {
-    useEffect(() => {
-      const inter = setInterval(() => {
-        setN(x => x + 1);
-        setCountOfProgress(100 - n);
-      }, 30);
-      if (countOfProgress <= 0) {
-        clearInterval(inter);
-        closeConfirm();
-        return;
-      }
-      return () => clearInterval(inter);
-  }, []);
-    return <ProgressBar now={countOfProgress} variant="success" />;
-  };*/
-  
-  /*const reducer = (state, action) => {
-    const { count, step } = state;
-    if (action.type === "tick") {
-      return { count: count - step, step };
-    } else {
-      throw new Error();
-    }
+  const [show, setShow] = useState(true);
+  const close = () => {
+    setShow(false);
+    setModal();
   };
-
-  const initialState = {
-    count: 101,
-    step: 1,
-  };
-
-  const Bar = () => {
-    const [state, dispatch] = useReducer(reducer, initialState);
-    const { count, step } = state;
-    useEffect(() => {
-      const inter = setInterval(() => {
-        dispatch({ type: "tick" });
-      }, 30);
-      return () => clearInterval(inter);
-    }, [dispatch]);
-    console.log("count=", count, "step=", step);
-    if (count < 0) {
-      setShowConfirm(false);
-      return;
-    }
-    return <ProgressBar now={count} variant="success" />;
-  };*/
   
   const Schema = Yup.object().shape({
     channel: Yup.string()
@@ -84,10 +39,10 @@ const AddChannel = (showAdd, closeAdd) => {
       .notOneOf(selectorChannels.map(channel => channel.name), uniqName),
   });
 
-  return showAdd ? (
+  return ( 
     <div className="fade modal show" tabIndex="-1">
-      <Modal show={showAdd} onHide={closeAdd} centered>
-        <Modal.Header closeButton onClick={closeAdd}>
+      <Modal show={show} onHide={close} centered>
+        <Modal.Header closeButton onClick={close}>
           <Modal.Title>{addChannel}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -108,7 +63,7 @@ const AddChannel = (showAdd, closeAdd) => {
                     : `Канал ${name} не добавлен`
                 );
               });
-              closeAdd();
+              close();
               setSubmitting(false);
             }}
           >
@@ -136,7 +91,7 @@ const AddChannel = (showAdd, closeAdd) => {
                         variant="secondary"
                         type="button"
                         className="me-2 rounded"
-                        onClick={closeAdd}
+                        onClick={close}
                       >
                         {cancel}
                       </Button>
@@ -171,7 +126,7 @@ const AddChannel = (showAdd, closeAdd) => {
         </Modal.Body>
       </Modal>
     </div>
-  ) : null
+  );
 };
 
 export default AddChannel;

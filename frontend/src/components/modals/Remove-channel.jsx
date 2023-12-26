@@ -3,13 +3,11 @@ import { Button, ButtonGroup, Form, Alert, Modal } from "react-bootstrap";
 import { userContext } from "../../index.js";
 import { useTranslation } from "react-i18next";
 
-const RemoveChannel = (showRemove, closeRemove, removingChannelNumber) => {
+const RemoveChannel = (channelNumber, setModal) => {
   const [showAlert, setShowAlert] = useState(false);
   const { socket } = useContext(userContext).socket;
   const newSocket = socket;
   const { t } = useTranslation();
-
-
   const removeChannel = t("remove.removeChannel");
   const remove = t("remove.remove");
   const sure = t("remove.sure");
@@ -17,8 +15,14 @@ const RemoveChannel = (showRemove, closeRemove, removingChannelNumber) => {
   const channel = t("remove.channel");
   const notRemoved = t("remove.notRemoved");
 
+  const [show, setShow] = useState(true);
+  const close = () => {
+    setShow(false);
+    setModal();
+  };
+
   const handleRemove = () => {
-    newSocket.emit("removeChannel", {id: removingChannelNumber}, (response) => {
+    newSocket.emit("removeChannel", {id: channelNumber}, (response) => {
         const { status } = response;
         setShowAlert(status === "ok" ? false : true);
         console.log(
@@ -27,13 +31,13 @@ const RemoveChannel = (showRemove, closeRemove, removingChannelNumber) => {
             : `Канал не удален`
         );
       });
-    closeRemove();
+    close();
   };
 
-  return showRemove ? (
+  return (
     <div className="fade modal show" tabIndex="-1">
-      <Modal show={showRemove} onHide={closeRemove} centered>
-        <Modal.Header closeButton onClick={closeRemove}>
+      <Modal show={show} onHide={close} centered>
+        <Modal.Header closeButton onClick={close}>
           <Modal.Title>{removeChannel}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -44,7 +48,7 @@ const RemoveChannel = (showRemove, closeRemove, removingChannelNumber) => {
                 <Button
                   type="button"
                   className="me-2 rounded btn btn-secondary"
-                  onClick={closeRemove}
+                  onClick={close}
                 >
                   {cancel}
                 </Button>
@@ -69,7 +73,7 @@ const RemoveChannel = (showRemove, closeRemove, removingChannelNumber) => {
         </Modal.Body>
       </Modal>
     </div>
-  ) : null;
+  );
 };
 
 export default RemoveChannel;

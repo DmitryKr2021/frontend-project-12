@@ -8,6 +8,10 @@ export default {
       msg_few: "{{count}} сообщения",
       msg_many: "{{count}} сообщений",
     },
+    toasts: {
+      channelRenamed: "Канал переименован",
+      channelNotRenamed: "Канал не переименован",
+    },
     errors: {
       serverError: "Неверные имя пользователя или пароль",
       loginLength: "От 3 до 20 символов",

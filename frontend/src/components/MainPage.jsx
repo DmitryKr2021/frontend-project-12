@@ -6,8 +6,8 @@ import { renderMessages } from "../slices/messages.js";
 import { Button, Form, ButtonGroup, Alert, Dropdown } from "react-bootstrap";
 import { Formik } from "formik";
 import cn from "classnames";
-import { useTranslation, I18nextProvider } from "react-i18next";
-import { i18n, userContext } from "../index.js";
+import { useTranslation } from "react-i18next";
+import { userContext } from "../index.js";
 import getModal from "./modals/index.js";
 import PropTypes from "prop-types";
 import SvgPlus from "./svg/Svg-plus.jsx";
@@ -24,14 +24,11 @@ export const MainPage = () => {
     (state) => state.channelsSlice.activeChannel
   );
   const dispatch = useDispatch();
-  const { t } = useTranslation();
   const [showAlert, setShowAlert] = useState(false);
-  const [showAdd, setShowAdd] = useState(false);
-  const [showRemove, setShowRemove] = useState(false);
-  const [showRename, setShowRename] = useState(false);
-  const [removingChannelNumber, setRemovingChannelNumber] = useState(null);
-  const [renamingChannelNumber, setRenamingChannelNumber] = useState(null);
+  //const [showRemove, setShowRemove] = useState(false);
+  const [channelNumber, setChannelNumber] = useState(null);
   const [typeModal, setTypeModal] = useState("null");
+  const { t } = useTranslation();
   const channels = t("main.channels");
   const channelManage = t("main.channelManage");
   const remove = t("main.remove");
@@ -43,45 +40,42 @@ export const MainPage = () => {
 
   const addOneChannel = (e) => {
     e.preventDefault();
-    setShowAdd(true);
     setTypeModal("adding");
-  };
-
-  const closeAdd = () => {
-    setShowAdd(false);
   };
 
   const removeOneChannel = (e) => {
     e.preventDefault();
-    setShowRemove(true);
+   // setShowRemove(true);
     setTypeModal("removing");
-    setRemovingChannelNumber(e.target.getAttribute("data-index"));
+    setChannelNumber(e.target.getAttribute("data-index"));
   };
 
-  const closeRemove = () => {
+  /*const closeRemove = () => {
     setShowRemove(false);
-  };
+  };*/
 
   const renameChannel = (e) => {
     e.preventDefault();
-    setShowRename(true);
     setTypeModal("renaming");
-    setRenamingChannelNumber(e.target.getAttribute("data-index"));
+    setChannelNumber(e.target.getAttribute("data-index"));
   };
 
-  const closeRename = () => {
-    setShowRename(false);
+  const setModalNull = () => {
+    setTypeModal(null);
   };
 
   const RenderModal = (props) => {
     const { value } = props;
+    console.log('props=', props)
     const getModalValue = getModal(value);
+   // return getModalValue(channelNumber, setModalNull);
     switch (value) {
       case "adding":
-        return getModalValue(showAdd, closeAdd);
-      case 'renaming': return (getModalValue(showRename, closeRename, renamingChannelNumber));
+        return getModalValue(channelNumber, setModalNull);
+      case "renaming":
+        return getModalValue(channelNumber, setModalNull);
       case "removing":
-        return getModalValue(showRemove, closeRemove, removingChannelNumber);
+        return getModalValue(channelNumber, setModalNull);
       default:
         return null;
     }
@@ -117,7 +111,6 @@ export const MainPage = () => {
   }, [dispatch]);
 
   const dropDownClass = cn("square", "border", "border-0");
-
   const Channels = () => {
     return (
       <div className="col-4 col-md-2 border-end px-0 bg-light flex-column h-100 d-flex">
@@ -168,9 +161,7 @@ export const MainPage = () => {
                       }
                       id="dropdown-basic"
                     >
-                      <span className="visually-hidden">
-                        {channelManage}
-                      </span>
+                      <span className="visually-hidden">{channelManage}</span>
                     </Dropdown.Toggle>
                     <Dropdown.Menu>
                       <Dropdown.Item
@@ -181,9 +172,11 @@ export const MainPage = () => {
                       >
                         {remove}
                       </Dropdown.Item>
-                      <Dropdown.Item type="button" href="#/action-2"
-                       data-index={item.id}
-                       onClick={renameChannel}
+                      <Dropdown.Item
+                        type="button"
+                        href="#/action-2"
+                        data-index={item.id}
+                        onClick={renameChannel}
                       >
                         {rename}
                       </Dropdown.Item>
@@ -202,7 +195,7 @@ export const MainPage = () => {
     let activeChannel;
     if (selectorChannels.length > 0) {
       [activeChannel] = selectorChannels.filter(
-        channel => channel.id === selectorActiveChannel
+        (channel) => channel.id === selectorActiveChannel
       );
     } else {
       return;
@@ -319,11 +312,10 @@ export const MainPage = () => {
     <>
       <div className="container h-100 my-4 overflow-hidden rounded shadow">
         <div className="row h-100 bg-white flex-md-row">
-          <I18nextProvider i18n={i18n} defaultNS={"translation"}>
-            <Channels />
-            <Chats />
-            <RenderModal value={typeModal} />
-          </I18nextProvider>
+          <Channels />
+          <Chats />
+          {typeModal ? 
+            <RenderModal value={typeModal} /> : null}
         </div>
       </div>
     </>
