@@ -12,7 +12,8 @@ import { Formik, ErrorMessage } from "formik";
 import { userContext } from "../../index.js";
 import { useTranslation } from "react-i18next";
 
-const AddChannel = (channelNull, setModal) => {
+const AddChannel = (params) => {
+  const { setModalNull } = params;
   const selectorChannels = useSelector((state) => state.channelsSlice.channels);
   const [showAlert, setShowAlert] = useState(false);
   const { socket } = useContext(userContext).socket;
@@ -29,7 +30,7 @@ const AddChannel = (channelNull, setModal) => {
   const [show, setShow] = useState(true);
   const close = () => {
     setShow(false);
-    setModal();
+    setModalNull();
   };
   
   const Schema = Yup.object().shape({

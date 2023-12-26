@@ -1,16 +1,20 @@
 import React, { useState, useContext, useEffect, useRef } from "react";
 import * as Yup from "yup";
 import { useSelector } from "react-redux";
-import { Button, ButtonGroup, Form, Alert, Modal } from "react-bootstrap";
+//import { Button, ButtonGroup, Form, Alert, Modal } from "react-bootstrap";
+import { Button, ButtonGroup, Form, Modal } from "react-bootstrap";
 import { Formik, ErrorMessage } from "formik";
 import { userContext } from "../../index.js";
 import { useTranslation } from "react-i18next";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const RenameChannel = (channelNumber, setModal) => {
+//const notify = () => toast('channelRenamed');
+
+const RenameChannel = (params) => {
+  const { channelNumber, setModalNull } = params;
   const selectorChannels = useSelector((state) => state.channelsSlice.channels);
-  const [showAlert, setShowAlert] = useState(false);
+//  const [showAlert, setShowAlert] = useState(false);
   const { socket } = useContext(userContext).socket;
   const newSocket = socket;
   const { t } = useTranslation();
@@ -19,19 +23,18 @@ const RenameChannel = (channelNumber, setModal) => {
   const rename = t("rename.rename");
   const cancel = t("rename.cancel");
   const send = t("rename.send");
-  const channel = t("rename.channel");
-  const notRenamed = t("rename.notRenamed");
+  //const channel = t("rename.channel");
+  //const notRenamed = t("rename.notRenamed");
 
   const [show, setShow] = useState(true);
   const close = () => {
     setShow(false);
-    setModal();
+    setModalNull();
   };
 
   const channelRenamed = t("toasts.channelRenamed");
   //const channelNotRenamed = t("rename.channelNotRenamed");
-  const notify = () =>
-    toast(channelRenamed, { theme: "light", autoClose: 5000 });
+  // const notify = () => toast(channelRenamed);
 
   const [renamingChannel] = selectorChannels.filter(
     (channel) => channel.id === +channelNumber
@@ -52,6 +55,15 @@ const RenameChannel = (channelNumber, setModal) => {
   useEffect(() => {
     inpChannel.current?.select();
   }, []);
+
+  const [st, setSt] = useState(false);
+  useEffect(() => {
+    console.log('st==', st)
+    const notify = () => toast(channelRenamed, {
+      autoClose: 1000,
+    });
+    notify();
+  }, [st, channelRenamed]);
 
   return (
     <>
@@ -75,9 +87,11 @@ const RenameChannel = (channelNumber, setModal) => {
                 };
                 newSocket.emit("renameChannel", renamingChannel, (response) => {
                   const { status } = response;
-                  setShowAlert(status === "ok" ? false : true);
+                 // setShowAlert(status === "ok" ? false : true);
                   if (status === "ok") {
-                    notify();
+                    //notify();
+                    setSt(true);
+                    console.log('status === ok', st)
                   }
                   console.log(
                     status === "ok"
@@ -87,7 +101,6 @@ const RenameChannel = (channelNumber, setModal) => {
                 });
                 close();
                 setSubmitting(false);
-                //notify();
               }}
             >
               {({ values, handleChange, handleSubmit, touched, errors }) => (
@@ -130,7 +143,23 @@ const RenameChannel = (channelNumber, setModal) => {
                     </div>
                   </Form>
 
-                  {showAlert ? (
+                
+                </>
+              )}
+            </Formik>
+          </Modal.Body>
+        </Modal>
+      </div>
+    </>
+  );
+};
+
+export default RenameChannel;
+
+
+
+/*
+  {showAlert ? (
                     <Alert
                       key="danger"
                       variant="danger"
@@ -144,14 +173,4 @@ const RenameChannel = (channelNumber, setModal) => {
                       {notRenamed}
                     </Alert>
                   ) : null}
-                </>
-              )}
-            </Formik>
-          </Modal.Body>
-        </Modal>
-      </div>
-    </>
-  );
-};
-
-export default RenameChannel;
+*/

@@ -25,9 +25,8 @@ export const MainPage = () => {
   );
   const dispatch = useDispatch();
   const [showAlert, setShowAlert] = useState(false);
-  //const [showRemove, setShowRemove] = useState(false);
   const [channelNumber, setChannelNumber] = useState(null);
-  const [typeModal, setTypeModal] = useState("null");
+  const [typeModal, setTypeModal] = useState(null);
   const { t } = useTranslation();
   const channels = t("main.channels");
   const channelManage = t("main.channelManage");
@@ -45,14 +44,9 @@ export const MainPage = () => {
 
   const removeOneChannel = (e) => {
     e.preventDefault();
-   // setShowRemove(true);
     setTypeModal("removing");
     setChannelNumber(e.target.getAttribute("data-index"));
   };
-
-  /*const closeRemove = () => {
-    setShowRemove(false);
-  };*/
 
   const renameChannel = (e) => {
     e.preventDefault();
@@ -65,20 +59,12 @@ export const MainPage = () => {
   };
 
   const RenderModal = (props) => {
-    const { value } = props;
-    console.log('props=', props)
-    const getModalValue = getModal(value);
-   // return getModalValue(channelNumber, setModalNull);
-    switch (value) {
-      case "adding":
-        return getModalValue(channelNumber, setModalNull);
-      case "renaming":
-        return getModalValue(channelNumber, setModalNull);
-      case "removing":
-        return getModalValue(channelNumber, setModalNull);
-      default:
-        return null;
+    const getModalValue = getModal(props.value);
+    const params = {
+      channelNumber,
+      setModalNull,
     }
+    return getModalValue(params) || null;
   };
 
   RenderModal.propTypes = {
@@ -314,8 +300,7 @@ export const MainPage = () => {
         <div className="row h-100 bg-white flex-md-row">
           <Channels />
           <Chats />
-          {typeModal ? 
-            <RenderModal value={typeModal} /> : null}
+          {typeModal ? <RenderModal value={typeModal} /> : null}
         </div>
       </div>
     </>

@@ -3,7 +3,8 @@ import { Button, ButtonGroup, Form, Alert, Modal } from "react-bootstrap";
 import { userContext } from "../../index.js";
 import { useTranslation } from "react-i18next";
 
-const RemoveChannel = (channelNumber, setModal) => {
+const RemoveChannel = (params) => {
+  const { channelNumber, setModalNull } = params;
   const [showAlert, setShowAlert] = useState(false);
   const { socket } = useContext(userContext).socket;
   const newSocket = socket;
@@ -18,7 +19,7 @@ const RemoveChannel = (channelNumber, setModal) => {
   const [show, setShow] = useState(true);
   const close = () => {
     setShow(false);
-    setModal();
+    setModalNull();
   };
 
   const handleRemove = () => {
