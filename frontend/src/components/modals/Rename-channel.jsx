@@ -34,7 +34,7 @@ const RenameChannel = (params) => {
 
   const channelRenamed = t("toasts.channelRenamed");
   //const channelNotRenamed = t("rename.channelNotRenamed");
-  // const notify = () => toast(channelRenamed);
+   const notify = () => toast(channelRenamed);
 
   const [renamingChannel] = selectorChannels.filter(
     (channel) => channel.id === +channelNumber
@@ -56,14 +56,14 @@ const RenameChannel = (params) => {
     inpChannel.current?.select();
   }, []);
 
-  const [st, setSt] = useState(false);
+  /*const [st, setSt] = useState(false);
   useEffect(() => {
     console.log('st==', st)
     const notify = () => toast(channelRenamed, {
       autoClose: 1000,
     });
     notify();
-  }, [st, channelRenamed]);
+  }, [st, channelRenamed]);*/
 
   return (
     <>
@@ -89,9 +89,9 @@ const RenameChannel = (params) => {
                   const { status } = response;
                  // setShowAlert(status === "ok" ? false : true);
                   if (status === "ok") {
-                    //notify();
-                    setSt(true);
-                    console.log('status === ok', st)
+                    notify();
+                    //setSt(true);
+                    //console.log('status === ok', st)
                   }
                   console.log(
                     status === "ok"
