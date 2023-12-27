@@ -24,6 +24,13 @@ import AuthContext from "./components/contexts/index.jsx";
 import useAuth from "./hooks/index.jsx";
 import PropTypes from "prop-types";
 import { useTranslation } from "react-i18next";
+import { Provider, ErrorBoundary } from "@rollbar/react";
+
+const rollbarConfig = {
+  // eslint-disable-next-line no-undef
+  accessToken: process.env.REACT_APP_SECRET_CODE,
+  environment: "production",
+};
 
 const AuthProvider = ({ children }) => {
   const logIn = () => setLoggedIn(true);
@@ -75,7 +82,7 @@ const router = createBrowserRouter(
       <Route
         path="main"
         element={
-          <ChatPage >
+          <ChatPage>
             <MainPage />
           </ChatPage>
         }
@@ -99,24 +106,28 @@ const App = () => {
   });
   
   return (
-    <AuthProvider >
-      <div className="h-100">
-        <div className="h-100" id="chat">
-          <div className="h-100 d-flex flex-column">
-            <nav className="shadow-sm navbar navbar-expand-lg navbar-light bg-white">
-              <div className="container">
-                <a className="navbar-brand" href="/">
-                  Hexlet Chat
-                </a>
-                <OutButton />
+    <Provider config={rollbarConfig}>
+      <ErrorBoundary>
+        <AuthProvider>
+          <div className="h-100">
+            <div className="h-100" id="chat">
+              <div className="h-100 d-flex flex-column">
+                <nav className="shadow-sm navbar navbar-expand-lg navbar-light bg-white">
+                  <div className="container">
+                    <a className="navbar-brand" href="/">
+                      Hexlet Chat
+                    </a>
+                    <OutButton />
+                  </div>
+                </nav>
+                <RouterProvider router={router} />
               </div>
-            </nav>
-            <RouterProvider router={router} />
+            </div>
           </div>
-        </div>
-      </div>
-    </AuthProvider>
+        </AuthProvider>
+      </ErrorBoundary>
+    </Provider>
   );
-}
+};
 
 export default App;

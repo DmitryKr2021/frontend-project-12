@@ -14,6 +14,7 @@ import SvgPlus from "./svg/Svg-plus.jsx";
 import SvgSend from "./svg/Svg-send.jsx";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import filter from "leo-profanity";
 
 export const MainPage = () => {
   const { socket } = useContext(userContext);
@@ -223,7 +224,7 @@ export const MainPage = () => {
               initialValues={{ message: "" }}
               onSubmit={(values, { setSubmitting }) => {
                 const newMessage = {
-                  body: values.message,
+                  body: filter.clean(values.message),
                   channelId: selectorActiveChannel,
                   username: "admin",
                 };

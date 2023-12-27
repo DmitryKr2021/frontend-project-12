@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Formik, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { Button, Form } from "react-bootstrap";
@@ -22,8 +22,14 @@ const LoginPage = () => {
   const registration = t("login.registration");
 
   const Schema = Yup.object().shape({
-    username: Yup.string().min(3, loginLength).max(20, loginLength).required(required),
-    password: Yup.string().min(5, passwordLength).max(20, passwordLength).required(required),
+    username: Yup.string()
+      .min(3, loginLength)
+      .max(20, loginLength)
+      .required(required),
+    password: Yup.string()
+      .min(5, passwordLength)
+      .max(20, passwordLength)
+      .required(required),
   });
 
   const msgClass = cn("invalid-tooltip");
@@ -37,6 +43,8 @@ const LoginPage = () => {
   }, [auth, navigate, auth.loggedIn]);
 
   const inpName = useRef();
+
+  const [loginError, setLoginError] = useState(false);
 
   return (
     <Formik
@@ -60,6 +68,7 @@ const LoginPage = () => {
                 username: serverError,
                 password: serverError,
               });
+              setLoginError(true);
               console.log(error.response.data);
               console.log(error.response.status);
               console.log(error.response.headers);
@@ -118,7 +127,7 @@ const LoginPage = () => {
                             {(msg) => (
                               <div
                                 className={
-                                  errors.username === serverError
+                                  loginError
                                     ? msgClass + " visually-hidden"
                                     : msgClass
                                 }
@@ -177,3 +186,8 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
+
+/*
+ сделай через useState. Установи что флаг ошибки и по нему рендери рамки (isInvalid пропс)  и сообщение компонентом Form.Control.Feedback 
+onSubmit={(values, { setErrors }) => {
+*/
