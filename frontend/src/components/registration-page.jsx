@@ -25,7 +25,7 @@ const RegistrationPage = () => {
 
   const Schema = Yup.object().shape({
     username: Yup.string().min(3, loginLength).max(20, loginLength).required(required),
-    password: Yup.string().min(5, passwordLength).max(20, passwordLength).required(required),
+    password: Yup.string().min(6, passwordLength).max(20, passwordLength).required(required),
     repeatPassword: Yup.string()
       .required(required)
       .oneOf([Yup.ref("password"), null], coincidePass),

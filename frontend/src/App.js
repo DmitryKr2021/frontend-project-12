@@ -104,7 +104,7 @@ const App = () => {
     const body = document.querySelector("body");
     body.className = "bg-light h-100";
   });
-  
+
   return (
     <Provider config={rollbarConfig}>
       <ErrorBoundary>

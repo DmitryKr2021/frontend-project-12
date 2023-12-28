@@ -27,7 +27,7 @@ const LoginPage = () => {
       .max(20, loginLength)
       .required(required),
     password: Yup.string()
-      .min(5, passwordLength)
+      .min(6, passwordLength)
       .max(20, passwordLength)
       .required(required),
   });
@@ -186,8 +186,3 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
-
-/*
- сделай через useState. Установи что флаг ошибки и по нему рендери рамки (isInvalid пропс)  и сообщение компонентом Form.Control.Feedback 
-onSubmit={(values, { setErrors }) => {
-*/

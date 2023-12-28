@@ -86,8 +86,6 @@ export const MainPage = () => {
             },
           })
           .then((response) => {
-            console.log("response.data=", response.data);
-            console.log("response.status=", response.status);
             dispatch(renderMessages(response.data));
             dispatch(renderChannels(response.data));
           })
