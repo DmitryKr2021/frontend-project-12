@@ -78,7 +78,7 @@ const router = createBrowserRouter(
       />
       <Route path="login" element={<LoginPage />} />
       <Route path="conflict" element={<ConflictPage />} />
-      <Route path="registration" element={<RegistrationPage />} />
+      <Route path="signup" element={<RegistrationPage />} />
       <Route
         path="main"
         element={

@@ -172,7 +172,7 @@ const LoginPage = () => {
                   <div className="card-footer p-4">
                     <div className="text-center">
                       <span>{noAccount}</span>
-                      <Link to="/registration">{registration}</Link>
+                      <Link to="/signup">{registration}</Link>
                     </div>
                   </div>
                 </div>

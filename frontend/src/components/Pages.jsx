@@ -6,7 +6,7 @@ const pageLoader = () => {
 };
 
 export { MainPage, pageLoader };
-export { default as LoginPage } from "./login-page";
-export { default as ErrorPage } from "./error-page";
-export { default as ConflictPage } from "./conflict-page";
-export { default as RegistrationPage } from "./registration-page";
+export { default as LoginPage } from "./LoginPage";
+export { default as ErrorPage } from "./ErrorPage";
+export { default as ConflictPage } from "./ConflictPage";
+export { default as RegistrationPage } from "./RegistrationPage";

@@ -20,18 +20,7 @@ import {
 export const userContext = createContext();
 const { dispatch } = store;
 
-/*export const i18n = i18next
-  .use(initReactI18next) // передаем экземпляр i18n в react-i18next, который сделает его доступным для всех компонентов через context API.
-  .init({
-    resources: { ru },
-    fallbackLng: "ru",
-    interpolation: {
-      escapeValue: false, // экранирование уже есть в React, поэтому отключаем
-    },
-  });*/
-
 const runApp = async () => {
-
 
   const i18n = i18next.createInstance();
   await i18n
@@ -43,7 +32,6 @@ const runApp = async () => {
       escapeValue: false, // экранирование уже есть в React, поэтому отключаем
     },
   });
-
 
   const root = ReactDOM.createRoot(document.getElementById("root"));
   const socket = new io();

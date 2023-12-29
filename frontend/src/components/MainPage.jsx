@@ -10,8 +10,8 @@ import { useTranslation } from "react-i18next";
 import { userContext } from "../index.js";
 import getModal from "./modals/index.js";
 import PropTypes from "prop-types";
-import SvgPlus from "./svg/Svg-plus.jsx";
-import SvgSend from "./svg/Svg-send.jsx";
+import SvgPlus from "./svg/SvgPlus.jsx";
+import SvgSend from "./svg/SvgSend.jsx";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import filter from "leo-profanity";
@@ -228,13 +228,7 @@ export const MainPage = () => {
                 };
                 newSocket.emit("newMessage", newMessage, (response) => {
                   const { status } = response;
-                  const { body } = newMessage;
                   setShowAlert(status === "ok" ? false : true);
-                  console.log(
-                    status === "ok"
-                      ? `Сообщение ${body} доставлено`
-                      : `Сообщение ${body} не доставлено`
-                  );
                 });
                 setSubmitting(false);
               }}
