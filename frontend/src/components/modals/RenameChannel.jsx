@@ -83,6 +83,7 @@ const RenameChannel = (params) => {
                     <div className="input-group has-validation">
                       <Form.Control
                         name="channel"
+                        id="name"
                         aria-label={rename}
                         title={rename}
                         onChange={handleChange}
@@ -92,6 +93,7 @@ const RenameChannel = (params) => {
                         autoFocus
                         required
                       />
+                      <label className="visually-hidden" htmlFor="name">Имя канала</label>
                       <ErrorMessage name="channel">
                         {(msg) => <div className=" invalid-tooltip">{msg}</div>}
                       </ErrorMessage>
