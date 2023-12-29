@@ -20,7 +20,6 @@ import {
   ConflictPage,
 } from './components/Pages';
 
-import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap';
 import AuthContext from './components/contexts/index.jsx';
@@ -56,7 +55,7 @@ const ChatPage = ({ children }) => {
   return auth.loggedIn ? (
     children
   ) : (
-    <Navigate to='/login' state={{ from: location }} replace={true} />
+    <Navigate to="/login" state={{ from: location }} replace={true} />
   );
 };
 
@@ -66,7 +65,7 @@ ChatPage.propTypes = {
 
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route path='/' element={null}>
+    <Route path="/" element={null}>
       <Route
         index
         loader={pageLoader}
@@ -76,18 +75,18 @@ const router = createBrowserRouter(
           </ChatPage>
         }
       />
-      <Route path='login' element={<LoginPage />} />
-      <Route path='conflict' element={<ConflictPage />} />
-      <Route path='signup' element={<RegistrationPage />} />
+      <Route path="login" element={<LoginPage />} />
+      <Route path="conflict" element={<ConflictPage />} />
+      <Route path="signup" element={<RegistrationPage />} />
       <Route
-        path='main'
+        path="main"
         element={
           <ChatPage>
             <MainPage />
           </ChatPage>
         }
       />
-      <Route path='*' element={<ErrorPage />} />
+      <Route path="*" element={<ErrorPage />} />
     </Route>
   )
 );
@@ -95,26 +94,26 @@ const router = createBrowserRouter(
 const OutButton = () => {
   const auth = useAuth();
   const { t } = useTranslation();
-  const goOut = t('app.goOut');
+  const goOut = t("app.goOut");
   return auth.loggedIn ? <Button onClick={auth.logOut}>{goOut}</Button> : null;
 };
 
 const App = () => {
   useEffect(() => {
-    const body = document.querySelector('body');
-    body.className = 'bg-light h-100';
+    const body = document.querySelector("body");
+    body.className = "bg-light h-100";
   });
 
   return (
     <Provider config={rollbarConfig}>
       <ErrorBoundary>
         <AuthProvider>
-          <div className='h-100'>
-            <div className='h-100' id='chat'>
-              <div className='h-100 d-flex flex-column'>
-                <nav className='shadow-sm navbar navbar-expand-lg navbar-light bg-white'>
-                  <div className='container'>
-                    <a className='navbar-brand' href='/'>
+          <div className="h-100">
+            <div className="h-100" id="chat">
+              <div className="h-100 d-flex flex-column">
+                <nav className="shadow-sm navbar navbar-expand-lg navbar-light bg-white">
+                  <div className="container">
+                    <a className="navbar-brand" href="/">
                       Hexlet Chat
                     </a>
                     <OutButton />

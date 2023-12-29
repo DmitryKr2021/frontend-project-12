@@ -67,79 +67,79 @@ const LoginPage = () => {
         touched,
         errors,
       }) => (
-        <div className='d-flex flex-column'>
-          <div className='container-fluid h-100'>
+        <div className="d-flex flex-column">
+          <div className="container-fluid h-100">
             <div
-              className='row justify-content-center align-content-center h-100'
+              className="row justify-content-center align-content-center h-100"
               style={{ marginTop: 200 }}
             >
-              <div className='col-12 col-md-8 col-xxl-6'>
-                <div className='card shadow-sm'>
-                  <div className='card-body row p-5'>
-                    <div className='col-12 col-md-6 d-flex align-items-center justify-content-center'>
+              <div className="col-12 col-md-8 col-xxl-6">
+                <div className="card shadow-sm">
+                  <div className="card-body row p-5">
+                    <div className="col-12 col-md-6 d-flex align-items-center justify-content-center">
                       <img
                         src={img}
-                        className='rounded-circle'
-                        alt='Войти/Enter'
+                        className="rounded-circle"
+                        alt="Войти/Enter"
                       />
                     </div>
                     <Form
                       onSubmit={handleSubmit}
-                      className='col-12 col-md-6 mt-3 mt-mb-0'
+                      className="col-12 col-md-6 mt-3 mt-mb-0"
                     >
-                      <h1 className='text-center mb-4'>{enter}</h1>
-                      <Form.Group className='mb-3'>
-                        <div className='form-floating mb-3'>
+                      <h1 className="text-center mb-4">{enter}</h1>
+                      <Form.Group className="mb-3">
+                        <div className="form-floating mb-3">
                           <Form.Control
-                            name='username'
-                            autoComplete='username'
+                            name="username"
+                            autoComplete="username"
                             required
                             placeholder={nik}
-                            id='username'
-                            {...getFieldProps('username')}
+                            id="username"
+                            {...getFieldProps("username")}
                             isInvalid={touched.username && errors.username}
                             autoFocus
                             ref={inpName}
                           />
-                          <Form.Label htmlFor='username'>{nik}</Form.Label>
+                          <Form.Label htmlFor="username">{nik}</Form.Label>
                           
                         </div>
                       </Form.Group>
-                      <Form.Group className='mb-3'>
-                        <div className='form-floating mb-3'>
+                      <Form.Group className="mb-3">
+                        <div className="form-floating mb-3">
                           <Form.Control
-                            name='password'
-                            type='password'
-                            autoComplete='password'
+                            name="password"
+                            type="password"
+                            autoComplete="password"
                             placeholder={password}
                             required
-                            id='password'
-                            {...getFieldProps('password')}
+                            id="password"
+                            {...getFieldProps("password")}
                             isInvalid={touched.password && errors.password}
                           />
-                          <Form.Label htmlFor='password'>{password}</Form.Label>
-                          <ErrorMessage name='password'>
+                          <Form.Label htmlFor="password">{password}</Form.Label>
+                          <ErrorMessage name="password">
                             {(msg) => (
-                              <div className='invalid-tooltip'>{msg}</div>
+                              <div className="invalid-tooltip">{msg}</div>
                             )}
                           </ErrorMessage>
                         </div>
                       </Form.Group>
 
                       <Button
-                        type='submit'
-                        className='w-100 mb-3 btn btn-outline-primary'
-                        variant='outline-primary'
+                        type="submit"
+                        className="w-100 mb-3 btn btn-outline-primary"
+                        variant="outline-primary"
                         //disabled={isSubmitting}
                       >
                         {enter}
                       </Button>
                     </Form>
                   </div>
-                  <div className='card-footer p-4'>
-                    <div className='text-center'>
+                  <div className="card-footer p-4">
+                    <div className="text-center">
                       <span>{noAccount}</span>
-                      <Link to='/signup'>{registration}</Link>
+                      <Link to="/signup">{registration}</Link>
                     </div>
                   </div>
                 </div>

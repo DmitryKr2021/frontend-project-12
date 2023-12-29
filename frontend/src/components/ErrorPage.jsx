@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import img from '../imgs/search.webp';
 
-export default function ErrorPage() {
+const ErrorPage = () => {
 const navigate = useNavigate();
 
   return (
@@ -22,6 +22,7 @@ const navigate = useNavigate();
         404 Page Not Found
       </p>
       <img
+      alt="search"
         src={img}
         style={{
           marginLeft: '50%',
@@ -42,3 +43,4 @@ const navigate = useNavigate();
     </div>
   );
 }
+export default ErrorPage;
