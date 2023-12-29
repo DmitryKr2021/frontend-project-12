@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { Formik, ErrorMessage } from "formik";
 //import * as Yup from "yup";
 import { Button, Form } from "react-bootstrap";
@@ -6,7 +6,7 @@ import img from "../imgs/autorization.jpg";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../hooks/index.jsx";
-import cn from "classnames";
+//import cn from "classnames";
 import { useTranslation } from "react-i18next";
 
 const LoginPage = () => {
@@ -32,7 +32,7 @@ const LoginPage = () => {
       .required(required),
   });*/
 
-  const msgClass = cn("invalid-tooltip");
+  //const msgClass = cn("invalid-tooltip");
   const auth = useAuth();
   const navigate = useNavigate();
   useEffect(() => {
@@ -44,7 +44,7 @@ const LoginPage = () => {
 
   const inpName = useRef();
 
-  const [loginError, setLoginError] = useState(false);
+  //const [loginError, setLoginError] = useState(false);
 
   return (
     <Formik
@@ -68,7 +68,7 @@ const LoginPage = () => {
                 username: serverError,
                 password: serverError,
               });
-              setLoginError(true);
+              //setLoginError(true);
               console.log(error.response.data);
               console.log(error.response.status);
               console.log(error.response.headers);
@@ -123,19 +123,7 @@ const LoginPage = () => {
                             ref={inpName}
                           />
                           <Form.Label htmlFor="username">{nik}</Form.Label>
-                          <ErrorMessage name="username">
-                            {(msg) => (
-                              <div
-                                className={
-                                  loginError
-                                    ? msgClass + " visually-hidden"
-                                    : msgClass
-                                }
-                              >
-                                {msg}
-                              </div>
-                            )}
-                          </ErrorMessage>
+                          
                         </div>
                       </Form.Group>
                       <Form.Group className="mb-3">
@@ -186,3 +174,18 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
+/*
+<ErrorMessage name="username">
+                            {(msg) => (
+                              <div
+                                className={
+                                  loginError
+                                    ? msgClass + " visually-hidden"
+                                    : msgClass
+                                }
+                              >
+                                {msg}
+                              </div>
+                            )}
+                          </ErrorMessage>
+*/
