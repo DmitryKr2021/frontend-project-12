@@ -13,8 +13,8 @@ export default {
       channelNotRenamed: "Канал не переименован",
       channelAdded: "Канал создан",
       channelNotAdded: "Канал не создан",
-      channelRemoved: "Канал удален",
-      channelNotRemoved: "Канал не удален",
+      channelRemoved: "Канал удалён",
+      channelNotRemoved: "Канал не удалён",
       dataNotLoaded: "Ошибка соединения",
     },
     errors: {
