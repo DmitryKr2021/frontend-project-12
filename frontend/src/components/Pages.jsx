@@ -1,9 +1,7 @@
 import React from 'react';
 import { MainPage } from './MainPage';
 
-const pageLoader = () => {
-  return (<h3>Loading...</h3>)
-};
+const pageLoader = () => <h3>Loading...</h3>;
 
 export { MainPage, pageLoader };
 export { default as LoginPage } from './LoginPage';

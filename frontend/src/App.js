@@ -32,12 +32,12 @@ const rollbarConfig = {
 };
 
 const AuthProvider = ({ children }) => {
+  const [loggedIn, setLoggedIn] = useState(false);
   const logIn = () => setLoggedIn(true);
   const logOut = () => {
     setLoggedIn(false);
     localStorage.removeItem('user');
   };
-  const [loggedIn, setLoggedIn] = useState(false);
   return (
     <AuthContext.Provider value={{ loggedIn, logIn, logOut }}>
       {children}
@@ -55,7 +55,7 @@ const ChatPage = ({ children }) => {
   return auth.loggedIn ? (
     children
   ) : (
-    <Navigate to="/login" state={{ from: location }} replace={true} />
+    <Navigate to="/login" state={{ from: location }} replace />
   );
 };
 
@@ -69,10 +69,10 @@ const router = createBrowserRouter(
       <Route
         index
         loader={pageLoader}
-        element={
+        element={(
           <ChatPage>
             <MainPage />
-          </ChatPage>
+          </ChatPage>)
         }
       />
       <Route path="login" element={<LoginPage />} />
@@ -80,28 +80,28 @@ const router = createBrowserRouter(
       <Route path="signup" element={<RegistrationPage />} />
       <Route
         path="main"
-        element={
+        element={(
           <ChatPage>
             <MainPage />
-          </ChatPage>
+          </ChatPage>)
         }
       />
       <Route path="*" element={<ErrorPage />} />
-    </Route>
-  )
+    </Route>,
+  ),
 );
 
 const OutButton = () => {
   const auth = useAuth();
   const { t } = useTranslation();
-  const goOut = t("app.goOut");
+  const goOut = t('app.goOut');
   return auth.loggedIn ? <Button onClick={auth.logOut}>{goOut}</Button> : null;
 };
 
 const App = () => {
   useEffect(() => {
     const body = document.querySelector("body");
-    body.className = "bg-light h-100";
+    body.className = 'bg-light h-100';
   });
 
   return (

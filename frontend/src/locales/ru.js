@@ -1,7 +1,7 @@
 export default {
   translation: {
     app: {
-      goOut: 'Выйти', 
+      goOut: 'Выйти',
     },
     messages: {
       msg_one: '{{count}} сообщение',
@@ -68,4 +68,3 @@ export default {
     },
   },
 };
-

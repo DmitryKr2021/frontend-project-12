@@ -1,11 +1,11 @@
 import React, { useEffect, useRef } from 'react';
 import { Formik, ErrorMessage } from 'formik';
 import { Button, Form } from 'react-bootstrap';
-import img from '../imgs/autorization.jpg';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
-import useAuth from '../hooks/index.jsx';
 import { useTranslation } from 'react-i18next';
+import useAuth from '../hooks/index.jsx';
+import img from '../imgs/autorization.jpg';
 
 const LoginPage = () => {
   const { t } = useTranslation();
@@ -56,12 +56,10 @@ const LoginPage = () => {
             } else {
               console.log('Error', error.message);
             }
-            // throw error;
           });
       }}
     >
       {({
-        //isSubmitting,
         handleSubmit,
         getFieldProps,
         touched,
@@ -102,7 +100,6 @@ const LoginPage = () => {
                             ref={inpName}
                           />
                           <Form.Label htmlFor="username">{nik}</Form.Label>
-                          
                         </div>
                       </Form.Group>
                       <Form.Group className="mb-3">
@@ -130,7 +127,6 @@ const LoginPage = () => {
                         type="submit"
                         className="w-100 mb-3 btn btn-outline-primary"
                         variant="outline-primary"
-                        //disabled={isSubmitting}
                       >
                         {enter}
                       </Button>

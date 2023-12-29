@@ -28,16 +28,17 @@ const ConflictPage = () => {
           marginLeft: "50%",
           transform: "translateX(-50%)",
         }}
-      ></img>
+      />
       <button
         style={{
-          margin: "50px",
-          marginLeft: "50%",
-          transform: "translateX(-50%)",
-          padding: "10px",
-          cursor: "pointer",
+          margin: '50px',
+          marginLeft: '50%',
+          transform: 'translateX(-50%)',
+          padding: '10px',
+          cursor: 'pointer',
         }}
-        onClick={() => navigate("/", { replace: false })}
+        type='button'
+        onClick={() => navigate('/', { replace: false })}
       >
         Return to MAIN
       </button>
