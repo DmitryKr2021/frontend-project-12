@@ -47,10 +47,10 @@ const AddChannel = (params) => {
         <Modal.Body>
           <Formik
             validationSchema={Schema}
-            initialValues={{ channel: "" }}
+            initialValues={{ name: "" }}
             onSubmit={(values, { setSubmitting }) => {
               const newChannel = {
-                name: values.channel,
+                name: values.name,
               };
               newSocket.emit("newChannel", newChannel, (response) => {
                 const { status } = response;
@@ -68,7 +68,6 @@ const AddChannel = (params) => {
               <>
                 <Form noValidate="" onSubmit={handleSubmit}>
                   <div className="input-group has-validation">
-                  <label className="visually-hidden" htmlFor="name">Имя канала</label>
                     <Form.Control
                       name="name"
                       id="name"
@@ -80,6 +79,7 @@ const AddChannel = (params) => {
                       required
                       title={addChannel}
                     />
+                     <label className="visually-hidden" htmlFor="name">Имя канала</label>
                     <ErrorMessage name="channel">
                       {(msg) => <div className=" invalid-tooltip">{msg}</div>}
                     </ErrorMessage>
