@@ -23,7 +23,7 @@ export default {
       passwordLength: "Не менее 6 символов",
       channelLength: "От 3 до 20 символов",
       required: "Обязательное поле",
-      coincidePass: "Пароли должен совпадать",
+      coincidePass: "Пароли должны совпадать",
       uniqName: "Имя должно быть уникальным",
     },
     login: {
