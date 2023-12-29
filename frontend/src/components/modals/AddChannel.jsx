@@ -68,8 +68,10 @@ const AddChannel = (params) => {
               <>
                 <Form noValidate="" onSubmit={handleSubmit}>
                   <div className="input-group has-validation">
+                  <label className="visually-hidden" htmlFor="name">Имя канала</label>
                     <Form.Control
-                      name="channel"
+                      name="name"
+                      id="name"
                       aria-label="Имя канала"
                       onChange={handleChange}
                       value={values.channel}
