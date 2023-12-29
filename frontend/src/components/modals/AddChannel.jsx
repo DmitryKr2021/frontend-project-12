@@ -70,7 +70,7 @@ const AddChannel = (params) => {
                   <div className="input-group has-validation">
                     <Form.Control
                       name="channel"
-                      aria-label="Новый канал"
+                      aria-label="Имя канала"
                       onChange={handleChange}
                       value={values.channel}
                       isInvalid={touched.channel && errors.channel}
