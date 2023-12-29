@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Formik, ErrorMessage } from "formik";
-import * as Yup from "yup";
+//import * as Yup from "yup";
 import { Button, Form } from "react-bootstrap";
 import img from "../imgs/autorization.jpg";
 import axios from "axios";
@@ -12,16 +12,16 @@ import { useTranslation } from "react-i18next";
 const LoginPage = () => {
   const { t } = useTranslation();
   const serverError = t("errors.serverError");
-  const loginLength = t("errors.loginLength");
+  /*const loginLength = t("errors.loginLength");
   const passwordLength = t("errors.passwordLength");
-  const required = t("errors.required");
+  const required = t("errors.required");*/
   const enter = t("login.enter");
   const nik = t("login.nik");
   const password = t("login.password");
   const noAccount = t("login.noAccount");
   const registration = t("login.registration");
 
-  const Schema = Yup.object().shape({
+  /*const Schema = Yup.object().shape({
     username: Yup.string()
       .min(3, loginLength)
       .max(20, loginLength)
@@ -30,7 +30,7 @@ const LoginPage = () => {
       .min(6, passwordLength)
       .max(20, passwordLength)
       .required(required),
-  });
+  });*/
 
   const msgClass = cn("invalid-tooltip");
   const auth = useAuth();
@@ -49,7 +49,7 @@ const LoginPage = () => {
   return (
     <Formik
       initialValues={{ username: "", password: "" }}
-      validationSchema={Schema}
+      //validationSchema={Schema}
       onSubmit={(values, { setErrors }) => {
         axios
           .post("/api/v1/login", {
