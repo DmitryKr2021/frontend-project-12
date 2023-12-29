@@ -1,5 +1,5 @@
-import { createSlice } from "@reduxjs/toolkit";
-import _ from "lodash"
+import { createSlice } from '@reduxjs/toolkit';
+import _ from 'lodash'
 
 const initialState = {
   channels: [],
@@ -7,7 +7,7 @@ const initialState = {
 };
 
 const channelsSlice = createSlice({
-  name: "channels",
+  name: 'channels',
   initialState,
   reducers: {
     renderChannels: (state, action) => {
