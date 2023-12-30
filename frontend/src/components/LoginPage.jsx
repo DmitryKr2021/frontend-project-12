@@ -1,27 +1,27 @@
-import React, { useEffect, useRef } from 'react';
-import { Formik, ErrorMessage } from 'formik';
-import { Button, Form } from 'react-bootstrap';
-import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import useAuth from '../hooks/index.jsx';
-import img from '../imgs/autorization.jpg';
+import React, { useEffect, useRef } from "react";
+import { Formik, ErrorMessage } from "formik";
+import { Button, Form } from "react-bootstrap";
+import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import useAuth from "../hooks/index.jsx";
+import img from "../imgs/autorization.jpg";
 
 const LoginPage = () => {
   const { t } = useTranslation();
-  const serverError = t('errors.serverError');
-  const enter = t('login.enter');
-  const nik = t('login.nik');
-  const password = t('login.password');
-  const noAccount = t('login.noAccount');
-  const registration = t('login.registration');
+  const serverError = t("errors.serverError");
+  const enter = t("login.enter");
+  const nik = t("login.nik");
+  const password = t("login.password");
+  const noAccount = t("login.noAccount");
+  const registration = t("login.registration");
 
   const auth = useAuth();
   const navigate = useNavigate();
   useEffect(() => {
     if (window.localStorage.length > 0) {
       auth.logIn();
-      navigate('/main');
+      navigate("/main");
     }
   }, [auth, navigate, auth.loggedIn]);
 
@@ -29,17 +29,17 @@ const LoginPage = () => {
 
   return (
     <Formik
-      initialValues={{ username: '', password: '' }}
+      initialValues={{ username: "", password: "" }}
       onSubmit={(values, { setErrors }) => {
         axios
-          .post('/api/v1/login', {
+          .post("/api/v1/login", {
             username: values.username,
             password: values.password,
           })
           .then((response) => {
-            window.localStorage.setItem('user', JSON.stringify(response.data));
+            window.localStorage.setItem("user", JSON.stringify(response.data));
             auth.logIn();
-            navigate('/main');
+            navigate("/main");
           })
           .catch((error) => {
             if (error.response) {
@@ -54,14 +54,16 @@ const LoginPage = () => {
             } else if (error.request) {
               console.log(error.request);
             } else {
-              console.log('Error', error.message);
+              console.log("Error", error.message);
             }
           });
       }}
     >
       {({
+        values,
+        handleChange,
+        handleBlur,
         handleSubmit,
-        getFieldProps,
         touched,
         errors,
       }) => (
@@ -94,7 +96,9 @@ const LoginPage = () => {
                             required
                             placeholder={nik}
                             id="username"
-                            {...getFieldProps("username")}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            value={values.username}
                             isInvalid={touched.username && errors.username}
                             autoFocus
                             ref={inpName}
@@ -111,7 +115,9 @@ const LoginPage = () => {
                             placeholder={password}
                             required
                             id="password"
-                            {...getFieldProps("password")}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            value={values.password}
                             isInvalid={touched.password && errors.password}
                           />
                           <Form.Label htmlFor="password">{password}</Form.Label>

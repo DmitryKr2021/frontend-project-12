@@ -2,10 +2,10 @@ import React, { createContext } from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import { Provider } from "react-redux";
-import store from "./slices/index.js";
 import i18next from "i18next";
 import { io } from "socket.io-client";
 import { initReactI18next, I18nextProvider } from "react-i18next";
+import store from "./slices/index.js";
 import App from "./App";
 import ru from "./locales/ru.js";
 import { addNewMessage, removeMessages } from "./slices/messages";
@@ -16,7 +16,7 @@ import {
   renameChannel,
 } from "./slices/channels";
 
-export const userContext = createContext();
+const userContext = createContext();
 const { dispatch } = store;
 
 const runApp = async () => {
@@ -53,12 +53,14 @@ const runApp = async () => {
     <userContext.Provider value={{ socket: { socket } }}>
       <Provider store={store}>
         <React.StrictMode>
-          <I18nextProvider i18n={i18n} defaultNS={"translation"}>
+          <I18nextProvider i18n={i18n} defaultNS="translation">
             <App />
           </I18nextProvider>
         </React.StrictMode>
       </Provider>
-    </userContext.Provider>
+    </userContext.Provider>,
   );
 };
 runApp();
+
+export default userContext;

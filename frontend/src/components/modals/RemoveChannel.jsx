@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { Button, ButtonGroup, Form, Modal } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
-import { userContext } from "../../index.js";
+import userContext from "../../index.js";
 
 const RemoveChannel = (params) => {
   const { channelNumber, setModalNull, setNotify } = params;

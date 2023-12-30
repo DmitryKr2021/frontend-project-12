@@ -12,13 +12,13 @@ import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import { Provider, ErrorBoundary } from '@rollbar/react';
 import {
-  MainPage,
   pageLoader,
   ErrorPage,
   LoginPage,
   RegistrationPage,
   ConflictPage,
 } from './components/Pages';
+import MainPage from './components/MainPage.jsx';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap';

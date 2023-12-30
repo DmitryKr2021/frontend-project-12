@@ -2,5 +2,9 @@
     "cSpell.words": [
         "formik",
         "Signup"
-    ]
+    ],
+    "prettier.singleQuote": false,
+    "yaml.format.singleQuote": true,
+    "html.autoCreateQuotes": false,
+    "prettier.embeddedLanguageFormatting": "off"
 }

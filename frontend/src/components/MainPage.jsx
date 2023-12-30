@@ -1,25 +1,25 @@
-import React, { useEffect, useState, useContext } from 'react';
-import axios from 'axios';
-import { useSelector, useDispatch } from 'react-redux';
-import { Button, Form, ButtonGroup, Alert, Dropdown } from 'react-bootstrap';
-import { Formik } from 'formik';
-import cn from 'classnames';
-import filter from 'leo-profanity';
-import { useTranslation } from 'react-i18next';
-import { userContext } from '../index.js';
-import getModal from './modals/index.js';
-import PropTypes from 'prop-types';
-import SvgPlus from './svg/SvgPlus.jsx';
-import SvgSend from './svg/SvgSend.jsx';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { renderChannels, setActiveChannel } from '../slices/channels.js';
-import { renderMessages } from '../slices/messages.js';
+import React, { useEffect, useState, useContext } from "react";
+import axios from "axios";
+import { useSelector, useDispatch } from "react-redux";
+import { Button, Form, ButtonGroup, Alert, Dropdown } from "react-bootstrap";
+import { Formik } from "formik";
+import cn from "classnames";
+import filter from "leo-profanity";
+import { useTranslation } from "react-i18next";
+import userContext from "../index.js";
+import getModal from "./modals/index.js";
+import PropTypes from "prop-types";
+import SvgPlus from "./svg/SvgPlus.jsx";
+import SvgSend from "./svg/SvgSend.jsx";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { renderChannels, setActiveChannel } from "../slices/channels.js";
+import { renderMessages } from "../slices/messages.js";
 
-export const MainPage = () => {
+const MainPage = () => {
   const { socket } = useContext(userContext);
   const newSocket = socket.socket;
-  const btnClass = cn('w-100', 'rounded-0', 'text-start');
+  const btnClass = cn("w-100", "rounded-0", "text-start");
 
   const selectorChannels = useSelector((state) => state.channelsSlice.channels);
   const selectorMessages = useSelector((state) => state.messagesSlice.messages);
@@ -31,20 +31,20 @@ export const MainPage = () => {
   const [channelNumber, setChannelNumber] = useState(null);
   const [typeModal, setTypeModal] = useState(null);
   const { t } = useTranslation();
-  const channels = t('main.channels');
-  const channelManage = t('main.channelManage');
-  const remove = t('main.remove');
-  const rename = t('main.rename');
-  const enterMessage = t('main.enterMessage');
-  const send = t('main.send');
-  const message = t('main.message');
-  const notDelivered = t('main.notDelivered');
-  const dataNotLoaded = t('toasts.dataNotLoaded');
+  const channels = t("main.channels");
+  const channelManage = t("main.channelManage");
+  const remove = t("main.remove");
+  const rename = t("main.rename");
+  const enterMessage = t("main.enterMessage");
+  const send = t("main.send");
+  const message = t("main.message");
+  const notDelivered = t("main.notDelivered");
+  const dataNotLoaded = t("toasts.dataNotLoaded");
 
   const manageChannel = (manageType) => (e) => {
     e.preventDefault();
     setTypeModal(manageType);
-    setChannelNumber(e.target.getAttribute('data-index'));
+    setChannelNumber(e.target.getAttribute("data-index"));
   };
 
   const setModalNull = () => {
@@ -57,7 +57,8 @@ export const MainPage = () => {
   };
 
   const RenderModal = (props) => {
-    const getModalValue = getModal(props.value);
+    const { value } = props;
+    const getModalValue = getModal(value);
     const params = {
       channelNumber,
       setModalNull,
@@ -77,10 +78,10 @@ export const MainPage = () => {
   useEffect(() => {
     const requestData = async () => {
       if (window.localStorage.length > 0) {
-        const user = window.localStorage.getItem('user');
+        const user = window.localStorage.getItem("user");
         const userToken = JSON.parse(user).token;
         await axios
-          .get('/api/v1/data', {
+          .get("/api/v1/data", {
             headers: {
               Authorization: `Bearer ${userToken}`,
             },
@@ -98,7 +99,7 @@ export const MainPage = () => {
     requestData();
   }, [dispatch, dataNotLoaded]);
 
-  const dropDownClass = cn('square', 'border', 'border-0');
+  const dropDownClass = cn("square", "border", "border-0");
   const Channels = () => {
     return (
       <div className="col-4 col-md-2 border-end px-0 bg-light flex-column h-100 d-flex">
@@ -179,15 +180,19 @@ export const MainPage = () => {
     );
   };
 
+  const getActiveChannel = () => {
+    return selectorChannels.length > 0
+      ? selectorChannels.filter(
+          (channel) => channel.id === selectorActiveChannel
+        )[0]
+      : null;
+  };
+
   const Chats = () => {
-    let activeChannel;
-    if (selectorChannels.length > 0) {
-      [activeChannel] = selectorChannels.filter(
-        (channel) => channel.id === selectorActiveChannel
-      );
-    } else {
+    if (!getActiveChannel()) {
       return;
     }
+    const activeChannel = getActiveChannel();
     const channelMessages = selectorMessages.filter(
       (item) => item.channelId === selectorActiveChannel
     );
@@ -259,7 +264,7 @@ export const MainPage = () => {
                       <Button
                         type="submit"
                         disabled={isSubmitting}
-                        onClick={() => setTimeout(() => resetForm(''), 300)}
+                        onClick={() => setTimeout(() => resetForm(""), 300)}
                         className="btn btn-group-vertical"
                       >
                         <SvgSend />
@@ -303,3 +308,5 @@ export const MainPage = () => {
     </>
   );
 };
+
+export default MainPage;

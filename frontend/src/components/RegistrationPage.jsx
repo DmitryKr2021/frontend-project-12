@@ -60,7 +60,6 @@ const RegistrationPage = () => {
               console.log(error.response.headers);
               return;
             }
-            throw error;
           });
       }}
     >
