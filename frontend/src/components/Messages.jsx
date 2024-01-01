@@ -111,6 +111,7 @@ const Messages = () => {
                 }
               });
               setSubmitting(false);
+              values.message = '';
             }}
           >
             {({
@@ -118,7 +119,6 @@ const Messages = () => {
               handleChange,
               handleSubmit,
               isSubmitting,
-              resetForm,
             }) => (
               <>
                 <Form
@@ -139,7 +139,6 @@ const Messages = () => {
                     <Button
                       type="submit"
                       disabled={isSubmitting}
-                      onClick={() => setTimeout(() => resetForm(''), 300)}
                       className="btn btn-group-vertical"
                     >
                       <SvgSend />
