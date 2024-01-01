@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button, Form } from 'react-bootstrap';
@@ -55,16 +55,19 @@ const Messages = () => {
       ? selectorChannels.filter(
           (channel) => channel.id === selectorActiveChannel,
         )[0]
-      : null;
+      : 1;
   };
 
-  if (!getActiveChannel()) {
-    return;
-  }
   const activeChannel = getActiveChannel();
   const channelMessages = selectorMessages.filter(
     (item) => item.channelId === selectorActiveChannel,
   );
+
+  const inpMessage = useRef();
+  useEffect(() => {
+    inpMessage?.current?.select();
+  }, [activeChannel]);
+
   const messagesLength = channelMessages.length;
   const countMessages = t('messages.msg', { count: messagesLength });
 
@@ -131,7 +134,7 @@ const Messages = () => {
                       className="border-0 p-0 ps-2 form-control"
                       onChange={handleChange}
                       value={values.message}
-                      autoFocus
+                      ref={inpMessage}
                     />
                     <Button
                       type="submit"
