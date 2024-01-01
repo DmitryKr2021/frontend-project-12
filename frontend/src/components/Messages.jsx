@@ -1,38 +1,38 @@
-import React, { useContext, useEffect } from "react";
-import axios from "axios";
-import { useSelector, useDispatch } from "react-redux";
-import { Button, Form } from "react-bootstrap";
-import { Formik } from "formik";
-import filter from "leo-profanity";
-import { useTranslation } from "react-i18next";
-import userContext from "../index.js";
-import SvgSend from "./svg/SvgSend.jsx";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { renderChannels } from "../slices/channels.js";
-import { renderMessages } from "../slices/messages.js";
+import React, { useContext, useEffect } from 'react';
+import axios from 'axios';
+import { useSelector, useDispatch } from 'react-redux';
+import { Button, Form } from 'react-bootstrap';
+import { Formik } from 'formik';
+import filter from 'leo-profanity';
+import { useTranslation } from 'react-i18next';
+import userContext from '../index.js';
+import SvgSend from './svg/SvgSend.jsx';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { renderChannels } from '../slices/channels.js';
+import { renderMessages } from '../slices/messages.js';
 
 const Messages = () => {
   const dispatch = useDispatch();
   const { socket } = useContext(userContext);
   const newSocket = socket.socket;
   const { t } = useTranslation();
-  const enterMessage = t("main.enterMessage");
-  const send = t("main.send");
-  const dataNotLoaded = t("toasts.dataNotLoaded");
+  const enterMessage = t('main.enterMessage');
+  const send = t('main.send');
+  const dataNotLoaded = t('toasts.dataNotLoaded');
   const selectorChannels = useSelector((state) => state.channelsSlice.channels);
   const selectorMessages = useSelector((state) => state.messagesSlice.messages);
   const selectorActiveChannel = useSelector(
-    (state) => state.channelsSlice.activeChannel
+    (state) => state.channelsSlice.activeChannel,
   );
 
   useEffect(() => {
     const requestData = async () => {
       if (window.localStorage.length > 0) {
-        const user = window.localStorage.getItem("user");
+        const user = window.localStorage.getItem('user');
         const userToken = JSON.parse(user).token;
         await axios
-          .get("/api/v1/data", {
+          .get('/api/v1/data', {
             headers: {
               Authorization: `Bearer ${userToken}`,
             },
@@ -53,7 +53,7 @@ const Messages = () => {
   const getActiveChannel = () => {
     return selectorChannels.length > 0
       ? selectorChannels.filter(
-          (channel) => channel.id === selectorActiveChannel
+          (channel) => channel.id === selectorActiveChannel,
         )[0]
       : null;
   };
@@ -63,11 +63,11 @@ const Messages = () => {
   }
   const activeChannel = getActiveChannel();
   const channelMessages = selectorMessages.filter(
-    (item) => item.channelId === selectorActiveChannel
+    (item) => item.channelId === selectorActiveChannel,
   );
   const messagesLength = channelMessages.length;
-  const countMessages = t("messages.msg", { count: messagesLength });
-  
+  const countMessages = t('messages.msg', { count: messagesLength });
+
   return (
     <div className="col p-0 h-100">
       <div className="d-flex flex-column h-100">
@@ -87,22 +87,25 @@ const Messages = () => {
                   </span>
                   {item.body}
                 </li>
-              ) : null
+              ) : null,
             )}
           </ul>
         </div>
         <div className="mt-auto px-5 py-3">
           <Formik
-            initialValues={{ message: "" }}
+            initialValues={{ message: '' }}
             onSubmit={(values, { setSubmitting }) => {
               const newMessage = {
                 body: filter.clean(values.message),
                 channelId: selectorActiveChannel,
-                username: "admin",
+                username: 'admin',
               };
-              newSocket.emit("newMessage", newMessage, (response) => {
+              newSocket.emit('newMessage', newMessage, (response) => {
                 const { status } = response;
-                console.log("status=", status);
+                if (status !== 'ok') {
+                  const notify = () => toast.error(dataNotLoaded);
+                  notify();
+                }
               });
               setSubmitting(false);
             }}
@@ -133,7 +136,7 @@ const Messages = () => {
                     <Button
                       type="submit"
                       disabled={isSubmitting}
-                      onClick={() => setTimeout(() => resetForm(""), 300)}
+                      onClick={() => setTimeout(() => resetForm(''), 300)}
                       className="btn btn-group-vertical"
                     >
                       <SvgSend />

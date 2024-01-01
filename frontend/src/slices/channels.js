@@ -20,7 +20,6 @@ const channelsSlice = createSlice({
     },
     addNewChannel: (state, action) => {
       const { payload } = action;
-
       const newChannels = [...state.channels, payload];
       state.channels = [...newChannels];
     },
