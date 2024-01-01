@@ -27,7 +27,7 @@ const RenameChannel = (params) => {
   const channelNotRenamed = t("rename.channelNotRenamed");
 
   const [renamingChannel] = selectorChannels.filter(
-    (channel) => channel.id === +channelNumber
+    (channel) => channel.id === +channelNumber,
   );
 
   const Schema = Yup.object().shape({
@@ -36,7 +36,7 @@ const RenameChannel = (params) => {
       .max(20, channelLength)
       .notOneOf(
         selectorChannels.map((channel) => channel.name),
-        uniqName
+        uniqName,
       ),
   });
 
@@ -87,7 +87,6 @@ const RenameChannel = (params) => {
                     value={values.channel}
                     ref={inpChannel}
                     isInvalid={touched.channel && errors.channel}
-                    autoFocus
                     required
                   />
                   <label className="visually-hidden" htmlFor="name">

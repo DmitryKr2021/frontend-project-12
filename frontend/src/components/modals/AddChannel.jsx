@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect, useRef } from "react";
 import * as Yup from "yup";
 import { useSelector } from "react-redux";
 import { Button, ButtonGroup, Form, Modal } from "react-bootstrap";
@@ -31,9 +31,14 @@ const AddChannel = (params) => {
       .max(20, channelLength)
       .notOneOf(
         selectorChannels.map((channel) => channel.name),
-        uniqName
+        uniqName,
       ),
   });
+
+  const inpChannel = useRef();
+  useEffect(() => {
+    inpChannel.current?.select();
+  }, []);
 
   return (
     <div className="fade modal show" tabIndex="-1">
@@ -70,8 +75,8 @@ const AddChannel = (params) => {
                     aria-label="Имя канала"
                     onChange={handleChange}
                     value={values.channel}
-                    isInvalid={touched.channel && errors.channel}
-                    autoFocus
+                    ref={inpChannel}
+                    isInvalid={touched.channel && errors.channel}         
                     required
                     title={addChannel}
                   />

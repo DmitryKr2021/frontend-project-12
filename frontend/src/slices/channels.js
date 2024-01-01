@@ -1,5 +1,5 @@
-import { createSlice } from "@reduxjs/toolkit";
-import _ from "lodash";
+import { createSlice } from '@reduxjs/toolkit';
+import _ from 'lodash';
 
 const initialState = {
   channels: [],
@@ -7,7 +7,7 @@ const initialState = {
 };
 
 const channelsSlice = createSlice({
-  name: "channels",
+  name: 'channels',
   initialState,
   reducers: {
     renderChannels: (state, action) => {
@@ -20,7 +20,7 @@ const channelsSlice = createSlice({
     },
     addNewChannel: (state, action) => {
       const { payload } = action;
-      //state.channels = [...state.channels, payload];
+
       const newChannels = [...state.channels, payload];
       state.channels = [...newChannels];
     },
@@ -35,8 +35,10 @@ const channelsSlice = createSlice({
       const { payload } = action;
       const { id } = payload;
       state.channels.map((channel) => {
-        if (channel.id === id) {
-          _.assign(channel, payload);
+        {
+          if (channel.id === id) {
+            _.assign(channel, payload);
+          }
         }
       });
     },

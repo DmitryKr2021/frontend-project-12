@@ -47,8 +47,6 @@ export default {
       rename: 'Переименовать',
       enterMessage: 'Введите сообщение...',
       send: 'Отправить',
-      message: 'Сообщение',
-      notDelivered: 'не доставлено',
     },
     rename: {
       rename: 'Переименовать канал',
