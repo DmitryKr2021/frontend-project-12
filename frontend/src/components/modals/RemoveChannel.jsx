@@ -1,17 +1,22 @@
-import React, { useState, useContext } from "react";
-import { Button, ButtonGroup, Form, Modal } from "react-bootstrap";
-import { useTranslation } from "react-i18next";
-import userContext from "../../index.js";
+import React, { useState, useContext } from 'react';
+import { 
+  Button, 
+  ButtonGroup, 
+  Form, 
+  Modal 
+} from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
+import userContext from '../../index.js';
 
 const RemoveChannel = (params) => {
   const { channelNumber, setModalNull, setNotify } = params;
   const { socket } = useContext(userContext).socket;
   const newSocket = socket;
   const { t } = useTranslation();
-  const removeChannel = t("remove.removeChannel");
-  const remove = t("remove.remove");
-  const sure = t("remove.sure");
-  const cancel = t("remove.cancel");
+  const removeChannel = t('remove.removeChannel');
+  const remove = t('remove.remove');
+  const sure = t('remove.sure');
+  const cancel = t('remove.cancel');
 
   const [show, setShow] = useState(true);
   const close = () => {
@@ -19,16 +24,16 @@ const RemoveChannel = (params) => {
     setModalNull();
   };
 
-  const channelRemoved = t("toasts.channelRemoved");
-  const channelNotRemoved = t("rename.channelNotRemoved");
+  const channelRemoved = t('toasts.channelRemoved');
+  const channelNotRemoved = t('rename.channelNotRemoved');
 
   const handleRemove = () => {
-    newSocket.emit("removeChannel", { id: channelNumber }, (response) => {
+    newSocket.emit('removeChannel', { id: channelNumber }, (response) => {
       const { status } = response;
-      if (status === "ok") {
-        setNotify(channelRemoved, "success");
+      if (status === 'ok') {
+        setNotify(channelRemoved, 'success');
       } else {
-        setNotify(channelNotRemoved, "error");
+        setNotify(channelNotRemoved, 'error');
       }
     });
     close();

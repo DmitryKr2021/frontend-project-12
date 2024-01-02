@@ -1,24 +1,24 @@
-import React, { useRef } from "react";
-import { Formik, ErrorMessage } from "formik";
-import * as Yup from "yup";
-import { Button, Form } from "react-bootstrap";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import useAuth from "../hooks/index.jsx";
-import img from "../imgs/registration.png";
+import React, { useRef } from 'react';
+import { Formik, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
+import { Button, Form } from 'react-bootstrap';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import useAuth from '../hooks/index.jsx';
+import img from '../imgs/registration.png';
 
 const RegistrationPage = () => {
   const { t } = useTranslation();
-  const loginLength = t("errors.loginLength");
-  const passwordLength = t("errors.passwordLength");
-  const required = t("errors.required");
-  const coincidePass = t("errors.coincidePass");
-  const toRegister = t("registration.toRegister");
-  const username = t("registration.username");
-  const password = t("registration.password");
-  const repeatPassword = t("registration.repeatPassword");
-  const registration = t("registration.registration");
+  const loginLength = t('errors.loginLength');
+  const passwordLength = t('errors.passwordLength');
+  const required = t('errors.required');
+  const coincidePass = t('errors.coincidePass');
+  const toRegister = t('registration.toRegister');
+  const username = t('registration.username');
+  const password = t('registration.password');
+  const repeatPassword = t('registration.repeatPassword');
+  const registration = t('registration.registration');
   const navigate = useNavigate();
   const auth = useAuth();
   const inpRepeat = useRef();
@@ -34,31 +34,30 @@ const RegistrationPage = () => {
       .required(required),
     repeatPassword: Yup.string()
       .required(required)
-      .oneOf([Yup.ref("password"), null], coincidePass),
+      .oneOf([Yup.ref('password'), null], coincidePass),
   });
 
   return (
     <Formik
-      initialValues={{ username: "", password: "", repeatPassword: "" }}
+      initialValues={{ username: '', password: '', repeatPassword: '' }}
       validationSchema={Schema}
       onSubmit={(values) => {
         axios
-          .post("/api/v1/signup", {
+          .post('/api/v1/signup', {
             username: values.username,
             password: values.password,
           })
           .then((response) => {
-            window.localStorage.setItem("user", JSON.stringify(response.data));
+            window.localStorage.setItem('user', JSON.stringify(response.data));
             auth.logIn();
-            navigate("/main");
+            navigate('/main');
           })
           .catch((error) => {
             if (error.response) {
-              navigate("/conflict");
+              navigate('/conflict');
               console.log(error.response.data);
               console.log(error.response.status);
               console.log(error.response.headers);
-              return;
             }
           });
       }}

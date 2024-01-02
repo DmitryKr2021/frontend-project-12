@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button, ButtonGroup, Dropdown } from 'react-bootstrap';
 import PropTypes from 'prop-types';
-import SvgPlus from './svg/SvgPlus.jsx';
 import cn from 'classnames';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
+import SvgPlus from './svg/SvgPlus.jsx';
 import { setActiveChannel } from '../slices/channels.js';
 import getModal from './modals/index.js';
 
@@ -19,8 +19,10 @@ const Channels = () => {
   const selectorActiveChannel = useSelector(
     (state) => state.channelsSlice.activeChannel,
   );
-  const btnClass = cn('w-100', 'rounded-0', 'text-start');
-  const dropDownClass = cn('square', 'border', 'border-0');
+  const btnClassLight = cn('w-100', 'rounded-0', 'text-start', 'btn-light');
+  const btnClassSecondary = cn('w-100', 'rounded-0', 'text-start', 'btn-secondary');
+  const dropDownClassLight = cn('square', 'border', 'border-0', 'btn-light');
+  const dropDownClassSecondary = cn('square', 'border', 'border-0', 'btn-secondary');
   const channelManage = t('main.channelManage');
   const remove = t('main.remove');
   const rename = t('main.rename');
@@ -93,9 +95,9 @@ const Channels = () => {
                   onClick={() => handleClick(item.id)}
                   className={
                     item.id === selectorActiveChannel
-                      ? btnClass + ' btn-secondary'
-                      : btnClass + ' btn-light'
-                  }
+                      ? btnClassSecondary
+                      : btnClassLight
+                  }              
                 >
                   <span className="me-1">#</span>
                   {item.name}
@@ -106,8 +108,8 @@ const Channels = () => {
                       aria-labelledby={item.id}
                       className={
                         item.id === selectorActiveChannel
-                          ? dropDownClass + ' btn-secondary'
-                          : dropDownClass + ' btn-light'
+                          ? dropDownClassSecondary
+                          : dropDownClassLight
                       }
                       id="dropdown-basic"
                     >

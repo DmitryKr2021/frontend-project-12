@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import { Provider } from "react-redux";
 import i18next from "i18next";
-import { io } from "socket.io-client";
+import { io as Io } from "socket.io-client";
 import { initReactI18next, I18nextProvider } from "react-i18next";
 import store from "./slices/index.js";
 import App from "./App";
@@ -30,7 +30,7 @@ const runApp = async () => {
   });
 
   const root = ReactDOM.createRoot(document.getElementById("root"));
-  const socket = new io();
+  const socket = new Io();
   await socket.on("newMessage", (payload) => {
     dispatch(addNewMessage(payload));
   });

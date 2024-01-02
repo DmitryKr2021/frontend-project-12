@@ -15,4 +15,10 @@ rules:
   react-hooks/rules-of-hooks: 2
   react-hooks/exhaustive-deps: 1 
   quotes: 0
+  object-curly-newline:
+   - error
+   - ImportDeclaration:
+       multiline: true
+       minProperties: 4
 
+  

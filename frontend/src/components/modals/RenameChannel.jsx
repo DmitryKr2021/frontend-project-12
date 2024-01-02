@@ -1,10 +1,20 @@
-import React, { useState, useContext, useEffect, useRef } from "react";
-import * as Yup from "yup";
-import { useSelector } from "react-redux";
-import { Button, ButtonGroup, Form, Modal } from "react-bootstrap";
-import { Formik, ErrorMessage } from "formik";
-import { useTranslation } from "react-i18next";
-import userContext from "../../index.js";
+import React, { 
+  useState, 
+  useContext, 
+  useEffect, 
+  useRef 
+} from 'react';
+import * as Yup from 'yup';
+import { useSelector } from 'react-redux';
+import { 
+  Button, 
+  ButtonGroup, 
+  Form, 
+  Modal 
+} from 'react-bootstrap';
+import { Formik, ErrorMessage } from 'formik';
+import { useTranslation } from 'react-i18next';
+import userContext from '../../index.js';
 
 const RenameChannel = (params) => {
   const { channelNumber, setModalNull, setNotify } = params;
@@ -12,19 +22,19 @@ const RenameChannel = (params) => {
   const { socket } = useContext(userContext).socket;
   const newSocket = socket;
   const { t } = useTranslation();
-  const channelLength = t("errors.channelLength");
-  const uniqName = t("errors.uniqName");
-  const rename = t("rename.rename");
-  const cancel = t("rename.cancel");
-  const send = t("rename.send");
+  const channelLength = t('errors.channelLength');
+  const uniqName = t('errors.uniqName');
+  const rename = t('rename.rename');
+  const cancel = t('rename.cancel');
+  const send = t('rename.send');
   const [show, setShow] = useState(true);
   const close = () => {
     setShow(false);
     setModalNull();
   };
 
-  const channelRenamed = t("toasts.channelRenamed");
-  const channelNotRenamed = t("rename.channelNotRenamed");
+  const channelRenamed = t('toasts.channelRenamed');
+  const channelNotRenamed = t('rename.channelNotRenamed');
 
   const [renamingChannel] = selectorChannels.filter(
     (channel) => channel.id === +channelNumber,
@@ -63,12 +73,12 @@ const RenameChannel = (params) => {
                 name: values.channel,
                 id: values.id,
               };
-              newSocket.emit("renameChannel", targetChannel, (response) => {
+              newSocket.emit('renameChannel', targetChannel, (response) => {
                 const { status } = response;
-                if (status === "ok") {
-                  setNotify(channelRenamed, "success");
+                if (status === 'ok') {
+                  setNotify(channelRenamed, 'success');
                 } else {
-                  setNotify(channelNotRenamed, "error");
+                  setNotify(channelNotRenamed, 'error');
                 }
               });
               close();

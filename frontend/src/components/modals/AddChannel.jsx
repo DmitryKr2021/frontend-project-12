@@ -1,10 +1,20 @@
-import React, { useState, useContext, useEffect, useRef } from "react";
-import * as Yup from "yup";
-import { useSelector } from "react-redux";
-import { Button, ButtonGroup, Form, Modal } from "react-bootstrap";
-import { Formik, ErrorMessage } from "formik";
-import { useTranslation } from "react-i18next";
-import userContext from "../../index.js";
+import React, { 
+  useState, 
+  useContext, 
+  useEffect, 
+  useRef 
+} from 'react';
+import * as Yup from 'yup';
+import { useSelector } from 'react-redux';
+import { 
+  Button, 
+  ButtonGroup, 
+  Form, 
+  Modal 
+} from 'react-bootstrap';
+import { Formik, ErrorMessage } from 'formik';
+import { useTranslation } from 'react-i18next';
+import userContext from '../../index.js';
 
 const AddChannel = (params) => {
   const { setModalNull, setNotify } = params;
@@ -12,18 +22,18 @@ const AddChannel = (params) => {
   const { socket } = useContext(userContext).socket;
   const newSocket = socket;
   const { t } = useTranslation();
-  const channelLength = t("errors.channelLength");
-  const uniqName = t("errors.uniqName");
-  const addChannel = t("add.addChannel");
-  const cancel = t("add.cancel");
-  const send = t("add.send");
+  const channelLength = t('errors.channelLength');
+  const uniqName = t('errors.uniqName');
+  const addChannel = t('add.addChannel');
+  const cancel = t('add.cancel');
+  const send = t('add.send');
   const [show, setShow] = useState(true);
   const close = () => {
     setShow(false);
     setModalNull();
   };
-  const channelAdded = t("toasts.channelAdded");
-  const channelNotAdded = t("rename.channelNotAdded");
+  const channelAdded = t('toasts.channelAdded');
+  const channelNotAdded = t('rename.channelNotAdded');
 
   const Schema = Yup.object().shape({
     channel: Yup.string()
@@ -49,17 +59,17 @@ const AddChannel = (params) => {
         <Modal.Body>
           <Formik
             validationSchema={Schema}
-            initialValues={{ name: "" }}
+            initialValues={{ name: '' }}
             onSubmit={(values, { setSubmitting }) => {
               const newChannel = {
                 name: values.name,
               };
-              newSocket.emit("newChannel", newChannel, (response) => {
+              newSocket.emit('newChannel', newChannel, (response) => {
                 const { status } = response;
-                if (status === "ok") {
-                  setNotify(channelAdded, "success");
+                if (status === 'ok') {
+                  setNotify(channelAdded, 'success');
                 } else {
-                  setNotify(channelNotAdded, "error");
+                  setNotify(channelNotAdded, 'error');
                 }
               });
               close();
@@ -76,7 +86,7 @@ const AddChannel = (params) => {
                     onChange={handleChange}
                     value={values.channel}
                     ref={inpChannel}
-                    isInvalid={touched.channel && errors.channel}         
+                    isInvalid={touched.channel && errors.channel}
                     required
                     title={addChannel}
                   />
