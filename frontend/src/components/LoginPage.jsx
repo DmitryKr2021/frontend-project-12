@@ -4,8 +4,6 @@ import { Button, Form } from 'react-bootstrap';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-//import useAuth from '../hooks/index.jsx';
-//import img from '../imgs/autorization.jpg';
 import { useAuth, imgLog } from '../internal';
 
 const LoginPage = () => {

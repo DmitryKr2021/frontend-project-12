@@ -5,8 +5,6 @@ import { Button, Form } from 'react-bootstrap';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-//import useAuth from '../hooks/index.jsx';
-//import img from '../imgs/registration.png';
 import { useAuth, imgReg } from '../internal';
 
 const RegistrationPage = () => {

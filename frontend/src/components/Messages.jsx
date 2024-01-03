@@ -8,10 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import userContext from '../index.js';
-//import SvgSend from './svg/SvgSend.jsx';
-/*import { renderChannels } from '../slices/channels.js';
-import { renderMessages } from '../slices/messages.js';*/
-import { SvgSend, renderChannels, renderMessages } from '.././internal.js';
+import { SvgSend, renderChannels, renderMessages } from '../internal.js';
 
 const Messages = () => {
   const dispatch = useDispatch();
