@@ -4,8 +4,9 @@ import { Button, Form } from 'react-bootstrap';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import useAuth from '../hooks/index.jsx';
-import img from '../imgs/autorization.jpg';
+//import useAuth from '../hooks/index.jsx';
+//import img from '../imgs/autorization.jpg';
+import { useAuth, imgLog } from '../internal';
 
 const LoginPage = () => {
   const { t } = useTranslation();
@@ -78,7 +79,7 @@ const LoginPage = () => {
                   <div className="card-body row p-5">
                     <div className="col-12 col-md-6 d-flex align-items-center justify-content-center">
                       <img
-                        src={img}
+                        src={imgLog}
                         className="rounded-circle"
                         alt="Войти/Enter"
                       />

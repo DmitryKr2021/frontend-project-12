@@ -1,8 +1,9 @@
 import React from 'react';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Channels from './Channels.jsx';
-import Messages from './Messages.jsx';
+//import Channels from './Channels.jsx';
+//import Messages from './Messages.jsx';
+import { Channels, Messages } from '../internal';
 
 const MainPage = () => (
   <>

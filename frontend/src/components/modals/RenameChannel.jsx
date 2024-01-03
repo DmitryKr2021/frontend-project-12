@@ -14,7 +14,8 @@ import {
 } from 'react-bootstrap';
 import { Formik, ErrorMessage } from 'formik';
 import { useTranslation } from 'react-i18next';
-import userContext from '../../index.js';
+//import userContext from '../../internal';
+import userContext from '../../index';
 
 const RenameChannel = (params) => {
   const { channelNumber, setModalNull, setNotify } = params;

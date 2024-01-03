@@ -7,14 +7,24 @@ import { io as Io } from 'socket.io-client';
 import { initReactI18next, I18nextProvider } from 'react-i18next';
 import store from './slices/index.js';
 import App from './App';
-import ru from './locales/ru.js';
-import { addNewMessage, removeMessages } from './slices/messages';
-import {
+//import ru from './locales/ru.js';
+//import { addNewMessage, removeMessages } from './slices/messages';
+import { 
+  addNewMessage, 
+  removeMessages, 
+  ru,
   addNewChannel,
   setActiveChannel,
   removeChannel,
   renameChannel,
-} from './slices/channels';
+} from './internal.js';
+/*import {
+  addNewChannel,
+  setActiveChannel,
+  removeChannel,
+  renameChannel,
+} from './slices/channels';*/
+//export * from "./internal.js";
 
 const userContext = createContext();
 const { dispatch } = store;

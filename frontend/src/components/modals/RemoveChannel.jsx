@@ -6,7 +6,8 @@ import {
   Modal,
 } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import userContext from '../../index.js';
+//import userContext from '../../internal';
+import userContext from '../../index';
 
 const RemoveChannel = (params) => {
   const { channelNumber, setModalNull, setNotify } = params;

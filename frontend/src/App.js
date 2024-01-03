@@ -1,4 +1,3 @@
-// eslint-disable react/jsx-no-constructed-context-values
 import React, { useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import {
@@ -12,19 +11,18 @@ import {
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import { Provider, ErrorBoundary } from '@rollbar/react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap';
 import {
   pageLoader,
   ErrorPage,
   LoginPage,
   RegistrationPage,
   ConflictPage,
-} from './components/Pages';
-import MainPage from './components/MainPage.jsx';
-
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap';
-import AuthContext from './components/contexts/index.jsx';
-import useAuth from './hooks/index.jsx';
+  MainPage,
+  AuthContext,
+  useAuth,
+} from './internal.js';
 
 const rollbarConfig = {
   // eslint-disable-next-line no-undef
@@ -32,6 +30,7 @@ const rollbarConfig = {
   environment: 'production',
 };
 
+/* eslint-disable */
 const AuthProvider = ({ children }) => {
   const [loggedIn, setLoggedIn] = useState(false);
   const logIn = () => setLoggedIn(true);
@@ -45,7 +44,7 @@ const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
-
+/* eslint-enable */
 AuthProvider.propTypes = {
   children: PropTypes.node.isRequired,
 };

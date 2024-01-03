@@ -6,11 +6,12 @@ import { Formik } from 'formik';
 import filter from 'leo-profanity';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
-import SvgSend from './svg/SvgSend.jsx';
-import userContext from '../index.js';
 import 'react-toastify/dist/ReactToastify.css';
-import { renderChannels } from '../slices/channels.js';
-import { renderMessages } from '../slices/messages.js';
+import userContext from '../index.js';
+//import SvgSend from './svg/SvgSend.jsx';
+/*import { renderChannels } from '../slices/channels.js';
+import { renderMessages } from '../slices/messages.js';*/
+import { SvgSend, renderChannels, renderMessages } from '.././internal.js';
 
 const Messages = () => {
   const dispatch = useDispatch();
