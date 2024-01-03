@@ -30,10 +30,10 @@ const channelsSlice = createSlice({
     },
     renameChannel: (state, action) => {
       const { payload } = action;
+      console.log('pay=', payload)
       const { id } = payload;
-      state.channels.map((channel) => {
-        channel.id === id && _.assign(channel, payload);
-      });
+      const targetChannel = state.channels.filter((channel) => channel.id === id)[0];
+      _.assign(targetChannel, payload);
     },
   },
 });
