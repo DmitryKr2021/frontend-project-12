@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useMemo } from 'react';
+// eslint-disable react/jsx-no-constructed-context-values
+import React, { useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import {
   createBrowserRouter,
@@ -33,13 +34,13 @@ const rollbarConfig = {
 
 const AuthProvider = ({ children }) => {
   const [loggedIn, setLoggedIn] = useState(false);
-  const logInMemo = useMemo(() => () => setLoggedIn(true), []);
-  const logOutMemo = useMemo(() => () => {
+  const logIn = () => setLoggedIn(true);
+  const logOut = () => {
     setLoggedIn(false);
     localStorage.removeItem('user');
-  }, []);
+  };
   return (
-    <AuthContext.Provider value={{ loggedIn, logInMemo, logOutMemo }}>
+    <AuthContext.Provider value={{ loggedIn, logIn, logOut }}>
       {children}
     </AuthContext.Provider>
   );
@@ -95,7 +96,7 @@ const OutButton = () => {
   const auth = useAuth();
   const { t } = useTranslation();
   const goOut = t('app.goOut');
-  return auth.loggedIn ? <Button onClick={auth.logOutMemo}>{goOut}</Button> : null;
+  return auth.loggedIn ? <Button onClick={auth.logOut}>{goOut}</Button> : null;
 };
 
 const App = () => {

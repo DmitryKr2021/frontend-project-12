@@ -49,7 +49,7 @@ const RegistrationPage = () => {
           })
           .then((response) => {
             window.localStorage.setItem('user', JSON.stringify(response.data));
-            auth.logInMemo();
+            auth.logIn();
             navigate('/main');
           })
           .catch((error) => {

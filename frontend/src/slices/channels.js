@@ -1,3 +1,4 @@
+// eslint-disable no-param-reassign
 import { createSlice } from '@reduxjs/toolkit';
 import _ from 'lodash';
 
@@ -5,7 +6,6 @@ const initialState = {
   channels: [],
   activeChannel: 1,
 };
-
 const channelsSlice = createSlice({
   name: 'channels',
   initialState,
@@ -30,7 +30,6 @@ const channelsSlice = createSlice({
     },
     renameChannel: (state, action) => {
       const { payload } = action;
-      console.log('pay=', payload)
       const { id } = payload;
       const targetChannel = state.channels.filter((channel) => channel.id === id)[0];
       _.assign(targetChannel, payload);
