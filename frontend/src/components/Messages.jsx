@@ -50,12 +50,11 @@ const Messages = () => {
     requestData();
   }, [dispatch, dataNotLoaded]);
 
-  const getActiveChannel = () =>
-    (selectorChannels.length > 0 &&
-      selectorChannels.filter(
-        (channel) => channel.id === selectorActiveChannel,
-      )[0]) ||
-    1;
+  const getActiveChannel = () => (selectorChannels.length > 0 
+    && selectorChannels.filter(
+      (channel) => channel.id === selectorActiveChannel,
+      )[0]) 
+      || 1;
 
   const activeChannel = getActiveChannel();
   const channelMessages = selectorMessages.filter(
@@ -82,8 +81,8 @@ const Messages = () => {
         <div id="messages-box" className="chat-messages px-5">
           <ul className="nav flex-column nav-pills nav-fill px-2 mb-3 h-100 overflow-auto d-block">
             {selectorMessages.map(
-              (item) =>
-                item.channelId === selectorActiveChannel && (
+              (item) => item.channelId === selectorActiveChannel 
+                && (
                   <li key={item.id} id={item.id}>
                     <span className="me-1">
                       <b>{item.username}</b>
@@ -155,4 +154,3 @@ const Messages = () => {
 };
 
 export default Messages;
-
