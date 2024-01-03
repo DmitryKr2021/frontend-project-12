@@ -20,5 +20,6 @@ rules:
    - ImportDeclaration:
        multiline: true
        minProperties: 4
-
-  
+   - ObjectExpression:
+       multiline: true
+       minProperties: 4

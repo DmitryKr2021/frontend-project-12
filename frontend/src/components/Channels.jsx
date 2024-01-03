@@ -51,8 +51,9 @@ const Channels = () => {
         setModalNull,
         setNotify,
       };
-      return getModalValue(params) || null;
+      return getModalValue(params);
     }
+    return null;
   };
 
   RenderModal.propTypes = {
@@ -97,7 +98,7 @@ const Channels = () => {
                     item.id === selectorActiveChannel
                       ? btnClassSecondary
                       : btnClassLight
-                  }              
+                  }
                 >
                   <span className="me-1">#</span>
                   {item.name}

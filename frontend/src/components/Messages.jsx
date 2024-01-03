@@ -5,8 +5,8 @@ import { Button, Form } from 'react-bootstrap';
 import { Formik } from 'formik';
 import filter from 'leo-profanity';
 import { useTranslation } from 'react-i18next';
-import SvgSend from './svg/SvgSend.jsx';
 import { toast } from 'react-toastify';
+import SvgSend from './svg/SvgSend.jsx';
 import userContext from '../index.js';
 import 'react-toastify/dist/ReactToastify.css';
 import { renderChannels } from '../slices/channels.js';
@@ -51,11 +51,11 @@ const Messages = () => {
   }, [dispatch, dataNotLoaded]);
 
   const getActiveChannel = () =>
-    selectorChannels.length > 0
-      ? selectorChannels.filter(
-          (channel) => channel.id === selectorActiveChannel,
-        )[0]
-      : 1;
+    (selectorChannels.length > 0 &&
+      selectorChannels.filter(
+        (channel) => channel.id === selectorActiveChannel,
+      )[0]) ||
+    1;
 
   const activeChannel = getActiveChannel();
   const channelMessages = selectorMessages.filter(
@@ -86,7 +86,8 @@ const Messages = () => {
                 item.channelId === selectorActiveChannel && (
                   <li key={item.id} id={item.id}>
                     <span className="me-1">
-                      <b>{item.username}</b>:
+                      <b>{item.username}</b>
+                      :
                     </span>
                     {item.body}
                   </li>
@@ -97,7 +98,7 @@ const Messages = () => {
         <div className="mt-auto px-5 py-3">
           <Formik
             initialValues={{ message: '' }}
-            onSubmit={(values, { setSubmitting }) => {
+            onSubmit={(values, { setSubmitting, resetForm }) => {
               const newMessage = {
                 body: filter.clean(values.message),
                 channelId: selectorActiveChannel,
@@ -111,10 +112,15 @@ const Messages = () => {
                 }
               });
               setSubmitting(false);
-              values.message = '';
+              resetForm('');
             }}
           >
-            {({ values, handleChange, handleSubmit, isSubmitting }) => (
+            {({
+              values,
+              handleChange,
+              handleSubmit,
+              isSubmitting,
+            }) => (
               <Form
                 noValidate=""
                 onSubmit={handleSubmit}
@@ -150,31 +156,3 @@ const Messages = () => {
 
 export default Messages;
 
-/*
-{selectorMessages.map((item) =>
-              item.channelId === selectorActiveChannel ? (
-                <li key={item.id} id={item.id}>
-                  <span className="me-1">
-                    <b>{item.username}</b>:
-                  </span>
-                  {item.body}
-                </li>
-              ) : null,
-            )}
-
-
-
- {selectorMessages.map(
-              (item) =>
-                item.channelId === selectorActiveChannel && (
-                  <li key={item.id} id={item.id}>
-                    <span className="me-1">
-                      <b>{item.username}</b>:
-                    </span>
-                    {item.body}
-                  </li>
-                ),
-            )}
-
-
-*/

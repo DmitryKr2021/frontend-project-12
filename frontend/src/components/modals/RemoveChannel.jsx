@@ -1,9 +1,9 @@
 import React, { useState, useContext } from 'react';
-import { 
-  Button, 
-  ButtonGroup, 
-  Form, 
-  Modal 
+import {
+  Button,
+  ButtonGroup,
+  Form,
+  Modal,
 } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import userContext from '../../index.js';

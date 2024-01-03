@@ -20,7 +20,7 @@ const LoginPage = () => {
   const navigate = useNavigate();
   useEffect(() => {
     if (window.localStorage.length > 0) {
-      auth.logIn();
+      auth.logInMemo();
       navigate('/main');
     }
   }, [auth, navigate, auth.loggedIn]);
@@ -38,7 +38,7 @@ const LoginPage = () => {
           })
           .then((response) => {
             window.localStorage.setItem('user', JSON.stringify(response.data));
-            auth.logIn();
+            auth.logInMemo();
             navigate('/main');
           })
           .catch((error) => {

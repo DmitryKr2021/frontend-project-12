@@ -1,16 +1,16 @@
-import React, { 
-  useState, 
-  useContext, 
-  useEffect, 
-  useRef 
+import React, {
+  useState,
+  useContext,
+  useEffect,
+  useRef,
 } from 'react';
 import * as Yup from 'yup';
 import { useSelector } from 'react-redux';
-import { 
-  Button, 
-  ButtonGroup, 
-  Form, 
-  Modal 
+import {
+  Button,
+  ButtonGroup,
+  Form,
+  Modal,
 } from 'react-bootstrap';
 import { Formik, ErrorMessage } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -76,9 +76,18 @@ const AddChannel = (params) => {
               setSubmitting(false);
             }}
           >
-            {({ values, handleChange, handleSubmit, touched, errors }) => (
+            {({
+              values,
+              handleChange,
+              handleSubmit,
+              touched,
+              errors,
+            }) => (
               <Form noValidate="" onSubmit={handleSubmit}>
                 <div className="input-group has-validation">
+                <label className="visually-hidden" htmlFor="name">
+                    Имя канала
+                  </label>
                   <Form.Control
                     name="name"
                     id="name"
@@ -89,10 +98,8 @@ const AddChannel = (params) => {
                     isInvalid={touched.channel && errors.channel}
                     required
                     title={addChannel}
+                    className="rounded"
                   />
-                  <label className="visually-hidden" htmlFor="name">
-                    Имя канала
-                  </label>
                   <ErrorMessage name="channel">
                     {(msg) => <div className=" invalid-tooltip">{msg}</div>}
                   </ErrorMessage>
