@@ -6,13 +6,15 @@ import { Formik } from 'formik';
 import filter from 'leo-profanity';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
+import SvgSend from './svg/SvgSend.jsx';
+import { UserContext } from './contexts/index.jsx';
 import 'react-toastify/dist/ReactToastify.css';
-import userContext from '../index.js';
-import { SvgSend, renderChannels, renderMessages } from '../internal.js';
+import { renderChannels } from '../slices/channels';
+import { renderMessages } from '../slices/messages';
 
 const Messages = () => {
   const dispatch = useDispatch();
-  const { socket } = useContext(userContext);
+  const { socket } = useContext(UserContext);
   const newSocket = socket.socket;
   const { t } = useTranslation();
   const enterMessage = t('main.enterMessage');

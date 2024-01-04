@@ -14,13 +14,12 @@ import {
 } from 'react-bootstrap';
 import { Formik, ErrorMessage } from 'formik';
 import { useTranslation } from 'react-i18next';
-//import userContext from '../../internal';
-import userContext from '../../index';
+import { UserContext } from '../contexts/index.jsx';
 
 const RenameChannel = (params) => {
   const { channelNumber, setModalNull, setNotify } = params;
   const selectorChannels = useSelector((state) => state.channelsSlice.channels);
-  const { socket } = useContext(userContext).socket;
+  const { socket } = useContext(UserContext).socket;
   const newSocket = socket;
   const { t } = useTranslation();
   const channelLength = t('errors.channelLength');

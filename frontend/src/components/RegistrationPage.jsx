@@ -5,7 +5,8 @@ import { Button, Form } from 'react-bootstrap';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useAuth, imgReg } from '../internal';
+import useAuth from '../hooks/index.jsx';
+import img from '../imgs/registration.png';
 
 const RegistrationPage = () => {
   const { t } = useTranslation();
@@ -81,7 +82,7 @@ const RegistrationPage = () => {
                   <div className="card-body row p-5">
                     <div className="col-12 col-md-6 d-flex align-items-center justify-content-center">
                       <img
-                        src={imgReg}
+                        src={img}
                         width={200}
                         className="rounded-circle"
                         alt={registration}

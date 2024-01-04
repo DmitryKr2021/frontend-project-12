@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Button, ButtonGroup, Dropdown } from 'react-bootstrap';
+import {
+  Button,
+  ButtonGroup,
+  Dropdown,
+} from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import cn from 'classnames';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import SvgPlus from './svg/SvgPlus.jsx';
-import { setActiveChannel } from '../slices/channels.js';
-import getModal from './modals/index.js';
+import { setActiveChannel } from '../slices/channels';
+import getModal from './modals/index';
 
 const Channels = () => {
   const [typeModal, setTypeModal] = useState(null);

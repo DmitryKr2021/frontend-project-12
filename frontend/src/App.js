@@ -11,18 +11,18 @@ import {
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import { Provider, ErrorBoundary } from '@rollbar/react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap';
 import {
   pageLoader,
   ErrorPage,
   LoginPage,
   RegistrationPage,
   ConflictPage,
-  MainPage,
-  AuthContext,
-  useAuth,
-} from './internal.js';
+} from './components/Pages.jsx';
+import MainPage from './components/MainPage.jsx';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap';
+import { AuthContext } from './components/contexts/index.jsx';
+import useAuth from './hooks/index.jsx';
 
 const rollbarConfig = {
   // eslint-disable-next-line no-undef

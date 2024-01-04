@@ -1,23 +1,22 @@
-import React, { createContext } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import { Provider } from 'react-redux';
 import i18next from 'i18next';
 import { io as Io } from 'socket.io-client';
 import { initReactI18next, I18nextProvider } from 'react-i18next';
-import store from './slices/index.js';
+import store from './slices/index';
 import App from './App';
+import ru from './locales/ru';
+import { addNewMessage, removeMessages } from './slices/messages';
 import {
-  addNewMessage,
-  removeMessages,
-  ru,
   addNewChannel,
   setActiveChannel,
   removeChannel,
   renameChannel,
-} from './internal.js';
+} from './slices/channels';
+import { UserContext } from './components/contexts/index.jsx';
 
-const userContext = createContext();
 const { dispatch } = store;
 
 const runApp = async () => {
@@ -51,7 +50,7 @@ const runApp = async () => {
   });
 
   root.render(
-    <userContext.Provider value={{ socket: { socket } }}>
+    <UserContext.Provider value={{ socket: { socket } }}>
       <Provider store={store}>
         <React.StrictMode>
           <I18nextProvider i18n={i18n} defaultNS="translation">
@@ -59,9 +58,7 @@ const runApp = async () => {
           </I18nextProvider>
         </React.StrictMode>
       </Provider>
-    </userContext.Provider>,
+    </UserContext.Provider>,
   );
 };
 runApp();
-
-export default userContext;
