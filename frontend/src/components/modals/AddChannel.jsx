@@ -37,7 +37,7 @@ const AddChannel = (params) => {
   const channelNotAdded = t('rename.channelNotAdded');
 
   const Schema = Yup.object().shape({
-    channel: Yup.string()
+    name: Yup.string()
       .min(3, channelLength)
       .max(20, channelLength)
       .notOneOf(
@@ -96,12 +96,12 @@ const AddChannel = (params) => {
                     onChange={handleChange}
                     value={values.channel}
                     ref={inpChannel}
-                    isInvalid={touched.channel && errors.channel}
+                    isInvalid={touched.name && errors.name}
                     required
                     title={addChannel}
                     className="rounded"
                   />
-                  <ErrorMessage name="channel">
+                  <ErrorMessage name="name">
                     {(msg) => <div className=" invalid-tooltip">{msg}</div>}
                   </ErrorMessage>
                 </div>
