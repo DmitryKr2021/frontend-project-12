@@ -8,7 +8,7 @@ start-frontend:
 	make -C frontend start
 
 build:
-	npm run build
+	npm run-build
 
 start-backend:
 	npx start-server
