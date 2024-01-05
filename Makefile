@@ -11,7 +11,7 @@ start-backend:
 	npx start-server
 
 build:
-	make build
+	npm build
 
 deploy:
 	git push heroku main
