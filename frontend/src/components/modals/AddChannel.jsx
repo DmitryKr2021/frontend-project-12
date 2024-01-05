@@ -13,6 +13,7 @@ import {
   Modal,
 } from 'react-bootstrap';
 import { Formik, ErrorMessage } from 'formik';
+import filter from 'leo-profanity';
 import { useTranslation } from 'react-i18next';
 import { UserContext } from '../contexts/index.jsx';
 
@@ -62,7 +63,7 @@ const AddChannel = (params) => {
             initialValues={{ name: '' }}
             onSubmit={(values, { setSubmitting }) => {
               const newChannel = {
-                name: values.name,
+                name: filter.clean(values.name),
               };
               newSocket.emit('newChannel', newChannel, (response) => {
                 const { status } = response;
