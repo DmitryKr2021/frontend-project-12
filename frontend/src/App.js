@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Button } from 'react-bootstrap';
 import {
   createBrowserRouter,
@@ -33,10 +34,16 @@ const rollbarConfig = {
 /* eslint-disable */
 const AuthProvider = ({ children }) => {
   const [loggedIn, setLoggedIn] = useState(false);
+  const selectorActiveUser = useSelector((state) => state.usersSlice.activeUser);
   const logIn = () => setLoggedIn(true);
   const logOut = () => {
     setLoggedIn(false);
-    localStorage.removeItem('user');
+   for (let i = 0; i < localStorage.length; i += 1) {
+    const key = localStorage.key(i);
+     if (JSON.parse(localStorage[key]).username === selectorActiveUser) {
+      localStorage.removeItem(key);
+    }
+   }
   };
   return (
     <AuthContext.Provider value={{ loggedIn, logIn, logOut }}>

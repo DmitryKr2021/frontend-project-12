@@ -1,4 +1,5 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
+import { useDispatch } from 'react-redux';
 import { Formik, ErrorMessage } from 'formik';
 import { Button, Form } from 'react-bootstrap';
 import axios from 'axios';
@@ -6,8 +7,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import useAuth from '../hooks/index.jsx';
 import img from '../imgs/autorization.jpg';
+import { loginUser, setActiveUser } from '../slices/users';
 
 const LoginPage = () => {
+  const dispatch = useDispatch();
   const { t } = useTranslation();
   const serverError = t('errors.serverError');
   const enter = t('login.enter');
@@ -15,16 +18,8 @@ const LoginPage = () => {
   const password = t('login.password');
   const noAccount = t('login.noAccount');
   const registration = t('login.registration');
-
   const auth = useAuth();
   const navigate = useNavigate();
-  useEffect(() => {
-    if (window.localStorage.length > 0) {
-      auth.logIn();
-      navigate('/main');
-    }
-  }, [auth, navigate, auth.loggedIn]);
-
   const inpName = useRef();
 
   return (
@@ -37,7 +32,8 @@ const LoginPage = () => {
             password: values.password,
           })
           .then((response) => {
-            window.localStorage.setItem('user', JSON.stringify(response.data));
+            dispatch(loginUser(response.data));
+            dispatch(setActiveUser(response.data));
             auth.logIn();
             navigate('/main');
           })

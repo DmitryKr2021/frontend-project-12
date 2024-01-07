@@ -20,6 +20,7 @@ const Messages = () => {
   const enterMessage = t('main.enterMessage');
   const send = t('main.send');
   const dataNotLoaded = t('toasts.dataNotLoaded');
+  const selectorActiveUser = useSelector((state) => state.usersSlice.activeUser);
   const selectorChannels = useSelector((state) => state.channelsSlice.channels);
   const selectorMessages = useSelector((state) => state.messagesSlice.messages);
   const selectorActiveChannel = useSelector(
@@ -29,8 +30,8 @@ const Messages = () => {
   useEffect(() => {
     const requestData = async () => {
       if (window.localStorage.length > 0) {
-        const user = window.localStorage.getItem('user');
-        const userToken = JSON.parse(user).token;
+        const user = localStorage.key(0);
+        const userToken = JSON.parse(localStorage[user]).token;
         await axios
           .get('/api/v1/data', {
             headers: {
@@ -101,7 +102,7 @@ const Messages = () => {
               const newMessage = {
                 body: filter.clean(values.message),
                 channelId: selectorActiveChannel,
-                username: 'admin',
+                username: selectorActiveUser,
               };
               newSocket.emit('newMessage', newMessage, (response) => {
                 const { status } = response;
