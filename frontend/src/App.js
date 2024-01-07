@@ -25,6 +25,8 @@ import 'bootstrap';
 import { AuthContext } from './components/contexts/index.jsx';
 import useAuth from './hooks/index.jsx';
 
+localStorage.clear();
+
 const rollbarConfig = {
   // eslint-disable-next-line no-undef
   accessToken: process.env.REACT_APP_SECRET_CODE,
