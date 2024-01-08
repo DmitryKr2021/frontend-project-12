@@ -7,7 +7,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import useAuth from '../hooks/index.jsx';
 import img from '../imgs/autorization.jpg';
-import { loginUser, setActiveUser } from '../slices/users';
+import { addUser, setActiveUser } from '../slices/users';
 
 const LoginPage = () => {
   const dispatch = useDispatch();
@@ -32,7 +32,7 @@ const LoginPage = () => {
             password: values.password,
           })
           .then((response) => {
-            dispatch(loginUser(response.data));
+            dispatch(addUser(response.data));
             dispatch(setActiveUser(response.data));
             auth.logIn();
             navigate('/main');

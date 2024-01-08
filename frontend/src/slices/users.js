@@ -16,26 +16,18 @@ const usersSlice = createSlice({
       const { username } = payload;
       state.activeUser = username;
     },
-    addNewUser: (state, action) => {
+    addUser: (state, action) => {
         const { payload } = action;
         const { username } = payload;
         const uniqName = _.uniqueId(username);
         state.users = [...state.users, uniqName];
         window.localStorage.setItem(uniqName, JSON.stringify(payload));
     },
-    loginUser: (state, action) => {
-      const { payload } = action;
-      const { username } = payload;
-      const uniqName = _.uniqueId(username);
-      state.users = [...state.users, uniqName];
-      window.localStorage.setItem(uniqName, JSON.stringify(payload));
-    },
   },
 });
 
 export const {
   setActiveUser,
-  addNewUser,
-  loginUser,
+  addUser,
 } = usersSlice.actions;
 export default usersSlice.reducer;

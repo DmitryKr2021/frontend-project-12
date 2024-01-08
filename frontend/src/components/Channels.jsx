@@ -109,7 +109,6 @@ const Channels = () => {
                 {item.removable ? (
                   <Dropdown as={ButtonGroup}>
                     <Dropdown.Toggle
-                      aria-labelledby={item.id}
                       className={
                         item.id === selectorActiveChannel
                           ? dropDownClassSecondary

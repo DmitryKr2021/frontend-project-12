@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import useAuth from '../hooks/index.jsx';
 import img from '../imgs/registration.png';
-import { addNewUser, setActiveUser } from '../slices/users';
+import { addUser, setActiveUser } from '../slices/users';
 
 const RegistrationPage = () => {
   const dispatch = useDispatch();
@@ -51,7 +51,7 @@ const RegistrationPage = () => {
             password: values.password,
           })
           .then((response) => {
-            dispatch(addNewUser(response.data));
+            dispatch(addUser(response.data));
             dispatch(setActiveUser(response.data));
             auth.logIn();
             navigate('/main');
