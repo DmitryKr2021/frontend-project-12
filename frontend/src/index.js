@@ -35,9 +35,12 @@ const runApp = async () => {
     dispatch(addNewMessage(payload));
   });
   await socket.on('newChannel', (payload) => {
-    const { id } = payload;
+    const { id, user } = payload;
+    const { activeUser } = store.getState().usersSlice;
     dispatch(addNewChannel(payload));
-    dispatch(setActiveChannel(id));
+    if (user === activeUser) {
+      dispatch(setActiveChannel(id));
+    }
   });
   await socket.on('removeChannel', (payload) => {
     const { id } = payload;

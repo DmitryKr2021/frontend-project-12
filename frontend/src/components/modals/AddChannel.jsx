@@ -15,6 +15,7 @@ import {
 import { Formik, ErrorMessage } from 'formik';
 import filter from 'leo-profanity';
 import { useTranslation } from 'react-i18next';
+import store from '../../slices/index';
 import { UserContext } from '../contexts/index.jsx';
 
 const AddChannel = (params) => {
@@ -50,7 +51,7 @@ const AddChannel = (params) => {
   useEffect(() => {
     inpChannel.current?.select();
   }, []);
-
+  const thisUser = store.getState().usersSlice.activeUser;
   return (
     <div className="fade modal show" tabIndex="-1">
       <Modal show={show} onHide={close} centered>
@@ -64,6 +65,7 @@ const AddChannel = (params) => {
             onSubmit={(values, { setSubmitting }) => {
               const newChannel = {
                 name: filter.clean(values.name),
+                user: thisUser,
               };
               newSocket.emit('newChannel', newChannel, (response) => {
                 const { status } = response;

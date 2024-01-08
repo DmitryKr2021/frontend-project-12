@@ -32,8 +32,9 @@ const LoginPage = () => {
             password: values.password,
           })
           .then((response) => {
-            dispatch(addUser(response.data));
-            dispatch(setActiveUser(response.data));
+            const { data } = response;
+            dispatch(addUser(data));
+            dispatch(setActiveUser(data));
             auth.logIn();
             navigate('/main');
           })
