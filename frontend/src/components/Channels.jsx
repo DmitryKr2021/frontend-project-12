@@ -23,8 +23,10 @@ const Channels = () => {
   const selectorActiveChannel = useSelector(
     (state) => state.channelsSlice.activeChannel,
   );
-  const btnClassLight = cn('w-100', 'rounded-0', 'text-start', 'btn-light');
-  const btnClassSecondary = cn('w-100', 'rounded-0', 'text-start', 'btn-secondary');
+
+  const btnClassLight = cn('w-100', 'rounded-0', 'text-start', 'text-truncate', 'btn', 'btn-light');
+  const btnClassSecondary = cn('w-100', 'rounded-0', 'text-start', 'text-truncate', 'btn', 'btn-secondary');
+
   const dropDownClassLight = cn('square', 'border', 'border-0', 'btn-light');
   const dropDownClassSecondary = cn('square', 'border', 'border-0', 'btn-secondary');
   const channelManage = t('main.channelManage');
