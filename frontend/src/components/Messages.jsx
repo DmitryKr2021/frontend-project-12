@@ -80,14 +80,14 @@ const Messages = () => {
           <span className="text-muted">{countMessages}</span>
         </div>
         <div id="messages-box" className="chat-messages px-5">
-          <ul className="nav flex-column nav-pills nav-fill px-2 mb-3 h-100 overflow-auto d-block">
+          <ul className="nav flex-column nav-pills nav-fill mb-2 h-100 overflow-auto d-block">
             {selectorMessages.map(
               (item) => item.channelId === selectorActiveChannel
                 && (
                   <li key={item.id} id={item.id}>
-                    <span className="me-1">
+                    <span>
                       <b>{item.username}</b>
-                      :
+                      &#58;&nbsp;
                     </span>
                     {item.body}
                   </li>
