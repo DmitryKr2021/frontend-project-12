@@ -16,13 +16,15 @@ import { Formik, ErrorMessage } from 'formik';
 import filter from 'leo-profanity';
 import { useTranslation } from 'react-i18next';
 import store from '../../slices/index';
-import { UserContext } from '../contexts/index.jsx';
+import { setActiveChannel } from '../../slices/channels';
+import AuthContext from '../contexts/index.jsx';
 
 const AddChannel = (params) => {
+  const { dispatch } = store;
   const { setModalNull, setNotify } = params;
   const selectorChannels = useSelector((state) => state.channelsSlice.channels);
-  const { socket } = useContext(UserContext).socket;
-  const newSocket = socket;
+  const { socket } = useContext(AuthContext);
+  const newSocket = socket.socket;
   const { t } = useTranslation();
   const channelLength = t('errors.channelLength');
   const uniqName = t('errors.uniqName');
@@ -51,7 +53,8 @@ const AddChannel = (params) => {
   useEffect(() => {
     inpChannel.current?.select();
   }, []);
-  const thisUser = store.getState().usersSlice.activeUser;
+  const thisUser = localStorage.key(0);
+
   return (
     <div className="fade modal show" tabIndex="-1">
       <Modal show={show} onHide={close} centered>
@@ -70,7 +73,9 @@ const AddChannel = (params) => {
               newSocket.emit('newChannel', newChannel, (response) => {
                 const { status } = response;
                 if (status === 'ok') {
+                  const { id } = response.data;
                   setNotify(channelAdded, 'success');
+                  dispatch(setActiveChannel(id));
                 } else {
                   setNotify(channelNotAdded, 'error');
                 }

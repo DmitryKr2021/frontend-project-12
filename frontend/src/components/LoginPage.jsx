@@ -1,5 +1,4 @@
 import React, { useRef } from 'react';
-import { useDispatch } from 'react-redux';
 import { Formik, ErrorMessage } from 'formik';
 import { Button, Form } from 'react-bootstrap';
 import axios from 'axios';
@@ -7,10 +6,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import useAuth from '../hooks/index.jsx';
 import img from '../imgs/autorization.jpg';
-import { addUser, setActiveUser } from '../slices/users';
+import * as routes from '../routes';
 
 const LoginPage = () => {
-  const dispatch = useDispatch();
   const { t } = useTranslation();
   const serverError = t('errors.serverError');
   const enter = t('login.enter');
@@ -25,36 +23,33 @@ const LoginPage = () => {
   return (
     <Formik
       initialValues={{ username: '', password: '' }}
-      onSubmit={(values, { setErrors }) => {
-        axios
-          .post('/api/v1/login', {
-            username: values.username,
-            password: values.password,
-          })
-          .then((response) => {
-            const { data } = response;
-            dispatch(addUser(data));
-            dispatch(setActiveUser(data));
-            auth.logIn();
-            navigate('/main');
-          })
-          .catch((error) => {
-            if (error.response) {
-              inpName.current.select();
-              setErrors({
-                username: serverError,
-                password: serverError,
-              });
-              console.log(error.response.data);
-              console.log(error.response.status);
-              console.log(error.response.headers);
-            } else if (error.request) {
-              console.log(error.request);
-            } else {
-              console.log('Error', error.message);
-            }
-          });
+      onSubmit={async (values, { setErrors }) => {
+        try {
+          const response = await axios
+            .post(routes.apiLoginPath(), {
+              username: values.username,
+              password: values.password,
+            });
+          const { data } = response;
+          auth.logIn();
+          auth.setActive(data);
+          navigate(routes.mainPath('/'));
+        } catch (error) {
+          if (error.response) {
+            inpName.current.select();
+            setErrors({
+              username: serverError,
+              password: serverError,
+            });
+            console.error(error.response.status);
+          } else if (error.request) {
+            console.error(error.request);
+          } else {
+            console.error('Error', error.message);
+          }
+        }
       }}
+
     >
       {({
         values,

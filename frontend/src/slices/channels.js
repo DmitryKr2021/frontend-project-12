@@ -3,45 +3,49 @@ import { createSlice } from '@reduxjs/toolkit';
 import _ from 'lodash';
 
 const initialState = {
+  modal: null,
   channels: [],
   activeChannel: 1,
 };
+
 const channelsSlice = createSlice({
   name: 'channels',
   initialState,
   reducers: {
-    renderChannels: (state, action) => {
-      const { channels } = action.payload;
+    showChannels: (state, { payload }) => {
+      const { channels } = payload;
       state.channels = [...channels];
     },
-    setActiveChannel: (state, action) => {
-      const { payload } = action;
+    setActiveChannel: (state, { payload }) => {
       state.activeChannel = payload;
     },
-    addNewChannel: (state, action) => {
-      const { payload } = action;
+    chooseModal: (state, { payload }) => {
+      state.modal = payload;
+    },
+    addNewChannel: (state, { payload }) => {
       state.channels = [...state.channels, payload];
     },
-    removeChannel: (state, action) => {
-      const { payload } = action;
+    removeChannel: (state, { payload }) => {
       state.channels = state.channels.filter(
         (channel) => channel.id !== payload,
       );
+      state.activeChannel = 1;
     },
-    renameChannel: (state, action) => {
-      const { payload } = action;
+    renameChannel: (state, { payload }) => {
       const { id } = payload;
       const targetChannel = state.channels.filter((channel) => channel.id === id)[0];
       _.assign(targetChannel, payload);
+      state.modal = null;
     },
   },
 });
 
 export const {
-  renderChannels,
+  showChannels,
   setActiveChannel,
   addNewChannel,
   removeChannel,
   renameChannel,
+  chooseModal,
 } = channelsSlice.actions;
 export default channelsSlice.reducer;

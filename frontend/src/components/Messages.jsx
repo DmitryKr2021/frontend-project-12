@@ -7,20 +7,17 @@ import filter from 'leo-profanity';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import SvgSend from './svg/SvgSend.jsx';
-import { UserContext } from './contexts/index.jsx';
+import AuthContext from './contexts/index.jsx';
 import 'react-toastify/dist/ReactToastify.css';
-import { renderChannels } from '../slices/channels';
-import { renderMessages } from '../slices/messages';
+import { showChannels } from '../slices/channels';
+import { showMessages } from '../slices/messages';
+import * as routes from '../routes';
 
 const Messages = () => {
   const dispatch = useDispatch();
-  const { socket } = useContext(UserContext);
+  const { socket, activeUser } = useContext(AuthContext);
   const newSocket = socket.socket;
   const { t } = useTranslation();
-  const enterMessage = t('main.enterMessage');
-  const send = t('main.send');
-  const dataNotLoaded = t('toasts.dataNotLoaded');
-  const selectorActiveUser = useSelector((state) => state.usersSlice.activeUser);
   const selectorChannels = useSelector((state) => state.channelsSlice.channels);
   const selectorMessages = useSelector((state) => state.messagesSlice.messages);
   const selectorActiveChannel = useSelector(
@@ -33,23 +30,23 @@ const Messages = () => {
         const user = localStorage.key(0);
         const userToken = JSON.parse(localStorage[user]).token;
         await axios
-          .get('/api/v1/data', {
+          .get(routes.apiDataPath(), {
             headers: {
               Authorization: `Bearer ${userToken}`,
             },
           })
           .then((response) => {
-            dispatch(renderMessages(response.data));
-            dispatch(renderChannels(response.data));
+            dispatch(showMessages(response.data));
+            dispatch(showChannels(response.data));
           })
           .catch(() => {
-            const notify = () => toast.error(dataNotLoaded);
+            const notify = () => toast.error(t('toasts.dataNotLoaded'));
             notify();
           });
       }
     };
     requestData();
-  }, [dispatch, dataNotLoaded]);
+  }, [dispatch, t]);
 
   const getActiveChannel = () => (selectorChannels.length > 0
     && selectorChannels.filter(
@@ -98,21 +95,25 @@ const Messages = () => {
         <div className="mt-auto px-5 py-3">
           <Formik
             initialValues={{ message: '' }}
-            onSubmit={(values, { setSubmitting, resetForm }) => {
+            onSubmit={async (values, { setSubmitting, resetForm }) => {
               const newMessage = {
                 body: filter.clean(values.message),
                 channelId: selectorActiveChannel,
-                username: selectorActiveUser,
+                username: activeUser,
               };
-              newSocket.emit('newMessage', newMessage, (response) => {
-                const { status } = response;
-                if (status !== 'ok') {
-                  const notify = () => toast.error(dataNotLoaded);
-                  notify();
-                }
-              });
-              setSubmitting(false);
-              resetForm('');
+              try {
+                await newSocket.emit('newMessage', newMessage, (response) => {
+                  const { status } = response;
+                  if (status === 'ok') {
+                    setSubmitting(false);
+                    resetForm('');
+                  }
+                });
+              } catch (error) {
+                console.error(error.response.status);
+                const notify = () => toast.error(t('toasts.dataNotLoaded'));
+                notify();
+              }
             }}
           >
             {({
@@ -130,7 +131,7 @@ const Messages = () => {
                   <Form.Control
                     name="message"
                     aria-label="Новое сообщение"
-                    placeholder={enterMessage}
+                    placeholder={t('main.enterMessage')}
                     className="border-0 p-0 ps-2 form-control"
                     onChange={handleChange}
                     value={values.message}
@@ -142,7 +143,7 @@ const Messages = () => {
                     className="btn btn-group-vertical"
                   >
                     <SvgSend />
-                    <span className="visually-hidden">{send}</span>
+                    <span className="visually-hidden">{t('main.send')}</span>
                   </Button>
                 </div>
               </Form>

@@ -6,11 +6,11 @@ import {
   Modal,
 } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import { UserContext } from '../contexts/index.jsx';
+import AuthContext from '../contexts/index.jsx';
 
 const RemoveChannel = (params) => {
   const { channelNumber, setModalNull, setNotify } = params;
-  const { socket } = useContext(UserContext).socket;
+  const { socket } = useContext(AuthContext).socket;
   const newSocket = socket;
   const { t } = useTranslation();
   const removeChannel = t('remove.removeChannel');

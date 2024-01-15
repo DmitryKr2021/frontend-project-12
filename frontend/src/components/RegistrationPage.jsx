@@ -1,5 +1,4 @@
 import React, { useRef } from 'react';
-import { useDispatch } from 'react-redux';
 import { Formik, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { Button, Form } from 'react-bootstrap';
@@ -8,10 +7,9 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import useAuth from '../hooks/index.jsx';
 import img from '../imgs/registration.png';
-import { addUser, setActiveUser } from '../slices/users';
+import * as routes from '../routes';
 
 const RegistrationPage = () => {
-  const dispatch = useDispatch();
   const { t } = useTranslation();
   const loginLength = t('errors.loginLength');
   const passwordLength = t('errors.passwordLength');
@@ -44,26 +42,23 @@ const RegistrationPage = () => {
     <Formik
       initialValues={{ username: '', password: '', repeatPassword: '' }}
       validationSchema={Schema}
-      onSubmit={(values) => {
-        axios
-          .post('/api/v1/signup', {
-            username: values.username,
-            password: values.password,
-          })
-          .then((response) => {
-            dispatch(addUser(response.data));
-            dispatch(setActiveUser(response.data));
-            auth.logIn();
-            navigate('/main');
-          })
-          .catch((error) => {
-            if (error.response) {
-              navigate('/conflict');
-              console.log(error.response.data);
-              console.log(error.response.status);
-              console.log(error.response.headers);
-            }
-          });
+      onSubmit={async (values) => {
+        try {
+          const response = await axios
+            .post(routes.apiSignupPath(), {
+              username: values.username,
+              password: values.password,
+            });
+          const { data } = response;
+          auth.logIn();
+          auth.setActive(data);
+          navigate(routes.mainPath('/'));
+        } catch (error) {
+          if (error.response) {
+            navigate(routes.conflictPath('/'));
+            console.error(error.response.status);
+          }
+        }
       }}
     >
       {({

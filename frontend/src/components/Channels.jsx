@@ -10,11 +10,14 @@ import cn from 'classnames';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import SvgPlus from './svg/SvgPlus.jsx';
-import { setActiveChannel } from '../slices/channels';
+import {
+  setActiveChannel,
+  chooseModal,
+} from '../slices/channels';
 import getModal from './modals/index';
 
 const Channels = () => {
-  const [typeModal, setTypeModal] = useState(null);
+  const [modal, setModal] = useState(null);
   const [channelNumber, setChannelNumber] = useState(null);
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -27,18 +30,16 @@ const Channels = () => {
   const btnClassSecondary = cn('w-100', 'rounded-0', 'text-start', 'text-truncate', 'btn', 'btn-secondary');
   const dropDownClassLight = cn('square', 'border', 'border-0', 'btn-light');
   const dropDownClassSecondary = cn('square', 'border', 'border-0', 'btn-secondary');
-  const channelManage = t('main.channelManage');
-  const remove = t('main.remove');
-  const rename = t('main.rename');
 
-  const manageChannel = (manageType) => (e) => {
+  const manageChannel = (modalType) => (e) => {
     e.preventDefault();
-    setTypeModal(manageType);
+    dispatch(chooseModal(modalType));
+    setModal(modalType);
     setChannelNumber(e.target.getAttribute('data-index'));
   };
 
   const setModalNull = () => {
-    setTypeModal(null);
+    setModal(null);
   };
 
   const setNotify = (text, result) => {
@@ -46,8 +47,7 @@ const Channels = () => {
     notify();
   };
 
-  const RenderModal = (props) => {
-    const { value } = props;
+  const RenderModal = ({ value }) => {
     if (value) {
       const getModalValue = getModal(value);
       const params = {
@@ -116,7 +116,7 @@ const Channels = () => {
                       }
                       id="dropdown-basic"
                     >
-                      <span className="visually-hidden">{channelManage}</span>
+                      <span className="visually-hidden">{t('main.channelManage')}</span>
                     </Dropdown.Toggle>
                     <Dropdown.Menu>
                       <Dropdown.Item
@@ -125,7 +125,7 @@ const Channels = () => {
                         data-index={item.id}
                         onClick={manageChannel('removing')}
                       >
-                        {remove}
+                        {t('main.remove')}
                       </Dropdown.Item>
                       <Dropdown.Item
                         type="button"
@@ -133,7 +133,7 @@ const Channels = () => {
                         data-index={item.id}
                         onClick={manageChannel('renaming')}
                       >
-                        {rename}
+                        {t('main.rename')}
                       </Dropdown.Item>
                     </Dropdown.Menu>
                   </Dropdown>
@@ -143,7 +143,7 @@ const Channels = () => {
           ))}
         </ul>
       </div>
-      {typeModal ? <RenderModal value={typeModal} /> : null}
+      {modal ? <RenderModal value={modal} /> : null}
     </>
   );
 };

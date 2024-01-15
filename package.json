@@ -1,7 +1,7 @@
 {
   "name": "@hexlet/code",
   "version": "1.0.0",
-  "description": "[![Actions Status](https://github.com/DmitryKr2021/frontend-project-12/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/DmitryKr2021/frontend-project-12/actions)",
+  "description": "Chat project. You can add, rename and remove channels, type a message",
   "main": "index.js",
   "scripts": {
     "build": "npm run build --prefix frontend",
