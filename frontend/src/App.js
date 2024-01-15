@@ -75,7 +75,7 @@ ChatPage.propTypes = {
 
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route path='/' element={null}>
+    <Route path="/" element={null}>
       <Route
         index
         loader={pageLoader}
@@ -96,7 +96,7 @@ const router = createBrowserRouter(
           </ChatPage>
         )}
       />
-      <Route path='*' element={<ErrorPage />} />
+      <Route path="*" element={<ErrorPage />} />
     </Route>,
   ),
 );

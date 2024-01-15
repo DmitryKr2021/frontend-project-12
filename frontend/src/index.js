@@ -9,11 +9,7 @@ import store from './slices/index';
 import App from './App';
 import ru from './locales/ru';
 import { addNewMessage } from './slices/messages';
-import {
-  addNewChannel,
-  removeChannel,
-  renameChannel,
-} from './slices/channels';
+import { addNewChannel, removeChannel, renameChannel } from './slices/channels';
 
 const { dispatch } = store;
 
@@ -44,13 +40,13 @@ const runApp = async () => {
   });
 
   root.render(
-      <Provider store={store}>
-        <React.StrictMode>
-          <I18nextProvider i18n={i18n} defaultNS="translation">
-            <App />
-          </I18nextProvider>
-        </React.StrictMode>
-      </Provider>,
+    <Provider store={store}>
+      <React.StrictMode>
+        <I18nextProvider i18n={i18n} defaultNS="translation">
+          <App />
+        </I18nextProvider>
+      </React.StrictMode>
+    </Provider>,
   );
 };
 runApp();
