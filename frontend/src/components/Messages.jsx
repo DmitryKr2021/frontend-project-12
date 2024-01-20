@@ -112,7 +112,12 @@ const Messages = () => {
               }
             }}
           >
-            {({ values, handleChange, handleSubmit, isSubmitting }) => (
+            {({
+              values,
+              handleChange,
+              handleSubmit,
+              isSubmitting,
+            }) => (
               <Form
                 noValidate=""
                 onSubmit={handleSubmit}

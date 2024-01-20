@@ -44,7 +44,7 @@ const RemoveChannel = (params) => {
 
   return (
     <div className="fade modal show" tabIndex="-1">
-      <Modal show={true} onHide={close} centered>
+      <Modal show onHide={close} centered>
         <Modal.Header closeButton onClick={close}>
           <Modal.Title>{removeChannel}</Modal.Title>
         </Modal.Header>

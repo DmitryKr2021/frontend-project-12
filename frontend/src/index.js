@@ -48,7 +48,7 @@ const runApp = async () => {
             <App />
           </I18nextProvider>
         </React.StrictMode>
-      </Provider>,
+      </Provider>
     </AuthContext.Provider>,
   );
 };

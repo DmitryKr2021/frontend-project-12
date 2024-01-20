@@ -46,7 +46,7 @@ const AuthProvider = ({ children }) => {
 
   const { token } = localStorage.length > 0 && JSON.parse(localStorage.getItem(activeUser));
 
-  /* eslint-disable max-len */
+  /* eslint-disable */
   return (
     <AuthContext.Provider value={{ logOut, activeUser, token, setUser, socket: auth.socket }}>
       {children}
