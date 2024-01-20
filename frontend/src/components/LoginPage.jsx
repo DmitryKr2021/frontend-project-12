@@ -31,9 +31,8 @@ const LoginPage = () => {
               password: values.password,
             });
           const { data } = response;
-          auth.logIn();
-          auth.setActive(data);
-          navigate(routes.mainPath('/'));
+          auth.setUser(data);
+          navigate(routes.mainPath());
         } catch (error) {
           if (error.response) {
             inpName.current.select();

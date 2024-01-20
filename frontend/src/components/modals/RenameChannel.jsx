@@ -1,5 +1,4 @@
 import React, {
-  useState,
   useContext,
   useEffect,
   useRef,
@@ -14,11 +13,14 @@ import {
 } from 'react-bootstrap';
 import { Formik, ErrorMessage } from 'formik';
 import { useTranslation } from 'react-i18next';
+import store from '../../slices/index';
+import { closeModal } from '../../slices/modals';
 import AuthContext from '../contexts/index.jsx';
 
 const RenameChannel = (params) => {
-  const { channelNumber, setModalNull, setNotify } = params;
-  const selectorChannels = useSelector((state) => state.channelsSlice.channels);
+  const { dispatch } = store;
+  const { channelNumber, setNotify } = params;
+  const channels = useSelector((state) => state.channelsSlice.channels);
   const { socket } = useContext(AuthContext).socket;
   const newSocket = socket;
   const { t } = useTranslation();
@@ -27,16 +29,15 @@ const RenameChannel = (params) => {
   const rename = t('rename.rename');
   const cancel = t('rename.cancel');
   const send = t('rename.send');
-  const [show, setShow] = useState(true);
+
   const close = () => {
-    setShow(false);
-    setModalNull();
+    dispatch(closeModal());
   };
 
   const channelRenamed = t('toasts.channelRenamed');
   const channelNotRenamed = t('rename.channelNotRenamed');
 
-  const [renamingChannel] = selectorChannels.filter(
+  const [renamingChannel] = channels.filter(
     (channel) => channel.id === +channelNumber,
   );
 
@@ -45,7 +46,7 @@ const RenameChannel = (params) => {
       .min(3, channelLength)
       .max(20, channelLength)
       .notOneOf(
-        selectorChannels.map((channel) => channel.name),
+        channels.map((channel) => channel.name),
         uniqName,
       ),
   });
@@ -57,7 +58,7 @@ const RenameChannel = (params) => {
 
   return (
     <div className="fade modal show" tabIndex="-1">
-      <Modal show={show} onHide={close} centered>
+      <Modal show={true} onHide={close} centered>
         <Modal.Header closeButton onClick={close}>
           <Modal.Title>{rename}</Modal.Title>
         </Modal.Header>
@@ -68,19 +69,21 @@ const RenameChannel = (params) => {
               channel: renamingChannel.name,
               id: channelNumber,
             }}
-            onSubmit={(values, { setSubmitting }) => {
+            onSubmit={async (values, { setSubmitting }) => {
               const targetChannel = {
                 name: values.channel,
                 id: values.id,
               };
-              newSocket.emit('renameChannel', targetChannel, (response) => {
-                const { status } = response;
-                if (status === 'ok') {
-                  setNotify(channelRenamed, 'success');
-                } else {
-                  setNotify(channelNotRenamed, 'error');
-                }
-              });
+              try {
+                await newSocket.emit('renameChannel', targetChannel, (response) => {
+                  const { status } = response;
+                  if (status === 'ok') {
+                    setNotify(channelRenamed, 'success');
+                  }
+                });
+              } catch (error) {
+                setNotify(channelNotRenamed, 'error');
+              }
               close();
               setSubmitting(false);
             }}

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext } from 'react';
 import {
   Button,
   ButtonGroup,
@@ -6,10 +6,13 @@ import {
   Modal,
 } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
+import store from '../../slices/index';
+import { closeModal } from '../../slices/modals';
 import AuthContext from '../contexts/index.jsx';
 
 const RemoveChannel = (params) => {
-  const { channelNumber, setModalNull, setNotify } = params;
+  const { dispatch } = store;
+  const { channelNumber, setNotify } = params;
   const { socket } = useContext(AuthContext).socket;
   const newSocket = socket;
   const { t } = useTranslation();
@@ -18,30 +21,30 @@ const RemoveChannel = (params) => {
   const sure = t('remove.sure');
   const cancel = t('remove.cancel');
 
-  const [show, setShow] = useState(true);
   const close = () => {
-    setShow(false);
-    setModalNull();
+    dispatch(closeModal());
   };
 
   const channelRemoved = t('toasts.channelRemoved');
   const channelNotRemoved = t('rename.channelNotRemoved');
 
-  const handleRemove = () => {
-    newSocket.emit('removeChannel', { id: channelNumber }, (response) => {
-      const { status } = response;
-      if (status === 'ok') {
-        setNotify(channelRemoved, 'success');
-      } else {
-        setNotify(channelNotRemoved, 'error');
-      }
-    });
+  const handleRemove = async () => {
+    try {
+      await newSocket.emit('removeChannel', { id: channelNumber }, (response) => {
+        const { status } = response;
+        if (status === 'ok') {
+          setNotify(channelRemoved, 'success');
+        }
+      });
+    } catch (error) {
+      setNotify(channelNotRemoved, 'error');
+    }
     close();
   };
 
   return (
     <div className="fade modal show" tabIndex="-1">
-      <Modal show={show} onHide={close} centered>
+      <Modal show={true} onHide={close} centered>
         <Modal.Header closeButton onClick={close}>
           <Modal.Title>{removeChannel}</Modal.Title>
         </Modal.Header>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import {
   createBrowserRouter,
@@ -11,7 +11,6 @@ import {
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import { Provider, ErrorBoundary } from '@rollbar/react';
-import { io as Io } from 'socket.io-client';
 import {
   pageLoader,
   ErrorPage,
@@ -26,30 +25,30 @@ import AuthContext from './components/contexts/index.jsx';
 import useAuth from './hooks/index.jsx';
 import * as routes from './routes';
 
-const socket = new Io();
-
 const rollbarConfig = {
   // eslint-disable-next-line no-undef
   accessToken: process.env.REACT_APP_SECRET_CODE,
   environment: 'production',
 };
 
-/* eslint-disable */
 const AuthProvider = ({ children }) => {
-  const [activeUser, setActiveUser] = useState(null);
-  const setActive = (data) => {
+  const auth = useAuth();
+  const [activeUser, setActiveUser] = useState(localStorage.key(0) || null);
+  const setUser = (data) => {
     const { username } = data;
     setActiveUser(username);
     window.localStorage.setItem(username, JSON.stringify(data));
   };
-  const [loggedIn, setLoggedIn] = useState(false);
-  const logIn = () => setLoggedIn(true);
   const logOut = () => {
-    setLoggedIn(false);
+    setActiveUser(null);
     localStorage.removeItem(activeUser);
   };
+
+  const { token } = localStorage.length > 0 && JSON.parse(localStorage.getItem(activeUser));
+
+  /* eslint-disable max-len */
   return (
-    <AuthContext.Provider value={{ loggedIn, logIn, logOut, activeUser, setActive, socket: { socket } }}>
+    <AuthContext.Provider value={{ logOut, activeUser, token, setUser, socket: auth.socket }}>
       {children}
     </AuthContext.Provider>
   );
@@ -62,10 +61,10 @@ AuthProvider.propTypes = {
 const ChatPage = ({ children }) => {
   const auth = useAuth();
   const location = useLocation();
-  return auth.loggedIn ? (
+  return auth.activeUser ? (
     children
   ) : (
-    <Navigate to={routes.loginPath('/')} state={{ from: location }} replace />
+    <Navigate to={routes.loginPath()} state={{ from: location }} replace />
   );
 };
 
@@ -105,14 +104,15 @@ const OutButton = () => {
   const auth = useAuth();
   const { t } = useTranslation();
   const goOut = t('app.goOut');
-  return auth.loggedIn ? <Button onClick={auth.logOut}>{goOut}</Button> : null;
+  return auth.activeUser ? <Button onClick={auth.logOut}>{goOut}</Button> : null;
 };
 
 document.querySelector('body').className = 'bg-light h-100';
 
 const App = () => {
-  localStorage.clear();
-
+  useEffect(() => {
+    localStorage.clear();
+  }, []);
   return (
     <Provider config={rollbarConfig}>
       <ErrorBoundary>
@@ -137,5 +137,4 @@ const App = () => {
     </Provider>
   );
 };
-
 export default App;

@@ -9,35 +9,36 @@ import { toast } from 'react-toastify';
 import SvgSend from './svg/SvgSend.jsx';
 import AuthContext from './contexts/index.jsx';
 import 'react-toastify/dist/ReactToastify.css';
-import { showChannels } from '../slices/channels';
-import { showMessages } from '../slices/messages';
+import { loadChannels } from '../slices/channels';
+import { loadMessages } from '../slices/messages';
 import * as routes from '../routes';
+import useAuth from '../hooks/index.jsx';
 
 const Messages = () => {
+  const auth = useAuth();
+  const { activeUser, token } = auth;
   const dispatch = useDispatch();
-  const { socket, activeUser } = useContext(AuthContext);
-  const newSocket = socket.socket;
+  const { socket } = useContext(AuthContext).socket;
+  const newSocket = socket;
   const { t } = useTranslation();
-  const selectorChannels = useSelector((state) => state.channelsSlice.channels);
-  const selectorMessages = useSelector((state) => state.messagesSlice.messages);
-  const selectorActiveChannel = useSelector(
+  const channels = useSelector((state) => state.channelsSlice.channels);
+  const messages = useSelector((state) => state.messagesSlice.messages);
+  const thisActiveChannel = useSelector(
     (state) => state.channelsSlice.activeChannel,
   );
 
   useEffect(() => {
     const requestData = async () => {
-      if (window.localStorage.length > 0) {
-        const user = localStorage.key(0);
-        const userToken = JSON.parse(localStorage[user]).token;
+      if (activeUser) {
         await axios
           .get(routes.apiDataPath(), {
             headers: {
-              Authorization: `Bearer ${userToken}`,
+              Authorization: `Bearer ${token}`,
             },
           })
           .then((response) => {
-            dispatch(showMessages(response.data));
-            dispatch(showChannels(response.data));
+            dispatch(loadMessages(response.data));
+            dispatch(loadChannels(response.data));
           })
           .catch(() => {
             const notify = () => toast.error(t('toasts.dataNotLoaded'));
@@ -46,17 +47,15 @@ const Messages = () => {
       }
     };
     requestData();
-  }, [dispatch, t]);
+  }, [dispatch, t, activeUser, auth, token]);
 
-  const getActiveChannel = () => (selectorChannels.length > 0
-    && selectorChannels.filter(
-      (channel) => channel.id === selectorActiveChannel,
-    )[0])
-      || 1;
+  const getActiveChannel = () => (channels.length > 0
+    && channels.find((channel) => channel.id === thisActiveChannel))
+    || 1;
 
   const activeChannel = getActiveChannel();
-  const channelMessages = selectorMessages.filter(
-    (item) => item.channelId === selectorActiveChannel,
+  const channelMessages = messages.filter(
+    (item) => item.channelId === thisActiveChannel,
   );
 
   const inpMessage = useRef();
@@ -76,21 +75,18 @@ const Messages = () => {
           </p>
           <span className="text-muted">{countMessages}</span>
         </div>
-        <div id="messages-box" className="chat-messages px-5">
-          <ul className="nav flex-column nav-pills nav-fill mb-2 h-100 overflow-auto d-block">
-            {selectorMessages.map(
-              (item) => item.channelId === selectorActiveChannel
-                && (
-                  <li key={item.id} id={item.id}>
-                    <span>
-                      <b>{item.username}</b>
-                      &#58;&nbsp;
-                    </span>
-                    {item.body}
-                  </li>
-                ),
-            )}
-          </ul>
+        <div id="messages-box" className="chat-messages px-5 overflow-auto">
+          {messages.map(
+            (item) => item.channelId === thisActiveChannel && (
+              <div key={item.id} id={item.id} className="text-break mb-2">
+                <span>
+                  <b>{item.username}</b>
+                  &#58;&nbsp;
+                </span>
+                {item.body}
+              </div>
+            ),
+          )}
         </div>
         <div className="mt-auto px-5 py-3">
           <Formik
@@ -98,7 +94,7 @@ const Messages = () => {
             onSubmit={async (values, { setSubmitting, resetForm }) => {
               const newMessage = {
                 body: filter.clean(values.message),
-                channelId: selectorActiveChannel,
+                channelId: thisActiveChannel,
                 username: activeUser,
               };
               try {
@@ -116,12 +112,7 @@ const Messages = () => {
               }
             }}
           >
-            {({
-              values,
-              handleChange,
-              handleSubmit,
-              isSubmitting,
-            }) => (
+            {({ values, handleChange, handleSubmit, isSubmitting }) => (
               <Form
                 noValidate=""
                 onSubmit={handleSubmit}

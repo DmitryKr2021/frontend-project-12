@@ -50,8 +50,7 @@ const RegistrationPage = () => {
               password: values.password,
             });
           const { data } = response;
-          auth.logIn();
-          auth.setActive(data);
+          auth.setUser(data);
           navigate(routes.mainPath('/'));
         } catch (error) {
           if (error.response) {

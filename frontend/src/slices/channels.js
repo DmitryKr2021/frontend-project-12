@@ -1,9 +1,9 @@
-/* eslint-disable */
+/* eslint-disable no-param-reassign */
+
 import { createSlice } from '@reduxjs/toolkit';
 import _ from 'lodash';
 
 const initialState = {
-  modal: null,
   channels: [],
   activeChannel: 1,
 };
@@ -12,15 +12,12 @@ const channelsSlice = createSlice({
   name: 'channels',
   initialState,
   reducers: {
-    showChannels: (state, { payload }) => {
+    loadChannels: (state, { payload }) => {
       const { channels } = payload;
-      state.channels = [...channels];
+      state.channels = channels;
     },
     setActiveChannel: (state, { payload }) => {
       state.activeChannel = payload;
-    },
-    chooseModal: (state, { payload }) => {
-      state.modal = payload;
     },
     addNewChannel: (state, { payload }) => {
       state.channels = [...state.channels, payload];
@@ -35,17 +32,15 @@ const channelsSlice = createSlice({
       const { id } = payload;
       const targetChannel = state.channels.filter((channel) => channel.id === id)[0];
       _.assign(targetChannel, payload);
-      state.modal = null;
     },
   },
 });
 
 export const {
-  showChannels,
+  loadChannels,
   setActiveChannel,
   addNewChannel,
   removeChannel,
   renameChannel,
-  chooseModal,
 } = channelsSlice.actions;
 export default channelsSlice.reducer;

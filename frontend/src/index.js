@@ -10,8 +10,10 @@ import App from './App';
 import ru from './locales/ru';
 import { addNewMessage } from './slices/messages';
 import { addNewChannel, removeChannel, renameChannel } from './slices/channels';
+import AuthContext from './components/contexts/index.jsx';
 
 const { dispatch } = store;
+const socket = new Io();
 
 const runApp = async () => {
   const i18n = i18next.createInstance();
@@ -22,9 +24,8 @@ const runApp = async () => {
       escapeValue: false,
     },
   });
-
   const root = ReactDOM.createRoot(document.getElementById('root'));
-  const socket = new Io();
+
   socket.on('newMessage', (payload) => {
     dispatch(addNewMessage(payload));
   });
@@ -40,13 +41,15 @@ const runApp = async () => {
   });
 
   root.render(
-    <Provider store={store}>
-      <React.StrictMode>
-        <I18nextProvider i18n={i18n} defaultNS="translation">
-          <App />
-        </I18nextProvider>
-      </React.StrictMode>
-    </Provider>,
+    <AuthContext.Provider value={{ socket: { socket } }}>
+      <Provider store={store}>
+        <React.StrictMode>
+          <I18nextProvider i18n={i18n} defaultNS="translation">
+            <App />
+          </I18nextProvider>
+        </React.StrictMode>
+      </Provider>,
+    </AuthContext.Provider>,
   );
 };
 runApp();

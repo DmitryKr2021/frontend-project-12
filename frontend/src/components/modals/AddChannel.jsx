@@ -1,5 +1,4 @@
 import React, {
-  useState,
   useContext,
   useEffect,
   useRef,
@@ -17,25 +16,29 @@ import filter from 'leo-profanity';
 import { useTranslation } from 'react-i18next';
 import store from '../../slices/index';
 import { setActiveChannel } from '../../slices/channels';
+import { closeModal } from '../../slices/modals';
 import AuthContext from '../contexts/index.jsx';
 
+import useAuth from '../../hooks/index.jsx';
+
 const AddChannel = (params) => {
+  const auth = useAuth();
   const { dispatch } = store;
-  const { setModalNull, setNotify } = params;
-  const selectorChannels = useSelector((state) => state.channelsSlice.channels);
-  const { socket } = useContext(AuthContext);
-  const newSocket = socket.socket;
+  const { setNotify } = params;
+  const channels = useSelector((state) => state.channelsSlice.channels);
+  const { socket } = useContext(AuthContext).socket;
+  const newSocket = socket;
   const { t } = useTranslation();
   const channelLength = t('errors.channelLength');
   const uniqName = t('errors.uniqName');
   const addChannel = t('add.addChannel');
   const cancel = t('add.cancel');
   const send = t('add.send');
-  const [show, setShow] = useState(true);
+
   const close = () => {
-    setShow(false);
-    setModalNull();
+    dispatch(closeModal());
   };
+
   const channelAdded = t('toasts.channelAdded');
   const channelNotAdded = t('rename.channelNotAdded');
 
@@ -44,7 +47,7 @@ const AddChannel = (params) => {
       .min(3, channelLength)
       .max(20, channelLength)
       .notOneOf(
-        selectorChannels.map((channel) => channel.name),
+        channels.map((channel) => channel.name),
         uniqName,
       ),
   });
@@ -53,11 +56,11 @@ const AddChannel = (params) => {
   useEffect(() => {
     inpChannel.current?.select();
   }, []);
-  const thisUser = localStorage.key(0);
+  const { activeUser } = auth;
 
   return (
     <div className="fade modal show" tabIndex="-1">
-      <Modal show={show} onHide={close} centered>
+      <Modal show={true} onHide={close} centered>
         <Modal.Header closeButton onClick={close}>
           <Modal.Title>{addChannel}</Modal.Title>
         </Modal.Header>
@@ -65,21 +68,23 @@ const AddChannel = (params) => {
           <Formik
             validationSchema={Schema}
             initialValues={{ name: '' }}
-            onSubmit={(values, { setSubmitting }) => {
+            onSubmit={async (values, { setSubmitting }) => {
               const newChannel = {
                 name: filter.clean(values.name),
-                user: thisUser,
+                user: activeUser,
               };
-              newSocket.emit('newChannel', newChannel, (response) => {
-                const { status } = response;
-                if (status === 'ok') {
-                  const { id } = response.data;
-                  setNotify(channelAdded, 'success');
-                  dispatch(setActiveChannel(id));
-                } else {
-                  setNotify(channelNotAdded, 'error');
-                }
-              });
+              try {
+                await newSocket.emit('newChannel', newChannel, (response) => {
+                  const { status } = response;
+                  if (status === 'ok') {
+                    const { id } = response.data;
+                    setNotify(channelAdded, 'success');
+                    dispatch(setActiveChannel(id));
+                  }
+                });
+              } catch (error) {
+                setNotify(channelNotAdded, 'error');
+              }
               close();
               setSubmitting(false);
             }}

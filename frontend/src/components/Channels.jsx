@@ -10,22 +10,20 @@ import cn from 'classnames';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import SvgPlus from './svg/SvgPlus.jsx';
-import {
-  setActiveChannel,
-  chooseModal,
-} from '../slices/channels';
+import { setActiveChannel } from '../slices/channels';
+import { chooseModal } from '../slices/modals';
 import getModal from './modals/index';
 
 const Channels = () => {
-  const [modal, setModal] = useState(null);
   const [channelNumber, setChannelNumber] = useState(null);
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const channels = t('main.channels');
-  const selectorChannels = useSelector((state) => state.channelsSlice.channels);
-  const selectorActiveChannel = useSelector(
+  const tChannels = t('main.channels');
+  const channels = useSelector((state) => state.channelsSlice.channels);
+  const activeChannel = useSelector(
     (state) => state.channelsSlice.activeChannel,
   );
+  const modal = useSelector((state) => state.modalsSlice.modal);
   const btnClassLight = cn('w-100', 'rounded-0', 'text-start', 'text-truncate', 'btn', 'btn-light');
   const btnClassSecondary = cn('w-100', 'rounded-0', 'text-start', 'text-truncate', 'btn', 'btn-secondary');
   const dropDownClassLight = cn('square', 'border', 'border-0', 'btn-light');
@@ -34,12 +32,7 @@ const Channels = () => {
   const manageChannel = (modalType) => (e) => {
     e.preventDefault();
     dispatch(chooseModal(modalType));
-    setModal(modalType);
     setChannelNumber(e.target.getAttribute('data-index'));
-  };
-
-  const setModalNull = () => {
-    setModal(null);
   };
 
   const setNotify = (text, result) => {
@@ -52,7 +45,6 @@ const Channels = () => {
       const getModalValue = getModal(value);
       const params = {
         channelNumber,
-        setModalNull,
         setNotify,
       };
       return getModalValue(params);
@@ -72,7 +64,7 @@ const Channels = () => {
     <>
       <div className="col-4 col-md-2 border-end px-0 bg-light flex-column h-100 d-flex">
         <div className="d-flex mt-1 justify-content-between mb-2 ps-4 pe-2 p-4">
-          <b>{channels}</b>
+          <b>{tChannels}</b>
           <Button
             type="button"
             variant="light"
@@ -87,7 +79,7 @@ const Channels = () => {
           id="channels-box"
           className="nav flex-column nav-pills nav-fill px-2 mb-3 overflow-auto h-100 d-block"
         >
-          {selectorChannels.map((item) => (
+          {channels.map((item) => (
             <li
               className="nav-item w-100 position-relative"
               key={item.id}
@@ -98,7 +90,7 @@ const Channels = () => {
                   type="button"
                   onClick={() => handleClick(item.id)}
                   className={
-                    item.id === selectorActiveChannel
+                    item.id === activeChannel
                       ? btnClassSecondary
                       : btnClassLight
                   }
@@ -110,7 +102,7 @@ const Channels = () => {
                   <Dropdown as={ButtonGroup}>
                     <Dropdown.Toggle
                       className={
-                        item.id === selectorActiveChannel
+                        item.id === activeChannel
                           ? dropDownClassSecondary
                           : dropDownClassLight
                       }
