@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Button } from 'react-bootstrap';
 import {
   createBrowserRouter,
@@ -33,18 +33,22 @@ const rollbarConfig = {
 
 const AuthProvider = ({ children }) => {
   const auth = useAuth();
-  const [activeUser, setActiveUser] = useState(localStorage.key(0) || null);
+
+  const name = JSON.parse(localStorage.getItem('user')) ? JSON.parse(localStorage.getItem('user')).username : null;
+
+  const [activeUser, setActiveUser] = useState(name);
+
   const setUser = (data) => {
     const { username } = data;
     setActiveUser(username);
-    window.localStorage.setItem(username, JSON.stringify(data));
+    window.localStorage.setItem('user', JSON.stringify(data));
   };
   const logOut = () => {
     setActiveUser(null);
     localStorage.removeItem(activeUser);
   };
 
-  const { token } = localStorage.length > 0 && JSON.parse(localStorage.getItem(activeUser));
+  const { token } = localStorage.length > 0 && JSON.parse(localStorage.getItem('user'));
 
   /* eslint-disable */
   return (
@@ -52,6 +56,11 @@ const AuthProvider = ({ children }) => {
       {children}
     </AuthContext.Provider>
   );
+  /* return (
+    <AuthContext.Provider value={{ logOut, activeUser, token, setUser }}>
+      {children}
+    </AuthContext.Provider>
+  ); */
 };
 /* eslint-enable */
 AuthProvider.propTypes = {
@@ -74,7 +83,7 @@ ChatPage.propTypes = {
 
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route path="/" element={null}>
+    <Route path={routes.slash()} element={null}>
       <Route
         index
         loader={pageLoader}
@@ -109,32 +118,28 @@ const OutButton = () => {
 
 document.querySelector('body').className = 'bg-light h-100';
 
-const App = () => {
-  useEffect(() => {
-    localStorage.clear();
-  }, []);
-  return (
-    <Provider config={rollbarConfig}>
-      <ErrorBoundary>
-        <AuthProvider>
-          <div className="h-100">
-            <div className="h-100" id="chat">
-              <div className="h-100 d-flex flex-column">
-                <nav className="shadow-sm navbar navbar-expand-lg navbar-light bg-white">
-                  <div className="container">
-                    <a className="navbar-brand" href="/">
-                      Hexlet Chat
-                    </a>
-                    <OutButton />
-                  </div>
-                </nav>
-                <RouterProvider router={router} />
-              </div>
+const App = () => (
+  <Provider config={rollbarConfig}>
+    <ErrorBoundary>
+      <AuthProvider>
+        <div className="h-100">
+          <div className="h-100" id="chat">
+            <div className="h-100 d-flex flex-column">
+              <nav className="shadow-sm navbar navbar-expand-lg navbar-light bg-white">
+                <div className="container">
+                  <a className="navbar-brand" href="/">
+                    Hexlet Chat
+                  </a>
+                  <OutButton />
+                </div>
+              </nav>
+              <RouterProvider router={router} />
             </div>
           </div>
-        </AuthProvider>
-      </ErrorBoundary>
-    </Provider>
-  );
-};
+        </div>
+      </AuthProvider>
+    </ErrorBoundary>
+  </Provider>
+);
+
 export default App;

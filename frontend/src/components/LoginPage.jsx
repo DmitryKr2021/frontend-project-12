@@ -10,12 +10,6 @@ import * as routes from '../routes';
 
 const LoginPage = () => {
   const { t } = useTranslation();
-  const serverError = t('errors.serverError');
-  const enter = t('login.enter');
-  const nik = t('login.nik');
-  const password = t('login.password');
-  const noAccount = t('login.noAccount');
-  const registration = t('login.registration');
   const auth = useAuth();
   const navigate = useNavigate();
   const inpName = useRef();
@@ -37,8 +31,8 @@ const LoginPage = () => {
           if (error.response) {
             inpName.current.select();
             setErrors({
-              username: serverError,
-              password: serverError,
+              username: t('errors.serverError'),
+              password: t('errors.serverError'),
             });
             console.error(error.response.status);
           } else if (error.request) {
@@ -78,14 +72,14 @@ const LoginPage = () => {
                       onSubmit={handleSubmit}
                       className="col-12 col-md-6 mt-3 mt-mb-0"
                     >
-                      <h1 className="text-center mb-4">{enter}</h1>
+                      <h1 className="text-center mb-4">{t('login.enter')}</h1>
                       <Form.Group className="mb-3">
                         <div className="form-floating mb-3">
                           <Form.Control
                             name="username"
                             autoComplete="username"
                             required
-                            placeholder={nik}
+                            placeholder={t('login.nik')}
                             id="username"
                             onChange={handleChange}
                             onBlur={handleBlur}
@@ -94,7 +88,7 @@ const LoginPage = () => {
                             autoFocus
                             ref={inpName}
                           />
-                          <Form.Label htmlFor="username">{nik}</Form.Label>
+                          <Form.Label htmlFor="username">{t('login.nik')}</Form.Label>
                         </div>
                       </Form.Group>
                       <Form.Group className="mb-3">
@@ -103,7 +97,7 @@ const LoginPage = () => {
                             name="password"
                             type="password"
                             autoComplete="password"
-                            placeholder={password}
+                            placeholder={t('login.password')}
                             required
                             id="password"
                             onChange={handleChange}
@@ -111,7 +105,7 @@ const LoginPage = () => {
                             value={values.password}
                             isInvalid={touched.password && errors.password}
                           />
-                          <Form.Label htmlFor="password">{password}</Form.Label>
+                          <Form.Label htmlFor="password">{t('login.password')}</Form.Label>
                           <ErrorMessage name="password">
                             {(msg) => (
                               <div className="invalid-tooltip">{msg}</div>
@@ -125,14 +119,14 @@ const LoginPage = () => {
                         className="w-100 mb-3 btn btn-outline-primary"
                         variant="outline-primary"
                       >
-                        {enter}
+                        {t('login.enter')}
                       </Button>
                     </Form>
                   </div>
                   <div className="card-footer p-4">
                     <div className="text-center">
-                      <span>{noAccount}</span>
-                      <Link to="/signup">{registration}</Link>
+                      <span>{t('login.noAccount')}</span>
+                      <Link to="/signup">{t('login.registration')}</Link>
                     </div>
                   </div>
                 </div>

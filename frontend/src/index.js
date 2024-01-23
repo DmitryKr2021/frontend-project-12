@@ -13,9 +13,9 @@ import { addNewChannel, removeChannel, renameChannel } from './slices/channels';
 import AuthContext from './components/contexts/index.jsx';
 
 const { dispatch } = store;
-const socket = new Io();
 
 const runApp = async () => {
+  const socket = new Io();
   const i18n = i18next.createInstance();
   await i18n.use(initReactI18next).init({
     resources: { ru },

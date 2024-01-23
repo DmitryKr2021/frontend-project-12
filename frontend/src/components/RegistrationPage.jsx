@@ -11,31 +11,22 @@ import * as routes from '../routes';
 
 const RegistrationPage = () => {
   const { t } = useTranslation();
-  const loginLength = t('errors.loginLength');
-  const passwordLength = t('errors.passwordLength');
-  const required = t('errors.required');
-  const coincidePass = t('errors.coincidePass');
-  const toRegister = t('registration.toRegister');
-  const username = t('registration.username');
-  const password = t('registration.password');
-  const repeatPassword = t('registration.repeatPassword');
-  const registration = t('registration.registration');
   const navigate = useNavigate();
   const auth = useAuth();
   const inpRepeat = useRef();
 
   const Schema = Yup.object().shape({
     username: Yup.string()
-      .min(3, loginLength)
-      .max(20, loginLength)
-      .required(required),
+      .min(3, t('errors.loginLength'))
+      .max(20, t('errors.loginLength'))
+      .required(t('errors.required')),
     password: Yup.string()
-      .min(6, passwordLength)
-      .max(20, passwordLength)
-      .required(required),
+      .min(6, t('errors.passwordLength'))
+      .max(20, t('errors.passwordLength'))
+      .required(t('errors.required')),
     repeatPassword: Yup.string()
-      .required(required)
-      .oneOf([Yup.ref('password'), null], coincidePass),
+      .required(t('errors.required'))
+      .oneOf([Yup.ref('password'), null], t('errors.coincidePass')),
   });
 
   return (
@@ -51,10 +42,10 @@ const RegistrationPage = () => {
             });
           const { data } = response;
           auth.setUser(data);
-          navigate(routes.mainPath('/'));
+          navigate(routes.mainPath());
         } catch (error) {
           if (error.response) {
-            navigate(routes.conflictPath('/'));
+            navigate(routes.conflictPath());
             console.error(error.response.status);
           }
         }
@@ -83,7 +74,7 @@ const RegistrationPage = () => {
                         src={img}
                         width={200}
                         className="rounded-circle"
-                        alt={registration}
+                        alt={t('registration.registration')}
                       />
                     </div>
                     <Form
@@ -91,13 +82,13 @@ const RegistrationPage = () => {
                       onSubmit={handleSubmit}
                       className="col-12 col-md-6 mt-3 mt-mb-0"
                     >
-                      <h1 className="text-center mb-4">{registration}</h1>
+                      <h1 className="text-center mb-4">{t('registration.registration')}</h1>
                       <Form.Group className="mb-3 position-relative">
                         <div className="form-floating mb-3">
                           <Form.Control
                             type="text"
                             name="username"
-                            placeholder={username}
+                            placeholder={t('registration.username')}
                             id="username"
                             onChange={handleChange}
                             onBlur={handleBlur}
@@ -105,7 +96,7 @@ const RegistrationPage = () => {
                             isInvalid={touched.username && errors.username}
                             autoFocus
                           />
-                          <Form.Label htmlFor="username">{username}</Form.Label>
+                          <Form.Label htmlFor="username">{t('registration.username')}</Form.Label>
                           <ErrorMessage name="username">
                             {(msg) => (
                               <div className=" invalid-tooltip">{msg}</div>
@@ -121,13 +112,13 @@ const RegistrationPage = () => {
                             autoComplete="password"
                             required
                             onBlur={handleBlur}
-                            placeholder={password}
+                            placeholder={t('registration.password')}
                             id="password"
                             onChange={handleChange}
                             value={values.password}
                             isInvalid={touched.password && errors.password}
                           />
-                          <Form.Label htmlFor="password">{password}</Form.Label>
+                          <Form.Label htmlFor="password">{t('registration.password')}</Form.Label>
                           <ErrorMessage name="password">
                             {(msg) => (
                               <div className=" invalid-tooltip">{msg}</div>
@@ -142,7 +133,7 @@ const RegistrationPage = () => {
                             type="password"
                             autoComplete="repeatPassword"
                             required
-                            placeholder={repeatPassword}
+                            placeholder={t('registration.repeatPassword')}
                             id="repeat-password"
                             onChange={handleChange}
                             onBlur={handleBlur}
@@ -153,7 +144,7 @@ const RegistrationPage = () => {
                             ref={inpRepeat}
                           />
                           <Form.Label htmlFor="repeat-password">
-                            {repeatPassword}
+                            {t('registration.repeatPassword')}
                           </Form.Label>
                           <Form.Control.Feedback type="invalid" tooltip>
                             {errors.repeatPassword}
@@ -166,7 +157,7 @@ const RegistrationPage = () => {
                         variant="outline-primary"
                         disabled={isSubmitting}
                       >
-                        {toRegister}
+                        {t('registration.toRegister')}
                       </Button>
                     </Form>
                   </div>

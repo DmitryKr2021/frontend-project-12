@@ -22,20 +22,11 @@ const RenameChannel = (params) => {
   const { channelNumber, setNotify } = params;
   const channels = useSelector((state) => state.channelsSlice.channels);
   const { socket } = useContext(AuthContext).socket;
-  const newSocket = socket;
   const { t } = useTranslation();
-  const channelLength = t('errors.channelLength');
-  const uniqName = t('errors.uniqName');
-  const rename = t('rename.rename');
-  const cancel = t('rename.cancel');
-  const send = t('rename.send');
 
   const close = () => {
     dispatch(closeModal());
   };
-
-  const channelRenamed = t('toasts.channelRenamed');
-  const channelNotRenamed = t('rename.channelNotRenamed');
 
   const [renamingChannel] = channels.filter(
     (channel) => channel.id === +channelNumber,
@@ -43,11 +34,11 @@ const RenameChannel = (params) => {
 
   const Schema = Yup.object().shape({
     channel: Yup.string()
-      .min(3, channelLength)
-      .max(20, channelLength)
+      .min(3, t('errors.channelLength'))
+      .max(20, t('errors.channelLength'))
       .notOneOf(
         channels.map((channel) => channel.name),
-        uniqName,
+        t('errors.uniqName'),
       ),
   });
 
@@ -60,7 +51,7 @@ const RenameChannel = (params) => {
     <div className="fade modal show" tabIndex="-1">
       <Modal show onHide={close} centered>
         <Modal.Header closeButton onClick={close}>
-          <Modal.Title>{rename}</Modal.Title>
+          <Modal.Title>{t('rename.rename')}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Formik
@@ -75,14 +66,14 @@ const RenameChannel = (params) => {
                 id: values.id,
               };
               try {
-                await newSocket.emit('renameChannel', targetChannel, (response) => {
+                await socket.emit('renameChannel', targetChannel, (response) => {
                   const { status } = response;
                   if (status === 'ok') {
-                    setNotify(channelRenamed, 'success');
+                    setNotify(t('toasts.channelRenamed'), 'success');
                   }
                 });
               } catch (error) {
-                setNotify(channelNotRenamed, 'error');
+                setNotify(t('rename.channelNotRenamed'), 'error');
               }
               close();
               setSubmitting(false);
@@ -103,8 +94,8 @@ const RenameChannel = (params) => {
                   <Form.Control
                     name="channel"
                     id="name"
-                    aria-label={rename}
-                    title={rename}
+                    aria-label={t('rename.rename')}
+                    title={t('rename.rename')}
                     onChange={handleChange}
                     value={values.channel}
                     ref={inpChannel}
@@ -124,10 +115,10 @@ const RenameChannel = (params) => {
                       className="me-2 rounded"
                       onClick={close}
                     >
-                      {cancel}
+                      {t('rename.cancel')}
                     </Button>
                     <Button variant="primary" type="submit" className="rounded">
-                      {send}
+                      {t('rename.send')}
                     </Button>
                   </ButtonGroup>
                 </div>

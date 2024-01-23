@@ -14,30 +14,22 @@ const RemoveChannel = (params) => {
   const { dispatch } = store;
   const { channelNumber, setNotify } = params;
   const { socket } = useContext(AuthContext).socket;
-  const newSocket = socket;
   const { t } = useTranslation();
-  const removeChannel = t('remove.removeChannel');
-  const remove = t('remove.remove');
-  const sure = t('remove.sure');
-  const cancel = t('remove.cancel');
 
   const close = () => {
     dispatch(closeModal());
   };
 
-  const channelRemoved = t('toasts.channelRemoved');
-  const channelNotRemoved = t('rename.channelNotRemoved');
-
   const handleRemove = async () => {
     try {
-      await newSocket.emit('removeChannel', { id: channelNumber }, (response) => {
+      await socket.emit('removeChannel', { id: channelNumber }, (response) => {
         const { status } = response;
         if (status === 'ok') {
-          setNotify(channelRemoved, 'success');
+          setNotify(t('toasts.channelRemoved'), 'success');
         }
       });
     } catch (error) {
-      setNotify(channelNotRemoved, 'error');
+      setNotify(t('rename.channelNotRemoved'), 'error');
     }
     close();
   };
@@ -46,22 +38,22 @@ const RemoveChannel = (params) => {
     <div className="fade modal show" tabIndex="-1">
       <Modal show onHide={close} centered>
         <Modal.Header closeButton onClick={close}>
-          <Modal.Title>{removeChannel}</Modal.Title>
+          <Modal.Title>{t('remove.removeChannel')}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form noValidate="" onSubmit={handleRemove}>
             <div className="d-flex justify-content-end ">
-              <p className="lead w-75 text-start">{sure}</p>
+              <p className="lead w-75 text-start">{t('remove.sure')}</p>
               <ButtonGroup className="w-50 mt-5">
                 <Button
                   type="button"
                   className="me-2 rounded btn btn-secondary"
                   onClick={close}
                 >
-                  {cancel}
+                  {t('remove.cancel')}
                 </Button>
                 <Button type="submit" className="rounded btn btn-danger">
-                  {remove}
+                  {t('remove.remove')}
                 </Button>
               </ButtonGroup>
             </div>

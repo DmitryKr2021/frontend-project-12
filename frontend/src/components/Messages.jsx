@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useRef } from 'react';
+// import React, { useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button, Form } from 'react-bootstrap';
@@ -18,8 +19,11 @@ const Messages = () => {
   const auth = useAuth();
   const { activeUser, token } = auth;
   const dispatch = useDispatch();
-  const { socket } = useContext(AuthContext).socket;
-  const newSocket = socket;
+
+  const { socket } = useContext(AuthContext).socket; // 1 вариант
+  // const { socket } = useContext(AuthContext);
+  // const { socket } = useAuth;
+
   const { t } = useTranslation();
   const channels = useSelector((state) => state.channelsSlice.channels);
   const messages = useSelector((state) => state.messagesSlice.messages);
@@ -66,6 +70,17 @@ const Messages = () => {
   const messagesLength = channelMessages.length;
   const countMessages = t('messages.msg', { count: messagesLength });
 
+  /* const scrollToLast = (b) => {
+    const last = document.querySelector(".last");
+    last.scrollIntoView({
+      behavior: b || 'auto',
+      block: 'end',
+    });
+  };
+  useEffect(() => {
+    scrollToLast('smooth');
+  }, []); */
+
   return (
     <div className="col p-0 h-100">
       <div className="d-flex flex-column h-100">
@@ -75,7 +90,7 @@ const Messages = () => {
           </p>
           <span className="text-muted">{countMessages}</span>
         </div>
-        <div id="messages-box" className="chat-messages px-5 overflow-auto">
+        <div id="messages-box" className="chat-messages px-5 overflow-auto ">
           {messages.map(
             (item) => item.channelId === thisActiveChannel && (
               <div key={item.id} id={item.id} className="text-break mb-2">
@@ -87,6 +102,7 @@ const Messages = () => {
               </div>
             ),
           )}
+          <div className="last invisible">Last message</div>
         </div>
         <div className="mt-auto px-5 py-3">
           <Formik
@@ -98,7 +114,7 @@ const Messages = () => {
                 username: activeUser,
               };
               try {
-                await newSocket.emit('newMessage', newMessage, (response) => {
+                await socket.emit('newMessage', newMessage, (response) => {
                   const { status } = response;
                   if (status === 'ok') {
                     setSubmitting(false);

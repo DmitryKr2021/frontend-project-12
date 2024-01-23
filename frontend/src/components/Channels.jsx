@@ -23,7 +23,8 @@ const Channels = () => {
   const activeChannel = useSelector(
     (state) => state.channelsSlice.activeChannel,
   );
-  const modal = useSelector((state) => state.modalsSlice.modal);
+  const showModal = useSelector((state) => state.modalsSlice.showModal);
+  const typeModal = useSelector((state) => state.modalsSlice.typeModal);
   const btnClassLight = cn('w-100', 'rounded-0', 'text-start', 'text-truncate', 'btn', 'btn-light');
   const btnClassSecondary = cn('w-100', 'rounded-0', 'text-start', 'text-truncate', 'btn', 'btn-secondary');
   const dropDownClassLight = cn('square', 'border', 'border-0', 'btn-light');
@@ -56,8 +57,17 @@ const Channels = () => {
     value: PropTypes.node.isRequired,
   };
 
+  const scrollToLast = (b) => {
+    const last = document.querySelector(".last");
+    last.scrollIntoView({
+      behavior: b || 'auto',
+      block: 'end',
+    });
+  };
+
   const handleClick = (id) => {
     dispatch(setActiveChannel(id));
+    scrollToLast('smooth');
   };
 
   return (
@@ -135,7 +145,7 @@ const Channels = () => {
           ))}
         </ul>
       </div>
-      {modal ? <RenderModal value={modal} /> : null}
+      {showModal ? <RenderModal value={typeModal} /> : null}
     </>
   );
 };
