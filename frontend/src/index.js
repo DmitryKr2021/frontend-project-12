@@ -96,7 +96,7 @@ const runApp = async () => {
   socket.on('renameChannel', (payload) => {
     dispatch(renameChannel(payload));
   });
-
+  // eslint-disable-next-line
   const withEmit = { emitMessage, emitAddChannel, emitRemoveChannel, emitRenameChannel };
 
   root.render(

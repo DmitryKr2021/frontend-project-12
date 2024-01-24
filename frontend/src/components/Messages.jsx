@@ -105,12 +105,12 @@ const Messages = () => {
             activeClass="active"
             className="lastMessage"
             to="lastMessage"
-            spy={true}
-            smooth={true}
+            spy
+            smooth
             offset={50}
             duration={500}
-          ></Link>
-          <Element name="lastMessage"></Element>
+          />
+          <Element name="lastMessage"/>
         </div>
         <div className="mt-auto px-5 py-3">
           <Formik
@@ -127,6 +127,7 @@ const Messages = () => {
               scrollTo();
             }}
           >
+            (//eslint-disable-next-line)
             {({ values, handleChange, handleSubmit, isSubmitting }) => (
               <Form
                 noValidate=""

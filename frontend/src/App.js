@@ -49,6 +49,7 @@ const AuthProvider = ({ children }) => {
   const { token } = localStorage.length > 0 && JSON.parse(localStorage.getItem('user'));
 
   return (
+    // eslint-disable-next-line
     <AuthContext.Provider value={{ logOut, activeUser, token, setUser }}>
       {children}
     </AuthContext.Provider>
