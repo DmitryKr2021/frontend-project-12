@@ -15,13 +15,14 @@ import { Formik, ErrorMessage } from 'formik';
 import { useTranslation } from 'react-i18next';
 import store from '../../slices/index';
 import { closeModal } from '../../slices/modals';
-import AuthContext from '../contexts/index.jsx';
+import { ApiContext } from '../contexts/index.jsx';
 
 const RenameChannel = (params) => {
   const { dispatch } = store;
-  const { channelNumber, setNotify } = params;
+  const { channelNumber } = params;
   const channels = useSelector((state) => state.channelsSlice.channels);
-  const { socket } = useContext(AuthContext).socket;
+  const { withEmit } = useContext(ApiContext);
+  const { emitRenameChannel } = withEmit;
   const { t } = useTranslation();
 
   const close = () => {
@@ -65,16 +66,7 @@ const RenameChannel = (params) => {
                 name: values.channel,
                 id: values.id,
               };
-              try {
-                await socket.emit('renameChannel', targetChannel, (response) => {
-                  const { status } = response;
-                  if (status === 'ok') {
-                    setNotify(t('toasts.channelRenamed'), 'success');
-                  }
-                });
-              } catch (error) {
-                setNotify(t('rename.channelNotRenamed'), 'error');
-              }
+              emitRenameChannel('renameChannel', targetChannel, t('toasts.channelRenamed'), t('toasts.channelNotRenamed'));
               close();
               setSubmitting(false);
             }}

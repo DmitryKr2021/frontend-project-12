@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useRef } from 'react';
-// import React, { useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button, Form } from 'react-bootstrap';
@@ -7,8 +6,9 @@ import { Formik } from 'formik';
 import filter from 'leo-profanity';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
+import { Link, Element, scroller } from 'react-scroll';
 import SvgSend from './svg/SvgSend.jsx';
-import AuthContext from './contexts/index.jsx';
+import { ApiContext } from './contexts/index.jsx';
 import 'react-toastify/dist/ReactToastify.css';
 import { loadChannels } from '../slices/channels';
 import { loadMessages } from '../slices/messages';
@@ -19,17 +19,27 @@ const Messages = () => {
   const auth = useAuth();
   const { activeUser, token } = auth;
   const dispatch = useDispatch();
-
-  const { socket } = useContext(AuthContext).socket; // 1 вариант
-  // const { socket } = useContext(AuthContext);
-  // const { socket } = useAuth;
-
+  const { withEmit } = useContext(ApiContext);
+  const { emitMessage } = withEmit;
   const { t } = useTranslation();
   const channels = useSelector((state) => state.channelsSlice.channels);
   const messages = useSelector((state) => state.messagesSlice.messages);
   const thisActiveChannel = useSelector(
     (state) => state.channelsSlice.activeChannel,
   );
+
+  const scrollTo = () => {
+    scroller.scrollTo('lastMessage', {
+      duration: 800,
+      delay: 0,
+      containerId: 'messages-box',
+      smooth: 'easeInOutQuart',
+    });
+  };
+
+  useEffect(() => {
+    scrollTo();
+  });
 
   useEffect(() => {
     const requestData = async () => {
@@ -70,17 +80,6 @@ const Messages = () => {
   const messagesLength = channelMessages.length;
   const countMessages = t('messages.msg', { count: messagesLength });
 
-  /* const scrollToLast = (b) => {
-    const last = document.querySelector(".last");
-    last.scrollIntoView({
-      behavior: b || 'auto',
-      block: 'end',
-    });
-  };
-  useEffect(() => {
-    scrollToLast('smooth');
-  }, []); */
-
   return (
     <div className="col p-0 h-100">
       <div className="d-flex flex-column h-100">
@@ -102,7 +101,16 @@ const Messages = () => {
               </div>
             ),
           )}
-          <div className="last invisible">Last message</div>
+          <Link
+            activeClass="active"
+            className="lastMessage"
+            to="lastMessage"
+            spy={true}
+            smooth={true}
+            offset={50}
+            duration={500}
+          ></Link>
+          <Element name="lastMessage"></Element>
         </div>
         <div className="mt-auto px-5 py-3">
           <Formik
@@ -113,27 +121,13 @@ const Messages = () => {
                 channelId: thisActiveChannel,
                 username: activeUser,
               };
-              try {
-                await socket.emit('newMessage', newMessage, (response) => {
-                  const { status } = response;
-                  if (status === 'ok') {
-                    setSubmitting(false);
-                    resetForm('');
-                  }
-                });
-              } catch (error) {
-                console.error(error.response.status);
-                const notify = () => toast.error(t('toasts.dataNotLoaded'));
-                notify();
-              }
+              emitMessage('newMessage', newMessage, t('toasts.dataNotLoaded'));
+              resetForm('');
+              setSubmitting(false);
+              scrollTo();
             }}
           >
-            {({
-              values,
-              handleChange,
-              handleSubmit,
-              isSubmitting,
-            }) => (
+            {({ values, handleChange, handleSubmit, isSubmitting }) => (
               <Form
                 noValidate=""
                 onSubmit={handleSubmit}

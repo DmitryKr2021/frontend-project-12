@@ -32,8 +32,6 @@ const rollbarConfig = {
 };
 
 const AuthProvider = ({ children }) => {
-  const auth = useAuth();
-
   const name = JSON.parse(localStorage.getItem('user')) ? JSON.parse(localStorage.getItem('user')).username : null;
 
   const [activeUser, setActiveUser] = useState(name);
@@ -50,19 +48,13 @@ const AuthProvider = ({ children }) => {
 
   const { token } = localStorage.length > 0 && JSON.parse(localStorage.getItem('user'));
 
-  /* eslint-disable */
   return (
-    <AuthContext.Provider value={{ logOut, activeUser, token, setUser, socket: auth.socket }}>
-      {children}
-    </AuthContext.Provider>
-  );
-  /* return (
     <AuthContext.Provider value={{ logOut, activeUser, token, setUser }}>
       {children}
     </AuthContext.Provider>
-  ); */
+  );
 };
-/* eslint-enable */
+
 AuthProvider.propTypes = {
   children: PropTypes.node.isRequired,
 };

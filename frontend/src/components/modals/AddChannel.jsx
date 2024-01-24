@@ -15,18 +15,17 @@ import { Formik, ErrorMessage } from 'formik';
 import filter from 'leo-profanity';
 import { useTranslation } from 'react-i18next';
 import store from '../../slices/index';
-import { setActiveChannel } from '../../slices/channels';
 import { closeModal } from '../../slices/modals';
-import AuthContext from '../contexts/index.jsx';
+import { ApiContext } from '../contexts/index.jsx';
 
 import useAuth from '../../hooks/index.jsx';
 
-const AddChannel = (params) => {
+const AddChannel = () => {
   const auth = useAuth();
   const { dispatch } = store;
-  const { setNotify } = params;
   const channels = useSelector((state) => state.channelsSlice.channels);
-  const { socket } = useContext(AuthContext).socket;
+  const { withEmit } = useContext(ApiContext);
+  const { emitAddChannel } = withEmit;
   const { t } = useTranslation();
 
   const close = () => {
@@ -64,18 +63,7 @@ const AddChannel = (params) => {
                 name: filter.clean(values.name),
                 user: activeUser,
               };
-              try {
-                await socket.emit('newChannel', newChannel, (response) => {
-                  const { status } = response;
-                  if (status === 'ok') {
-                    const { id } = response.data;
-                    setNotify(t('toasts.channelAdded'), 'success');
-                    dispatch(setActiveChannel(id));
-                  }
-                });
-              } catch (error) {
-                setNotify(t('rename.channelNotAdded'), 'error');
-              }
+              emitAddChannel('newChannel', newChannel, t('toasts.channelAdded'), t('toasts.channelNotAdded'));
               close();
               setSubmitting(false);
             }}

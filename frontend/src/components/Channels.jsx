@@ -7,7 +7,6 @@ import {
 } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import cn from 'classnames';
-import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import SvgPlus from './svg/SvgPlus.jsx';
 import { setActiveChannel } from '../slices/channels';
@@ -23,7 +22,6 @@ const Channels = () => {
   const activeChannel = useSelector(
     (state) => state.channelsSlice.activeChannel,
   );
-  const showModal = useSelector((state) => state.modalsSlice.showModal);
   const typeModal = useSelector((state) => state.modalsSlice.typeModal);
   const btnClassLight = cn('w-100', 'rounded-0', 'text-start', 'text-truncate', 'btn', 'btn-light');
   const btnClassSecondary = cn('w-100', 'rounded-0', 'text-start', 'text-truncate', 'btn', 'btn-secondary');
@@ -36,17 +34,11 @@ const Channels = () => {
     setChannelNumber(e.target.getAttribute('data-index'));
   };
 
-  const setNotify = (text, result) => {
-    const notify = () => toast[result](text);
-    notify();
-  };
-
   const RenderModal = ({ value }) => {
     if (value) {
       const getModalValue = getModal(value);
       const params = {
         channelNumber,
-        setNotify,
       };
       return getModalValue(params);
     }
@@ -57,17 +49,8 @@ const Channels = () => {
     value: PropTypes.node.isRequired,
   };
 
-  const scrollToLast = (b) => {
-    const last = document.querySelector(".last");
-    last.scrollIntoView({
-      behavior: b || 'auto',
-      block: 'end',
-    });
-  };
-
   const handleClick = (id) => {
     dispatch(setActiveChannel(id));
-    scrollToLast('smooth');
   };
 
   return (
@@ -145,7 +128,7 @@ const Channels = () => {
           ))}
         </ul>
       </div>
-      {showModal ? <RenderModal value={typeModal} /> : null}
+      {typeModal ? <RenderModal value={typeModal} /> : null}
     </>
   );
 };

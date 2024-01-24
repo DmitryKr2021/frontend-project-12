@@ -7,14 +7,6 @@ const initialState = {
   messages: [],
 };
 
-const scrollToLast = (b) => {
-  const last = document.querySelector(".last");
-  last.scrollIntoView({
-    behavior: b || 'auto',
-    block: 'end',
-  });
-};
-
 const messagesSlice = createSlice({
   name: 'messages',
   initialState,
@@ -22,11 +14,9 @@ const messagesSlice = createSlice({
     loadMessages: (state, { payload }) => {
       const { messages } = payload;
       state.messages = messages;
-      scrollToLast('smooth');
     },
     addNewMessage: (state, { payload }) => {
       state.messages = [...state.messages, payload];
-      scrollToLast('smooth');
     },
   },
   extraReducers: (builder) => {
