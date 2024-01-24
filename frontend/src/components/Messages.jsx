@@ -1,3 +1,4 @@
+/* eslint-disable object-curly-newline */
 import React, { useContext, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useSelector, useDispatch } from 'react-redux';
@@ -127,8 +128,12 @@ const Messages = () => {
               scrollTo();
             }}
           >
-            (//eslint-disable-next-line)
-            {({ values, handleChange, handleSubmit, isSubmitting }) => (
+            {({
+              values,
+              handleChange,
+              handleSubmit,
+              isSubmitting,
+            }) => (
               <Form
                 noValidate=""
                 onSubmit={handleSubmit}
