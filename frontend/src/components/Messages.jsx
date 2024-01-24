@@ -111,7 +111,7 @@ const Messages = () => {
             offset={50}
             duration={500}
           />
-          <Element name="lastMessage"/>
+          <Element name="lastMessage" />
         </div>
         <div className="mt-auto px-5 py-3">
           <Formik
