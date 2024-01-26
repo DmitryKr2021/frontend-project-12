@@ -25,6 +25,7 @@ export default {
       required: 'Обязательное поле',
       coincidePass: 'Пароли должны совпадать',
       uniqName: 'Имя должно быть уникальным',
+      userExists: 'Такой пользователь уже существует',
     },
     login: {
       enter: 'Войти',

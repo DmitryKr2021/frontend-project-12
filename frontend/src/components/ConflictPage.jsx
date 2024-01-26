@@ -1,9 +1,11 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import img from '../imgs/409.jpg';
 
 const ConflictPage = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   return (
     <div
@@ -20,6 +22,14 @@ const ConflictPage = () => {
         }}
       >
         409 User already exists
+      </p>
+      <p
+        style={{
+          textAlign: 'center',
+          fontSize: '20px',
+        }}
+      >
+        {t('errors.userExists')}
       </p>
       <img
         src={img}
