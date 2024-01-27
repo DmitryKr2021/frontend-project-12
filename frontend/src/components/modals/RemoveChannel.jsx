@@ -1,4 +1,6 @@
 import React, { useContext } from 'react';
+import { useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
 import {
   Button,
   ButtonGroup,
@@ -11,24 +13,34 @@ import { closeModal } from '../../slices/modals';
 import { ApiContext } from '../contexts/index.jsx';
 
 const RemoveChannel = (params) => {
-  const { dispatch } = store;
+  const dispatch = useDispatch();
   const { channelNumber } = params;
-  const { withEmit } = useContext(ApiContext);
-  const { emitRemoveChannel } = withEmit;
+  const { showModal } = store.getState().modalsSlice;
+  const { emitChannel } = useContext(ApiContext);
   const { t } = useTranslation();
 
   const close = () => {
     dispatch(closeModal());
   };
 
+  const setNotify = (text, result) => {
+    const notify = () => toast[result](text);
+    notify();
+  };
+
   const handleRemove = async () => {
-    emitRemoveChannel('removeChannel', { id: channelNumber }, t('toasts.channelRemoved'), t('toasts.channelNotRemoved'));
+    try {
+      await emitChannel('removeChannel', { id: channelNumber });
+      setNotify(t('toasts.channelRemoved'), 'success');
+    } catch (err) {
+      setNotify(t('toasts.channelNotRemoved'), 'error');
+    }
     close();
   };
 
   return (
     <div className="fade modal show" tabIndex="-1">
-      <Modal show onHide={close} centered>
+      <Modal show={showModal} onHide={close} centered>
         <Modal.Header closeButton onClick={close}>
           <Modal.Title>{t('remove.removeChannel')}</Modal.Title>
         </Modal.Header>

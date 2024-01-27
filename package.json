@@ -23,10 +23,6 @@
   },
   "homepage": "https://github.com/DmitryKr2021/frontend-project-12#readme",
   "dependencies": {
-    "@hexlet/chat-server": "^1.1.9",
-    "react-scroll": "^1.9.0"
-  },
-  "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
+    "@hexlet/chat-server": "^1.1.9"
   }
 }

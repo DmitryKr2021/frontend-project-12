@@ -4,7 +4,8 @@ import React, {
   useRef,
 } from 'react';
 import * as Yup from 'yup';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
 import {
   Button,
   ButtonGroup,
@@ -17,15 +18,14 @@ import { useTranslation } from 'react-i18next';
 import store from '../../slices/index';
 import { closeModal } from '../../slices/modals';
 import { ApiContext } from '../contexts/index.jsx';
-
 import useAuth from '../../hooks/index.jsx';
 
 const AddChannel = () => {
   const auth = useAuth();
-  const { dispatch } = store;
+  const dispatch = useDispatch();
+  const { showModal } = store.getState().modalsSlice;
   const channels = useSelector((state) => state.channelsSlice.channels);
-  const { withEmit } = useContext(ApiContext);
-  const { emitAddChannel } = withEmit;
+  const { emitChannel } = useContext(ApiContext);
   const { t } = useTranslation();
 
   const close = () => {
@@ -46,11 +46,17 @@ const AddChannel = () => {
   useEffect(() => {
     inpChannel.current?.select();
   }, []);
+
+  const setNotify = (text, result) => {
+    const notify = () => toast[result](text);
+    notify();
+  };
+
   const { activeUser } = auth;
 
   return (
     <div className="fade modal show" tabIndex="-1">
-      <Modal show onHide={close} centered>
+      <Modal show={showModal} onHide={close} centered>
         <Modal.Header closeButton onClick={close}>
           <Modal.Title>{t('add.addChannel')}</Modal.Title>
         </Modal.Header>
@@ -63,7 +69,12 @@ const AddChannel = () => {
                 name: filter.clean(values.name),
                 user: activeUser,
               };
-              emitAddChannel('newChannel', newChannel, t('toasts.channelAdded'), t('toasts.channelNotAdded'));
+              try {
+                await emitChannel('newChannel', newChannel);
+                setNotify(t('toasts.channelAdded'), 'success');
+              } catch (err) {
+                setNotify(t('toasts.channelNotAdded'), 'error');
+              }
               close();
               setSubmitting(false);
             }}

@@ -46,11 +46,12 @@ const AuthProvider = ({ children }) => {
     localStorage.removeItem(activeUser);
   };
 
-  const { token } = localStorage.length > 0 && JSON.parse(localStorage.getItem('user'));
+  const user = localStorage.length > 0 && JSON.parse(localStorage.getItem('user'));
+  const header = { Authorization: `Bearer ${user.token}` };
 
   return (
     // eslint-disable-next-line
-    <AuthContext.Provider value={{ logOut, activeUser, token, setUser }}>
+    <AuthContext.Provider value={{ logOut, activeUser, user, setUser, header }}>
       {children}
     </AuthContext.Provider>
   );
@@ -76,7 +77,7 @@ ChatPage.propTypes = {
 
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route path={routes.slash()} element={null}>
+    <Route path={routes.root()} element={null}>
       <Route
         index
         loader={pageLoader}

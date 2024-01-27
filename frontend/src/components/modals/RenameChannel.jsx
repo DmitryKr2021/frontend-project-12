@@ -4,7 +4,8 @@ import React, {
   useRef,
 } from 'react';
 import * as Yup from 'yup';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
 import {
   Button,
   ButtonGroup,
@@ -18,11 +19,11 @@ import { closeModal } from '../../slices/modals';
 import { ApiContext } from '../contexts/index.jsx';
 
 const RenameChannel = (params) => {
-  const { dispatch } = store;
+  const dispatch = useDispatch();
+  const { showModal } = store.getState().modalsSlice;
   const { channelNumber } = params;
   const channels = useSelector((state) => state.channelsSlice.channels);
-  const { withEmit } = useContext(ApiContext);
-  const { emitRenameChannel } = withEmit;
+  const { emitChannel } = useContext(ApiContext);
   const { t } = useTranslation();
 
   const close = () => {
@@ -48,9 +49,14 @@ const RenameChannel = (params) => {
     inpChannel.current?.select();
   }, []);
 
+  const setNotify = (text, result) => {
+    const notify = () => toast[result](text);
+    notify();
+  };
+
   return (
     <div className="fade modal show" tabIndex="-1">
-      <Modal show onHide={close} centered>
+      <Modal show={showModal} onHide={close} centered>
         <Modal.Header closeButton onClick={close}>
           <Modal.Title>{t('rename.rename')}</Modal.Title>
         </Modal.Header>
@@ -66,7 +72,12 @@ const RenameChannel = (params) => {
                 name: values.channel,
                 id: values.id,
               };
-              emitRenameChannel('renameChannel', targetChannel, t('toasts.channelRenamed'), t('toasts.channelNotRenamed'));
+              try {
+                await emitChannel('renameChannel', targetChannel);
+                setNotify(t('toasts.channelRenamed'), 'success');
+              } catch (err) {
+                setNotify(t('toasts.channelNotRenamed'), 'error');
+              }
               close();
               setSubmitting(false);
             }}

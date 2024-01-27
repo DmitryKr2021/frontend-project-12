@@ -21,6 +21,8 @@ const channelsSlice = createSlice({
     },
     addNewChannel: (state, { payload }) => {
       state.channels = [...state.channels, payload];
+      const { id } = payload;
+      state.activeChannel = id;
     },
     removeChannel: (state, { payload }) => {
       state.channels = state.channels.filter(

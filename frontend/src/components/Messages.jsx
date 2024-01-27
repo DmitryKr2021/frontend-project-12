@@ -18,10 +18,10 @@ import useAuth from '../hooks/index.jsx';
 
 const Messages = () => {
   const auth = useAuth();
-  const { activeUser, token } = auth;
+  const { activeUser, user } = auth;
+  const { token } = user;
   const dispatch = useDispatch();
-  const { withEmit } = useContext(ApiContext);
-  const { emitMessage } = withEmit;
+  const { emitMessage } = useContext(ApiContext);
   const { t } = useTranslation();
   const channels = useSelector((state) => state.channelsSlice.channels);
   const messages = useSelector((state) => state.messagesSlice.messages);
@@ -42,27 +42,24 @@ const Messages = () => {
     scrollTo();
   });
 
+  const { header } = useAuth();
   useEffect(() => {
     const requestData = async () => {
-      if (activeUser) {
-        await axios
-          .get(routes.apiDataPath(), {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          })
-          .then((response) => {
-            dispatch(loadMessages(response.data));
-            dispatch(loadChannels(response.data));
-          })
-          .catch(() => {
-            const notify = () => toast.error(t('toasts.dataNotLoaded'));
-            notify();
-          });
-      }
+      await axios
+        .get(routes.apiDataPath(), {
+          headers: header,
+        })
+        .then((response) => {
+          dispatch(loadMessages(response.data));
+          dispatch(loadChannels(response.data));
+        })
+        .catch(() => {
+          const notify = () => toast.error(t('toasts.dataNotLoaded'));
+          notify();
+        });
     };
     requestData();
-  }, [dispatch, t, activeUser, auth, token]);
+  }, [dispatch, t, activeUser, header, auth, token]);
 
   const getActiveChannel = () => (channels.length > 0
     && channels.find((channel) => channel.id === thisActiveChannel))
@@ -80,6 +77,10 @@ const Messages = () => {
 
   const messagesLength = channelMessages.length;
   const countMessages = t('messages.msg', { count: messagesLength });
+  const setNotify = (text, result) => {
+    const notify = () => toast[result](text);
+    notify();
+  };
 
   return (
     <div className="col p-0 h-100">
@@ -122,7 +123,11 @@ const Messages = () => {
                 channelId: thisActiveChannel,
                 username: activeUser,
               };
-              emitMessage('newMessage', newMessage, t('toasts.dataNotLoaded'));
+              try {
+                await emitMessage('newMessage', newMessage);
+              } catch (err) {
+                setNotify(t('toasts.dataNotAdded'), 'error');
+              }
               resetForm('');
               setSubmitting(false);
               scrollTo();
