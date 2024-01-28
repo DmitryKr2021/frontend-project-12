@@ -77,6 +77,7 @@ const AddChannel = () => {
               }
               close();
               setSubmitting(false);
+              // console.log('activeUser=', auth, activeUser);
             }}
           >
             {({

@@ -41,6 +41,7 @@ const AuthProvider = ({ children }) => {
     setActiveUser(username);
     window.localStorage.setItem('user', JSON.stringify(data));
   };
+
   const logOut = () => {
     setActiveUser(null);
     localStorage.removeItem(activeUser);

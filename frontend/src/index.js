@@ -13,6 +13,7 @@ import {
   addNewChannel,
   removeChannel,
   renameChannel,
+  setActiveChannel,
 } from './slices/channels';
 import { ApiContext } from './components/contexts/index.jsx';
 
@@ -29,6 +30,10 @@ const runApp = async () => {
     const response = await socket
       .timeout(2000)
       .emitWithAck(nameEmit, bodyEmit);
+    if (nameEmit === 'newChannel') {
+      const { data } = response;
+      dispatch(setActiveChannel(data.id));
+    }
     return response;
   };
 
